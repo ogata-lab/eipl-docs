@@ -1,0 +1,32 @@
+.md-header {
+  background-color: #881C28;
+}
+
+.highlight .hll {
+  background-color: rgba(255, 255, 0, 0.2); /* 薄い背景色を指定 */
+}
+
+.center {
+  display: block;
+  margin: 0 auto;
+}
+
+dt {
+  font-size: 1em;
+  font-weight: bold;
+  font-family: font-family: monospace, serif;
+  color: #996666;
+}
+
+dd {
+  font-size: 0.9em; 
+}
+
+.wrap {
+  display: flex;
+  justify-content: center;
+}
+.youtube {
+  max-width: 100%;
+}
+

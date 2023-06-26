@@ -1,0 +1,91 @@
+site_name: 'EIPL: Embodied Intelligence with Deep Predictive Learning'
+site_description: EIPL User Guide, Japanese version
+site_author: Hiroshi Ito
+site_url: https://hiroshi-ito.github.io/eipl-docs/ja/
+repo_url: https://github.com/hiroshi-ito/eipl-docs/
+copyright: 'Copyright &copy; 2023 Ogata Laboratory, Waseda University'
+nav:
+  - 'はじめに': 'index.md'
+  - '深層予測学習': 'overview.md'
+  - '環境構築':
+    - 'インストール': 'install/install-software.md'
+    - 'クイックスタート': 'install/quick-start.md'
+  - '動作教示':
+    - '概要': 'teach/overview.md'
+    - '実行環境': 'teach/environment.md'
+    - 'データセット作成': 'teach/dataset.md'
+  - 'モデル学習':
+    - 'データローダ': 'model/dataloader.md'
+    - 'モデル実装': 'model/SARNN.md'
+    - '学習': 'model/train.md'
+    - '推論': 'model/test.md'
+  - '実ロボット応用':
+    - '概要': 'robot/overview.md'
+#    - 'ハードウェア': 'robot/hardware.md'
+#    - 'ROS環境': 'robot/ros.md'
+#    - '遠隔操作': 'robot/teleop.md'
+#    - '前処理': 'robot/preprocess.md'
+#    - 'データセット作成': 'robot/dataset.md'
+  - 'Model Zoo':
+    - '概要': 'zoo/overview.md'
+    - 'MTRNN': 'zoo/MTRNN.md'
+    - 'CAE-RNN': 'zoo/CAE-RNN.md'
+    - 'CNNRNN': 'zoo/CNNRNN.md'
+  - 'Tips':
+    - '関節角度処理': 'tips/normalization.md'
+    - '画像拡張': 'tips/augmentation.md'
+  - 'FAQ': 'faq.md'
+  - 'License': 'license.md'
+
+theme:
+  name: material
+  favicon: 'img/favicon.ico'
+  logo: 'img/logo.svg'
+  language: 'ja'
+  features:
+    - toc.integrate
+extra:
+  analytics:
+    provider: google
+    property: G-J6RG9X05HL
+  alternate:
+    - name: 'English'
+      link: 'https://hiroshi-ito.github.io/eipl-docs/en/'
+    - name: '日本語'
+      link: 'https://hiroshi-ito.github.io/eipl-docs/ja/'
+
+markdown_extensions:
+  - tables
+  - attr_list
+  - footnotes
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist
+  - def_list
+
+plugins:
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [./docs/model/src/,./docs/zoo/src/]
+          options:
+            docstring_style: google
+  - search:
+      lang: ja
+  - bibtex:
+      bib_file: "./assets/refs.bib"
+
+extra_javascript:
+  - javascripts/katex.js 
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js  
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+  
+extra_css:
+  - css/extra.css
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
