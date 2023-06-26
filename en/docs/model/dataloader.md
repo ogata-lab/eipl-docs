@@ -1,46 +1,40 @@
 
 
-EIPLでは、Pytorchが標準で提供する`Dataset`クラスを継承した、ロボット動作学習のための`MultimodalDataset`クラスを提供している。
-本クラスは毎エポック、モデルへの入力データ $x_{data}$ と真値 $y_{data}$ のペアを返す。
-入力データ$x_{data}$は画像と関節角度のペアになっており、毎エポックデータ拡張を行う。
-入力画像には、照明変化に対するロバスト性を向上させるために輝度やコントラストなどをランダムに付与し、入力関節角度には、手先位置誤差に対するロバスト性を向上させるためにガウシアンノイズを付与している。
-一方で出力データには一切ノイズを加えていない。
-モデルはノイズが混じった入力データから、ノイズを無視した状況（内部表現）を学習することで、推論時は実世界のノイズに対しロバストな動作生成が可能になる。
+EIPL provides a `MultimodalDataset` class for learning robot motions, which inherits from the `Dataset` class provided by Pytorch as standard.
+This class returns every epoch, a pair of input data `x_data` and a true value `y_data`.
+The input data `x_data` is a pair of images and joint angles, and data augmentation is applied every epoch.
+The input image is randomly assigned brightness, contrast, etc. to improve robustness against lighting changes, and the input joint angles are added gaussian noise to improve robustness against position errors.
+On the other hand, no noise is added to the true data.
+The model learns a noise-neglected situation (internal representation) from input data mixed with noise, which enables robust motion generation against real-world noise during inference.
 
-以下は、AIRECを用いて収集した[物体把持タスク](../teach/overview.md)を例に、`MultimodalDataset`クラスの利用方法を示している。
-`MultimodalDataset`クラスに5次元の画像時系列データ（データ数、時系列長、チャネル、縦、横）と3次元の関節角度時系列データ（データ数、時系列長、関節数）を渡すことで自動的にデータ拡張などが行われる。
-なお、`SampleDownloader`はEIPLのサンプルデータのダウンロードを行うクラスであり、必ずしも必要ではない。
-`numpy.load`関数などを用いて、自作データセットを直接読み込んでも良い。
+The following source code shows how to use the `MultimodalDataset` class using an [object grasping task](../teach/overview.md) collected using AIREC as an example.
+By passing 5-dimensional image time-series data [number of data, time-series length, channel, height, width] and
+3-dimensional joint angle time-series data [number of data, time-series length, number of joints] to the `MultimodalDataset` class, data expansion and other operations are automatically performed. Note that `SampleDownloader` downloading sample dataset and is not necessarily required.
+You may use the `numpy.load` function or other functions to directly load your own data sets.
 
-
-```python title="サンプルデータセットの使い方" linenums="1"
+```python title="How to use dataloader" linenums="1"
 from eipl.data import SampleDownloader, MultimodalDataset
 
-# サンプルデータをダウンロードし、正規化
+# Download and normalize sample data
 grasp_data = SampleDownloader("airec", "grasp_bottle", img_format="CHW")
 images, joints = grasp_data.load_norm_data("train", vmin=0.1, vmax=0.9)
 
-# 画像と関節角度をDatasetクラスに渡す
+# Give the image and joint angles to the Dataset class
 multi_dataset = MultimodalDataset(images, joints)
 
-# 入出力データを戻り値として返す。
+# Return input/true data as return value.
 x_data, y_data = multi_dataset[1]
 ```
 
-下図は`MultimodalDataset`クラスが返したロボットのカメラ画像を示しており、
-左から順に右はノイズの無い画像、ノイズが付与された画像、そしてロボット関節角度である。
-毎エポックランダムなノイズが画像に付与されるため、モデルは多様な視覚状況を学習する。
-またロボット関節角度の黒色点線は、ノイズがないオリジナル関節角度、色付き線はガウシアンノイズが付与された関節角度である。
+The following figure shows the robot camera images returned by the `MultimodalDataset` class, From left to right are the noiseless image, the image with noise and the robot joint angles. Since random noise is added to the image every epoch, the model learns a wide variety of visual situations. The black dotted lines in the robot joint angles are the original joint angles without noise, and the colored lines are the joint angles with gaussian noise.
 
 
-![データセット](img/vis_dataset.webp){: .center}
+![dataset](img/vis_dataset.webp){: .center}
 
 
 !!! note
     
-    Proxyなどが原因でデータセットが取得できない場合は、
-    [ここから](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar)データセットを手動でダウンロードし、
-    `~/.eipl/` フォルダ内に保存してください。
+    If you are unable to get the dataset due to a proxy or some other reason, download the data set manually from [here](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar) and save it in the ~/.eipl/ folder.
         ```bash            
         $ cd ~/
         $ mkdir .eipl

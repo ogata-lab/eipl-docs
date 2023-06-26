@@ -1,8 +1,6 @@
-# 概要
+# Overview
 
-EIPLに実装されたレイヤーやモデルを順次公開する。
-`Layer`では大まかなネットワークの概要とテストプログラムを、
-`Model`ではサンプルデータセットと動作学習から推論のプログラムを提供する。
+The newly implemented layers and models will be released sequentially.
 
 - [x] [Multiple Timescale Recurrent Neural Network](./MTRNN.md)
 - [x] [CAE-RNN](./CAE-RNN.md)

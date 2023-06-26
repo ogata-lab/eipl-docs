@@ -12,7 +12,7 @@ from eipl.utils import get_activation_fn
 
 
 class SARNN(nn.Module):
-    #:: ImageDataset
+    #:: SARNN
     """SARNN: Spatial Attention with Recurrent Neural Network.
     `joint_dim` を設定することで、関節自由度が異なるロボットにも対応可能である。
     一方でロボットの視覚画像 `im_size` は128x128ピクセルのカラー画像に対応している。

@@ -1,6 +1,6 @@
 MKDOCS_ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 SITE_DIR    := $(MKDOCS_ROOT)/site
-CNAME       := hiroshi-ito.github.io
+CNAME       := ogata-lab.github.io
 
 build:
 	mkdocs build --config-file $(MKDOCS_ROOT)/top/mkdocs.yml  --site-dir $(SITE_DIR)

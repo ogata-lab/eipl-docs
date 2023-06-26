@@ -1,49 +1,29 @@
-# 深層予測学習 {#dpl}
+# Deep Predictive Learning {#dpl}
 
-## 概要 {#dpl-overview}
-深層予測学習（Deep Predictive Learning）とは、脳の多様な機能を統一的に説明する自由エネルギー原理を参考に開発されたロボット動作生成手法である[@ito2022efficient]。
-遠隔操作などを用いて実世界でロボットが動作を経験した際の運動と感覚の時系列情報を用いて、時刻($t$)と次時刻($t$+1)の感覚運動情報の予測誤差が最小になるように再起結合型神経回路モデル（Recurrent Neural Network: RNN）を学習する。
-実行時には、ロボットの感覚運動情報からリアルタイムに近未来の感覚と動作を予測し、RNN内のアトラクタの引き込み作用により結果的に予測誤差が最小になるような動作を実行することが可能である。
-下図は深層予測学習のロボット実装を示しており、動作教示、学習、動作生成の3ステップから構成される。
+## Overview {#dpl-overview}
+Deep Predictive Learning (Deep Predictive Learning) is a robot motion generation method developed with reference to the free energy principle, which unifies and explains the various functions of the brain[@ito2022efficient]. A recurrent coupled neural network (RNN) model is trained to minimize the prediction error between the sensory-motor information at time (t) and the next time (t+1) using the time-series information of the robot's motion and sensation when the robot experiences motion in the real world using teleoperation, etc. At runtime, it is possible to predict the robot's near-future sensations and actions in real time from its sensory-motor information, and to execute actions such that the resulting prediction error is minimized by the attracting action of attractors in the RNN. The figure below shows a robot implementation of deep predictive learning, which consists of three steps: motion teaching, learning, and motion generation.
 
-[![深層予測学習の概要図](img/dpl-overview.webp)](img/dpl-overview.webp)
+
+[![overview of deep predictive learning](img/dpl-overview.webp)](img/dpl-overview.webp)
 
       
 
 ----
-## 動作教示 {#dpl-teach}
-深層予測学習ではロボットの感覚運動情報（運動情報・センサ情報などから構成される時系列データ）を直接学習データとすることで、動作生成モデルをデータドリブンに獲得する。
-そのため、学習データにはロボットの身体と環境とのインタラクションに関する情報が含まれている必要がある。
-また、学習データの量と質はモデルの性能に大きく影響するため、高品質なデモンストレーションデータを効率的に収集できることが望ましい。
+## Motion Teaching {#dpl-teach}
+In deep predictive learning, motion generation models are acquired in a data-driven manner using the robot's sensorimotor information (time-series data comprising motion and sensor information) as training data. Therefore, the training data must contain information about the interaction between the robot's body and the environment. In addition, since the quantity and quality of the training data influence model performance, high-quality demonstration data must be collected efficiently. 
 
-ステップ１では、所望の動作をロボットに教示し、その時の感覚運動情報を一定のサンプリングレートで記録することで学習データを収集する。
-代表的な動作教示方法として、プログラミングによる動作記述 [@suzuki2021air]_ 、ダイレクトティーチング [@ichiwara2022contact]_ 、テレオペレーション [@ito2022efficient]_ [@yang2016repeatable]_ などが挙げられる。
-プログラミングによる動作記述は簡単に動作教示可能である反面、複雑かつ長期の動作をロボットに行わせる際には記述が複雑になる。
-一方で、ダイレクトティーチングやテレオペレーションのように、人がロボットを操縦して教示を行うことで、緻密なモデリングやパラメータ調整などを必要とせずに学習データを収集することが可能である。
+In Phase 1, the training data is collected by performing the desired motions on the robot and recording motion information, such as joint angles, and sensor information, such as camera images, at a constant sampling rate. Typical teaching methods for robot motion include program description[@suzuki2021air], direct teaching[@ichiwara2022contact], and teleoperation[@ito2022efficient]. Although describing the robot's motion in advance using a robot programming language is simple, it may not be feasible due to the complexity of the description when a robot needs to perform a long-term motion. In contrast, training data without precise modeling and parameter adjustment can be obtained by teaching movements through human manipulation of the robot. Among them, remotely controlling the manipulator from the actual robot's perspective (Wizard of Oz [@yang2016repeatable]) is desirable because it can intuitively teach the robot human manipulation skills for a task. The operator interacts naturally with the environment by controlling the robot as if he were controlling his body. In addition, since the operator makes decisions about actions based on information obtained from sensor information, the acquired teaching dataset is expected to contain information necessary for motion learning and be effective in acquiring data for model training.
+
 
 ----
-## 学習 {#dpl-train}
-ステップ2の深層予測学習では、実世界でロボットが動作を経験した時の運動と感覚の時系列を学習する。
-人がロボットを複数回遠隔操作した際のロボットのセンサ情報を学習データとし、現在と次時刻の視覚身体情報の予測誤差が最小になるようにモデルを学習する。
-具体的には、現在のロボット状態（$i_t, s_t$）をモデルに入力し、次ステップのロボットの予測状態（$\hat i_t, \hat s_{t+1}$ ）と真値（$i_{t+1}, s_{t+1}$）が一致するように学習する。
-学習データには正解ラベルがつけられていないため、この教師あり学習によりロボット動作生成に重要な特徴量抽出やモーダル間の関係性の学習を行う。
-これにより、従来のロボティクスで必要であった環境の物理モデルの詳細な設計や、複数のモダリティにまたがる環境認識と動作生成の機能を統合したダイナミックを獲得することが可能である。
+## Training {#dpl-train}
+In deep predictive learning, the learning target is the time-series relationships between sensorimotor information in a system in which the environment and the body interact dynamically. The training data are not labeled with correct answers, and the model is trained to predict the robot state ($\hat i_t, \hat s_{t+1}$) in the next step using the current robot state as input ($i_t, s_t$). This autoregressive learning eliminates the need for the detailed design of a physical model of the environment, as required in conventional robotics. In addition, the model can be represented as a dynamic system integrating environment recognition and motion generation functions across multiple modalities.
 
-モデルはロボットの感覚運動情報を学習するために、特徴量抽出と時系列学習部から構成される。
-特徴量抽出部はロボットが取得したセンサ情報から特徴量を抽出し、時系列学習部では抽出した特徴量と関節角度などで表現されるロボット状態を統合した感覚運動情報を学習する。
-本マニュアルでは、特徴量抽出部と時系列学習部をEnd-Endで学習させる方法を [CNNRNN](zoo/CNNRNN.md)、[SARNN](model/SARNN.md)に、独立して学習させる方法を[CAE-RNN](zoo/CAE-RNN.md) に、それぞれの利点・欠点を含めて述べる。
+The model consists of feature extraction and time series learning parts to learn the robot's sensorimotor information. The feature extraction part extracts features from sensor information values acquired by the robot, and the time series learning part learns sensorimotor information that integrates the extracted features and robot motion information ( e.g., joint angles and torque). Although each part is connected end-to-end ([CNNRNN](zoo/CNNRNN.md), [SARNN](model/SARNN.md)) or learned independently ([CAE-RNN](zoo/CAE-RNN.md)), the roles of each part are explicitly separated in this manual.
+
 
 ----
-## 推論 {#dpl-execute}
-ステップ3の動作生成では、ロボットの感覚運動情報からリアルタイムに近未来の感覚と運動を予測する。
-具体的には、モデルの前向き計算を毎ステップ行うことで、RNNは内部で保持するコンテキスト情報（$c_t$）と入力情報（$x_t$）に基づいて、次ステップのロボット状態（$\hat x_{t+1} $）を予測する。
-その後、RNNの予測値を目標状態として各関節の制御を行う。
-上記の作業をオンラインで繰り返し行うことで、逐次的にロボットからセンサ情報を取得し、モデルによる予測、ロボットへの制御コマンドの送信を行う。
-RNNはコンテキスト層の各ニューロンの状態を逐次的に変化させながらロボットの感覚運動情報を予測する。
-このときRNNが持つ引き込み作用により、結果的に、予測誤差が最小になるような行動遷移が起こり、予測感覚と現時点の感覚入力の融合（Perceptual Inference）、さらに生成動作の変化（Active Inference）が起こる。
-これにより、柔軟物のハンドリングなど複数のタスクを多自由度ロボットを用いて実世界で実現することが可能である[@yang2016repeatable,@saito2021select]。
+## Motion Generation {#dpl-execute}
+When performing the task, RNN performs three processes sequentially: (1) Acquire sensor information from the robot, (2) predict the next state based on the sensor information, and (3) send control commands to the robot based on the predicted values. By performing the forward computation of the model at each step, RNN predicts the robot's state for the next time-step based on the context information and inputs it holds internally. The RNN output is then used as the target state to control each joint. By repeating the above process online, the RNN predicts the sensorimotor motion of the robot while sequentially changing the state of each neuron in the context layer. Based on the results of this prediction and the prediction error in the real environment, the robot generates motions that dynamically respond to the input.
 
-深層予測学習モデルを動作生成に用いる利点の一つに、オンライン時における動作の生成速度が挙げられる。
-提案するフレームワークは軽量なモデルから構成されており、動作生成時に必要な計算時間・コストが少ない。
-これまでの各機能をコンポーネント化して実装することで、タスクやロボットハードの変更・デバイスの追加などに応じて実装したシステムを容易に使いまわすことも可能である [@kanamura2021development]。
-
+Another advantage of using deep learning models for motion generation is the online motion generation speed. The proposed framework comprises lightweight models, and the computational time and cost required for motion generation are low. Moreover, implementing each of the previous functions as components makes it possible to easily reuse the implemented system when tasks or robot hardware changes, or devices are added[kanamura2021development].

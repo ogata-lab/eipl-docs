@@ -1,11 +1,12 @@
-# 概要
-MTRNNは、応答速度の異なる階層的なニューロン群から構成されるRNNの一種である[@yamashita2008emergence]。
-IO層と異なる発火速度（時定数）を持つコンテキスト層（Cf層とCs層）の3層からなり、それぞれ再帰的な入力を持つ。
-時定数は、Cf層からCs層の順で値が大きくなり、入力に対する応答速度が遅くなる。
-入力された情報は、Cf層とCs層を介してOutput層で出力される。
-IO層とCs層の間に直接の結合は存在せず、Cf層を介して相互作用する。
-MTRNNを用いることで、ロボットの動作学習が可能となり、Cf層では動作プリミティブ、Cs層ではそれらの組み合わせが表現（学習）される。
-LSTMと比較してMTRNNは解釈性が高いため、尾形研究室でよく用いている。
+# Overview
+
+MTRNN is a type of RNN consisting of a hierarchical neuron group with different firing rates [@yamashita2008emergence].
+It consists of three layers: an IO layer and context layers (Cf and Cs layers) with different firing rates (time constants), each with recursive inputs.
+The time constants increase in value from the Cf layer to the Cs layer, and the response speed to the input becomes slower.
+The input information is output at the Output layer via the Cf and Cs layers.
+There is no direct coupling between the IO and Cs layers, and they interact through the Cf layer.
+The MTRNN enables the robot to learn behaviors, with the Cf layer representing the behavior primitives and the Cs layer representing (learning) the combination of these primitives.
+Compared to LSTM, MTRNN is more interpretable and is often used in the Ogata lab.
 
 
 ![MTRNN](img/mtrnn/mtrnn.webp){: .center}

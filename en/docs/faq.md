@@ -1,13 +1,13 @@
 # FAQ
 
-## Q. 動作が安定しない
+## Q. Motion is not smoothly.
 
-1. 予測データを混合する
-    実世界のノイズに対し安定的な動作を生成するために、時刻$t$のセンサ情報に、前時刻$t-1$でもRNNの予測値を一定の割合で混合した値をRNNに入力する。
-    本処理はローパスフィルタと同等であり、ロボットのセンサ値にノイズが乗っても、 前時刻の予測値を補助的に利用することで、安定した動作指令の予測が可能である。
-    なお混合係数(`input_param`)が小さ過ぎると、実世界のセンサ情報に基づいて動作を修正することが困難になるため、位置変化に対するロバスト性が低下することに注意されたい。
-    仮に`input_param=0.0`の場合、初期時刻で取得したセンサ情報のみを用いて動作生成することになる。
-    以下は実装例であり、ロボットのカメラ画像と関節角度に対しデータを混合している。
+1. Mixing predictive data
+    In order to generate stable/smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value of RNN at the previous time $t-1$ in a specific ratio and then input to RNN.
+    This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
+    Note that if the mixing factor (`input_param`) is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.
+    If `input_param=0.0`, the motion will be generated using only the sensor information acquired at the initial time.
+    The following is an example implementation, in which data is mixed with the robot's camera image and joint angles.
 
     ```python
     x_image, x_joint = robot.get_sensor_data()
@@ -20,34 +20,35 @@
     ```
 
 
-## Q. 予測画像が異常
+## Q. Predicted image is abnormal
 
-1. カメラパラメータを固定する
-    学習済みモデルを実ロボットに適用した際、予測画像中に物体が映らない、予測画像がノイジーという問題が発生する。
-    カメラパラメータ（例えばホワイトバランスなど）が自動的に変化していることが原因として考えられるため、
-    `データ収集時`にカメラパラメータを固定してする。
-    もしくは、`データ収集時`と同じような視覚画像になるように、`推論時`にカメラパラメータを調整する。
+1. Fix camera parameters
+    When the trained model is applied to a real robot, the problem occurs that no objects are seen in the predicted image or the predicted image is noisy.
+    This may be due to the fact that camera parameters (e.g. white balance) are automatically changed, fix the camera parameters at the time of `motion teaching`.
+    Or adjust the `inference` camera parameters to get the same visual image as the `motion teaching`.
+
    
 
-## Q. 対象物に注意が向かない
+## Q. Not focusing attention on the object.
 
-1. カメラ位置を調整する
-    安定した注意点と動作を獲得するために、ロボットの身体（ハンドもしくはアーム）と対象物が、画像中に常に表示されることを推奨する。
-    注意点がロボットの身体と対象部に向くことで、両者の時系列関係が学習しやすくなる。
+1. Adjusting the camera position
+
+    It is recommended that the robot's body (hand or arm) and the object be constantly displayed in the image in order to acquire stable attention and motion.
+    When attention is directed to the robot's body and the object part, it is easier to learn the time-series relationship between the both.
     
-2. 対象物を大きくする
-    画像中で対象物が占める割合が小さいと、CNNの畳み込みにより物体位置が喪失する可能性がある。
-    そのため、対象物を大きくするか、カメラを対象物に近づけること。
+2. Enlarge the object
 
-3. 初期重みが原因
-    モデルの初期重みが原因で対象物に注意が向かない可能性がある。
-    同じパラメータで複数回学習を行うことで、5回中3回は対象物に注意が向く結果が得られる。
+    Therefore, either make the object physically larger, crop the image around the object, or move the camera closer to the object.
+
+3. Re-training the mode
+    The initial weights of the model may cause the objects to be inattentive.
+    Training multiple times with the same parameters yields good results 3 out of 5 times.
 
 
-## Q. データローダをカスタマイズしたい
+## Q. Customize the data loader
 
-`MultimodalDataset` クラスを渡すデータの数や、入出力定義を一部変更することで、任意のセンサを追加/削除することが可能である。
-以下は、新たにトルクセンサを追加した例を示している。
+It is possible to add/remove any sensor by changing the number of data to pass the `MultimodalDataset` class or by changing some of the input/output definitions.
+The following shows an example of adding a new torque sensor.
 
 ```python
 class MultimodalDataset(Dataset):

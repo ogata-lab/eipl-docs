@@ -1,25 +1,24 @@
-# 概要
+# Overview
 
-EPILは、公式的にLinux（Ubuntu 20.04）とPython3.8をサポートしている。
-深層学習フレームワークとしてはPytorchを採用しており、最新版の [pytorch](https://pytorch.org/get-started/locally/) をインストールすることを推奨する。
-特に、Pytorch 2.0以上は、事前にコンパイルされたことにより、学習速度を向上させ、GPUメモリの使用率を低減させるため、大規模なモデルの学習を高速に実行可能である。
-なお、CUDAやNvidiaドライバーは利用するPytorchの[バージョン](https://pytorch.org/get-started/previous-versions/)に合わせてインストールする必要がある。
-
-----
-## フォルダ構造
-本ライブラリは以下のように構成される。
-`layer` と `model` の一部は [torchinfo](https://github.com/TylerYep/torchinfo)を用いて、モデル構造を可視化することで検証を行っている。
-
-- **data**: サンプルデータのダウンロードや、モデル学習のためのDataloader
-- **layer**: [階層型RNN](../zoo/MTRNN.md)や[空間注意機構](../model/SARNN.md#spatial_softmax)などを実装
-- **model**: 複数の動作生成モデルを実装、入力は関節角度（任意の自由度）とカラー画像（128x128ピクセル）
-- **test**: テストプログラム
-- **utils**: 正規化や可視化、引数処理などの関数
+EPIL officially supports Linux (Ubuntu 20.04) and Python 3.8.
+Pytorch is used as the deep learning framework and it is recommended to install the [latest version of pytorch](https://pytorch.org/get-started/locally/).
+In particular, Pytorch 2.0 and above can perform training of large models faster because it is precompiled, which improves training speed and reduces GPU memory usage.
+Note that CUDA and Nvidia drivers must be installed according to the [version](https://pytorch.org/get-started/previous-versions/) of Pytorch used.
 
 ----
-## pip {#pip_install}
+## Files
+This library is composed of the following:
 
-GithubからEIPLのリポジトリクローンし、pipコマンドを用いて環境をインストールする。
+- **data**: A sample data downloader and a Dataloader for model training are implemented.
+- **layer**: A layered model ([Hierarchical RNNs](../zoo/MTRNN.md), [spatial attention mechanisms](../model/SARNN.md#spatial_softmax), etc.) are implemented.
+- **model**: Multiple motion generation models are implemented, and inputs support joint angles (arbitrary degrees of freedom) and color images (128x128 pixels).
+- **test**: Test programs.
+- **utils**: Functions for normalization, visualization, arguments processing, etc.
+
+----
+## Install from pip {#pip_install}
+
+Clone the EIPL repository from Github and install the environment using the pip command.
 
 ```bash linenums="1"
 mkdir ~/work/
@@ -34,4 +33,4 @@ pip install -e .
 ## docker
 
 !!! Note
-    現在対応中。
+    Coming soon.

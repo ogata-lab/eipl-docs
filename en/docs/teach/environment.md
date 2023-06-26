@@ -1,22 +1,17 @@
-# 実行環境
+# Setup
 
 <!-- ******************************** -->
 ----
 ### ROS
-ROSがインストールされている環境でデータセットの作成を行う場合、以下の処理は不要であるため、
-[次章](./dataset.md)へ進んでください。
-
+Here, we use the rospy and rosbag packages to extract data from `rosbag`.
+If you are generating data sets in a ROS installed environment, the following process is not necessary, so please go to the [next chapter](./dataset.md).
 
 ### pyenv
-本プログラムでは、`rosbag` からデータを抽出するのに rospy と rosbag パッケージを利用する。
-そのためROS（Noetic推奨）をインストール済みのPCであれば、そのまま実行すれば問題なく動作する。
-
-一方で、ROSがインストールされていないPCでrospyなどを使う方法として、
-[rospypi/simple](https://github.com/rospypi/simple)が挙げられる。
-本パッケージは、ROSをインストールすることなく、rospyやtf2などのバイナリパッケージを利用することが可能である。
-さらに、LinuxやWindows、MacOSに対応していることから、収集したデータを自身のPC環境で容易に解析することが可能である。
-なお、既存のpython環境との競合を防ぐために、venvを用いて仮想環境を作ることを推奨する。
-以下に、venvを用いたrospypi/simpleライブラリの環境構築手順を示す。
+On the other hand, one approach to using rospy and other software on a PC without ROS installed is [rospypi/simple](https://github.com/rospypi/simple).
+This package enables the use of binary packages such as rospy and tf2 without installing ROS.
+Furthermore, since it is compatible with Linux, Windows, and MacOS, the collected data can be easily analyzed on one's own PC environment.
+In order to prevent conflicts with existing python environments, it is recommended to create a virtual environment using venv.
+The following is the procedure for creating an environment for rospypi/simple library using venv.
 
 ```bash
 $ python3 -m venv ~/.venv/rosbag
@@ -28,6 +23,5 @@ $ pip install matplotlib numpy opencv-python
 
 !!! note
     
-    rospypi/simpleライブラリですべてのメッセージデータに対応できることは確認できていない。
-    特にカスタムROSメッセージは未検証であるため、仮想環境でプログラムが正しく実行できない場合は、
-    ROS環境で実行すること。
+    The authors have not been able to verify that the rospypi/simple library can handle all message data.
+    Especially custom ROS messages have not been tested, so if a program cannot be executed correctly in a virtual environment, it should be executed in a ROS environment.

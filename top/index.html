@@ -91,7 +91,8 @@
         </center>
       </td>
       <td align=center width=200px>
-        <center><span style="font-size:22px"><a href="https://ogata-lab.github.io/eipl-docs/en/">[Documentation]</a></span>
+        <center><span style="font-size:22px"><a
+              href="https://ogata-lab.github.io/eipl-docs/en/">[Documentation]</a></span>
         </center>
       </td>
       <td align=center width=200px>
@@ -115,23 +116,20 @@
     <h1>Abstract</h1>
   </center>
   <div style="width:800px; margin:0 auto; text-align=center">
-    A major challenge to making robots work in the real world is the cost of human model building.
-    Learning-based approaches are a promising method to reduce this cost, and are expected to simultaneously learn
-    recognition and motion generation without building an environment model.
-    However, the cost of collecting training data is a challenge, and time and human resources are essential for trial
-    and error with robots that involve physical contact.
-    Some research has been done to transfer learning results from a simulation environment to the real world, but
-    modeling nonlinear physical phenomena is difficult and cannot completely solve the problem.
-    To solve this problem, the authors have proposed Deep Prediction Learning, an approach that assumes imperfections in
-    prediction models and minimizes prediction errors between real-world situations and models.
-    This technology was developed with reference to the "free energy principle," which explains how living organisms
-    behave, to minimize the prediction error between the real world and the brain.
-    The robot predicts near-future situations based on sensorimotor information and generates behaviors that minimize
-    the gap with reality.
-    The robot can flexibly perform tasks even in unlearned situations by continuously adjusting its behavior in real
-    time while tolerating the gap between learning and reality.
-    This paper describes the concept of Deep Predictive Learning, how it is implemented, and examples of its application
-    to real robots.</div>
+    A deep learning-based approach can generalize model performance while reducing feature design costs by learning
+    end-to-end environment recognition and motion generation.
+    However, the process incurs huge training data collection costs and time and human resources for trial-and-error
+    when involving physical contact with robots.
+    Therefore, we propose ''deep predictive learning,'' a motion learning concept that assumes imperfections in the
+    predictive model
+    and minimizes the prediction error with the real-world situation.
+    Deep predictive learning is inspired by the ''free energy principle and predictive coding theory,'' which explains
+    how living organisms behave to minimize the prediction error between the real world and the brain.
+    Robots predict near-future situations based on sensorimotor information and generate motions that minimize the gap
+    with reality.
+    The robot can flexibly perform tasks in unlearned situations by adjusting its motion in real-time while considering
+    the gap between learning and reality.
+  </div>
   <br>
   <hr>
 
@@ -231,7 +229,8 @@
   <table align=center width=700px>
     <tr>
       <td align=center width=200px>
-        <center><span style="font-size:22px"><a href="https://ogata-lab.github.io/eipl-docs/en/">[Documentation]</a></span>
+        <center><span style="font-size:22px"><a
+              href="https://ogata-lab.github.io/eipl-docs/en/">[Documentation]</a></span>
         </center>
       </td>
       <td align=center width=200px>
@@ -252,7 +251,7 @@
       <div class="interpolation-panel">
         <pre><code>@inproceedings{suzuki2023dpl,
   author    = {Kanata Suzuki and Hiroshi Ito and Tatsuro Yamada and Kei Kase and Tetsuya Ogata},
-  title     = {Deep Predictive Learning: Cognitive Robotics-inspired Motion Learning Concept},
+  title     = {Deep Predictive Learning : Motion Learning Concept inspired by Cognitive Robotics},
   booktitle = {arXiv preprint arXiv:XXXX.YYYYY},
   year      = {2023},
 }</code></pre>
@@ -270,10 +269,8 @@
           <center>
             <h1>Acknowledgements</h1>
           </center>
-          We would like to thank <a href="https://sites.google.com/site/canakanasuzu/">Kanata Suzuki</a>, <a
-            href="https://sites.google.com/view/yamadat/home-english">Tatsuro Yamada</a>, <a
-            href="https://sites.google.com/site/keikkase">Kei Kase</a>, <a
-            href="https://sites.google.com/site/78yb87go8/home/english-page">Hayato Idei</a> for fruitful discussions
+          We would like to thank <a href="https://sites.google.com/site/78yb87go8/home/english-page">Hayato Idei</a> for
+          fruitful discussions
           and
           comments.
           The project was supported by JST Moonshot R&D Project (JPMJMS2031), JST ACT-X (JPMJAX190I), and Hitachi,

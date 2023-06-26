@@ -31,6 +31,3 @@
 以下は、元データ（青色矩形波）に対し平滑化処理を適用した結果であり、引数（ `step` サイズ）に応じて滑らかさを調整することが可能である。
 
 [![interpolation](img/interpolation.png)](img/interpolation.png)
-
-
-:download:`Download cos_interpolation.py <../../eipl/utils/utils.py>`

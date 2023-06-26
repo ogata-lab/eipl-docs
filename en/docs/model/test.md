@@ -1,11 +1,11 @@
-# 推論 {#test}
+# Inference {#test}
 <!-- #################################################################################################### -->
-## オフライン推論 
-SARNNが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
-引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックスである。
-`input_param`は実世界のノイズに対し安定的な動作を生成するための混合係数であり、時刻$t$のセンサ情報に、前時刻$t-1$のモデルの予測値を一定の割合で混合した値をモデルに入力する。
-本処理はローパスフィルタと同等であり、ロボットのセンサ値にノイズが乗っても、 前時刻の予測値を補助的に利用することで、安定した動作指令の予測が可能である。
-なお、混合係数が小さ過ぎると実世界のセンサ情報に基づいて動作を修正することが困難になるため、位置変化に対するロバスト性が低下することに注意されたい。
+## Off-line inference 
+Check that SARNN has been properly trained using the test program `test.py`.
+The argument `filename` is the path of the trained weights file and `idx` is the index of the data to be visualized.
+The `input_param` is a mixing coefficient to generate stable behavior against real-world noise. The sensor information at time $t$ is mixed with the predictions of the model at the previous time $t-1$ in a certain ratio and input to the model.
+This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
+Note that if the mixing coefficient is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.
 
 
 ```bash
@@ -26,27 +26,28 @@ $ ls output/
 SARNN_20230521_1247_41_4_1.0.gif
 ```
 
-下図に[未学習位置（D地点）](../teach/overview.md#task)での推論結果を示す。
-左から入力画像、予測画像、そして予測関節角度（点線は真値）である。
-入力画像中の青点は画像から抽出した注意点、そして赤点はRNNが予測した注意点であり、ロボットハンドと把持対象物に着目しながら関節角度を予測していることがわかる。
+The following figure shows the inference results at the unlearned position ([point D](../teach/overview.md#task)). From left to right, the input image, the predicted image, and the predicted joint angles (dotted lines are true values). The blue points in the input image are the points of interest extracted from the image, and the red points are the points of interest predicted by the RNN, indicating that the joint angle is predicted while focusing on the robot hand and the grasped object.
 
-![未教示位置におけるSARNNの予測結果](img/sarnn-rt_4.webp){: .center}
+![results_of_SARNN](img/sarnn-rt_4.webp){: .center}
 
 
 
 <!-- #################################################################################################### -->
 ----
-## 主成分分析 {#pca}
-深層予測学習では、学習済みモデルが汎化性能を備えているかを事前検討するために、主成分分析 [@hotelling1933analysis] を用いて内部表現を可視化することを推奨する。
-小データで汎化動作を獲得するために、RNNの内部状態に動作を埋め込む必要があり、教示動作ごとに内部状態が自己組織化（構造化）されることが望ましい。
-以降、主成分分析を用いてRNNの内部状態を低次元に圧縮し、データの特徴を表す要素（第1ー第3主成分）を可視化することで、感覚運動情報（画像・関節角度）がどのようにして表現されているのかを検証する。
+## Principal Component Analysis {#pca}
+In deep predictive learning, it is recommended to visualize the internal representation using Principal Component Analysis (PCA)[@hotelling1933analysis] in order to preliminarily examine whether the trained model has generalization performance.
+In order to acquire generalization motion with small data, it is necessary to embed the motion in the RNN's internal state, and the internal state should be self-organized (structured) for each teaching motion.
+Hereafter, we use PCA to compress the internal state of the RNN to a lower dimension, and visualize the elements (first through third principal components) that represent the characteristics of the data to verify how the sensorimotor information (images and joint angles) are represented.
 
-以下のプログラムは、推論および主成分分析の処理を一部抜粋したものである。
-初めに、モデルにテストデータを入力し、各時刻におけるRNNの内部状態 `state` をリストとして保存する。
-[LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html) の場合、`hidden state` と `cell state` が `state` して返ってくるため、ここでは `hidden state` を対象に可視化解析する。
-次に、物体位置毎における内部状態を比較するために`state`の形状、［データ数、時系列長、stateの次元数］から［データ数×時系列長、stateの次元数］に変形する。
-最後に、12行目に示すように主成分分析を適用することで、高次元な `state` を低次元な情報（3次元）に圧縮する。
-圧縮された主成分 `pca_val` を元の形状［データ数、時系列長、3次元］に戻し、物体位置ごとに色付けて3D空間にプロットすることで、物体位置と内部状態の関係を可視化できる。
+
+The following program is a partial excerpt of the inference and PCA process.
+First, input test data into the model and store the internal state `state` of the RNN at each time as a list.
+In the case of [LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html), `hidden state` and `cell state` are returned as `state`.
+Here we use `state` for visualization and analysis.
+Next, we transform the shape of `state`, from [number of data, time series length, number of dimensions of state] to [number of data x time series length, number of dimensions of state] in order to compare the internal state at each object position.
+Finally, the high-dimensional `state` is compressed into low-dimensional information (3 dimensions) by applying PCA as shown in line 12.
+By restoring the compressed principal component `pca_val` to its original shape [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by coloring each object position and plotting it in 3D space.
+
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
 states = tensor2numpy( states )
@@ -79,7 +80,8 @@ def anim_update(i):
 
 
 
-主成分分析を用いた内部状態の可視化プログラムには `test_pca_sarnn.py` を用いる。引数 filename は学習済みの重みファイルのパスである。
+Use `test_pca_sarnn.py` for the program to visualize the internal state using PCA.
+The argument filename is the path of the weights file.
 
 ```bash
 $ cd eipl/tutorials/sarnn/
@@ -88,11 +90,11 @@ $ ls output/
 PCA_SARNN_20230521_1247_41.gif
 ```
 
-下図はSARNNの可視化結果であり、各点線は内部状態の時系列変化を示してている。
-各アトラクタの色は[物体位置](../teach/overview.md#task)に対応しており、青、オレンジ、緑は教示位置A、C、Eに、赤、紫は未学習位置B、Dである。
-物体位置に応じてアトラクタが自己組織化（整列）していることから、物体位置に応じた動作が学習（記憶）されていると言える。
-特に未学習位置のアトラクタは、教示位置の間に生成されていることから、物体位置が異なる把持動作を複数回教示し学習させるだけで、未学習の内挿動作を生成することが可能である。
-
+The figure below shows the inference result of SARNN. Each dotted line shows the time series change of the internal state.
+The color of each attractor corresponds to [object position](../teach/overview.md#task), with blue, orange, and green corresponding to taught positions A, C,and E,
+and red and purple to untrained positions B and D.
+Since the attractors are self-organized (aligned) according to the object position, it can be said that the behavior is learned (memorized) according to the object position.
+In particular, since the attractors at unlearned positions are generated between taught positions, it is possible to generate unlearned interpolated motions by simply teaching and learning grasping motions with different object positions multiple times.
 
 ![Visualize_the_internal_state_of_SARNN_using_Principal_Component_Analysis](img/sarnn_pca.webp){: .center}
 
@@ -100,31 +102,35 @@ PCA_SARNN_20230521_1247_41.gif
 
 <!-- #################################################################################################### -->
 ----
-## オンライン動作生成 {#online}
-以下に疑似コードを用いて、実ロボットを用いたオンライン動作生成方法について述べる。
-ロボットは、ステップ2-5をの処理を、指定したサンプリングレートで繰り返し行うことで、センサ情報に基づいて逐次動作を生成することが可能である。
+## Online Motion Generation {#online}
+The following describes an online motion generation method using a real robot with pseudo code.
+The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.
 
-1. **モデル読み込み（21行目）**
 
-    モデルの定義を行った後に、学習済みの重みを読み込む。
+1. **Model loading (line 21)**
 
-2. **センサ情報の取得、正規化（36行目）**
+    After defining the model, load the trained weights.
 
-    ロボットセンサ情報を取得し、正規化処理を行う。例えばロボットシステムに ROS を用いている場合、 Subscribe した画像と関節角度を `raw_image`, `raw_joint`とする。 
+2. **Get and normalize sensor information (line 36)**
 
-3. **推論（49行目）**
-
-    正規化済みの画像`x_img`、関節角度`x_joint`を用いて、次時刻の画像`y_image`と関節角度`y_joint`を予測する。そして、各予測値を逆正規化することで、予測画像`pred_image`と予測関節角度`pred_joint`を計算する。
+    Get the robot sensor information and perform the normalization process.
+    For example, if you are using ROS, the Subscribed image and joint angles as `raw_image` and `raw_joint`.
     
 
-4. **指令送信（59行目）**
+3. **Inference (line 49)**
 
-    予測関節角度`pred_joint`をロボットの動作指令とするとことで、ロボットは逐次動作を生成することが可能である。ROSの場合、関節角度をモータにPublishすることでロボットは指令値に基づいて各モータを制御する。
+    Predict the image `y_image` and joint angle `y_joint` at the next time using the normalized image `x_img` and joint angle `x_joint`.
+    
 
+4. **Send command (line 59)**
 
-5. **スリープ（63行目）**
+    By using the predicted joint angle `pred_joint` as the robot's motor command, the robot can generate sequential motions.
+    In the case of ROS, by publishing the joint angles to the motors, the robot controls each motor based on the motor command.
 
-    最後に指定したサンプリングレートで推論を行うために、スリープ処理を入れることでタイミング調整を行う。なお、サンプリングレートは学習データ収集時と同じにする。
+5. **Sleep (line 63)**
+
+    Finally, timing is adjusted by inserting a sleep process to perform inference at the specified sampling rate. The sampling rate should be the same as during training data collection.
+
 
 
 ```python title="online.py" linenums="1" hl_lines="21-24 36-42 49-50 59-61 63-65"

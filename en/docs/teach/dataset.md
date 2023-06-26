@@ -1,11 +1,11 @@
-# データセット作成
+# Generate dataset
 
 
 <!-- ******************************** -->
-## ダウンロード
-AIRECを用いて物体把持動作を教示した際のセンサ情報から、機械学習のためのデータセットを作成する。
-ここでは、収集済みのサンプルデータとスクリプトを用いて、複数のrosbagデータから特定のファイルのみを取り出しnpz形式で保存する方法について述べる。
-以下のコマンドに従って、ファイルのダウンロードと解凍を行う。
+## Download
+Here, we generate a dataset for deep predictive learning using sensor information from teaching object grasping movements using AIREC.
+In this section, we describe how to extract only specific files from multiple rosbag data and save them in npz format using the collected sample data and scripts.
+Follow the commands below to download and extract the files.
 
 ```bash 
 $ mkdir ~/tmp
@@ -20,29 +20,29 @@ $ ls
 
 <!-- ******************************** -->
 ----
-## フォルダ構成
-ダウンロードファイルの中身は、以下のようなフォルダで構成されている。
-プログラム番号1から順にプログラムを実行するだけで、rosbagデータから学習データを生成することが可能である。
+## Files
+The contents of the download file consist of the following files.
+Users can generate training data from rosbag data simply by executing the programs in the order of program number 1.
 
-- **1_rosbag2npy.py**：rosbagデータから指定した情報（トピックデータ）のみを抽出し、npz形式に変換する。
-- **2_make_dataset.py**：本プログラムでは3つの処理を行う。1つ目はデータ長の整形であり、 `rosbag record` 時に `--duration` 引数を設定しても、プログラム実行タイミングによってデータの時系列長が異なるため、全データの時系列長を揃える。2つ目は、指定したインデックスに基づいて学習・テストデータを仕分けし、保存する。3つ目は、関節角度の正規化パラメータ（上下限）の計算を行う。本処理の詳細は :doc:`こちら </dataset/tips>` を参照ください。
-- **3_check_data.py**：収集データを可視化プログラムであり、本プログラムはロボットの画像と関節角度をgifとして保存する。学習プログラムを実行する前に、必ず画像のトリミング範囲や関節角度の正規化範囲を確認する。
-- **utils.py**：データセット作成に必要な前処理プログラム（正規化など）が保存されている。
-- **bag**：収集した `rosbag` データが保存されている。
-- **data**： `2_make_dataset.py` 実行後に、学習・テストデータ、そして関節角度の正規化パラメータが保存される。
-- **output**：可視化結果が保存される。ファイル名の末尾の数字は学習データのインデックスを示している。
+- **1_rosbag2npy.py**：Extracts only the specified information (topic data) from rosbag data and converts it to npz format.
+- **2_make_dataset.py**：This program performs three processes: First, formatting the data length. Even if the `--duration` argument is set at `rosbag record`, the time-series length of the data differs depending on the timing of program execution, so it is necessary to align the time-series length of all the data. The second is to sort and save training and test data based on a specified index. The third is to calculate the normalization parameters (upper and lower limits) for the joint angles. For details of this process, please click [here](../tips/normalization.md).
+- **3_check_data.py**：A program to visualize the collected data, this program saves the image and joint angles of the robot as gifs. Before executing the training program, be sure to check the cropping range of the image and the normalized range of the joint angles.
+- **utils.py**：Pre-processing programs (e.g., normalization) required for the data set are stored.
+- **bag**：The collected `rosbag` data are stored.
+- **data**： After running `2_make_dataset.py`, the training and test data and the normalization parameters for the joint angles are saved.
+- **output**：The visualization results are saved. The number at the end of the file name indicates the index of the training data.
 
 
 
 
 <!-- ******************************** -->
 ----
-## データ抽出
-次のコマンドを実行することで、rosbagデータから指定した情報（トピックデータ）のみを抽出することが可能である。
-引数の詳細は以下の通りである。
+## Data extraction
+The following command can extract only the specified information (topic data) from rosbag data.
+The details of the arguments are as follows:
 
-- **bag_dir** ： rosbagデータが保存されたディレクトリを指定する。
-- **freq** ： センサによって保存時のサンプリングレート（Hz）が異なるため、指定したサンプリングレートでデータを抽出、保存する。
+- **bag_dir** ： Specify the directory where rosbag data are stored.
+- **freq** ： Since the sampling rate (Hz) varies by sensor, the data is extracted and stored at the specified sampling rate.
 
 ```bash
 $ python3 1_rosbag2npz.py ./bag/ --freq 10
@@ -54,13 +54,11 @@ Failed to load Python extension for LZ4 support. LZ4 compression will not be ava
 1664630682.2616074
 ```
 
-全てのトピックをnpzファイルに保存すると膨大なメモリを消費するため、本スクリプトでは一例として、ロボットセンサ情報（カメラ画像、関節角度、グリッパ状態）を保存する。
-31行目で保存したいトピック名を列挙し、47-84行目では各トピックのメッセージからデータを抽出し予め用意したリストに保存する。
-なお、カメラ画像をそのまま保存すると膨大な容量が必要になるため、事前にリサイズもしくはトリミングすることを推奨する。
-また、一定間隔でサンプリングしても、rosbag record の開始・終了タイミングによってトピックのデータ長が異なる場合があるため、91行目以降では時系列長の調整を行っている。
-なお本プログラムのトピック名やデータの抽出方法を変更することで、ユーザ自身のロボットへ適用することが可能である。
-
-
+Since saving all topics in the npz file consumes a huge amount of memory, this script saves the robot sensor information (camera image, joint angle, and gripper state) as an example.
+In line 31, the names of the topics to be saved are listed, and in lines 47-84, data is extracted from the messages of each topic and saved in a list prepared in advance.
+Note that saving the camera image as it is requires a huge amount of space, so it is recommended to resize or crop the image in advance.
+Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end timing of the rosbag record, so the time series length is adjusted after line 91.
+The program can be applied to the user's own robot by changing the topic name and data extraction method.
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-32 92-99"
@@ -175,9 +173,8 @@ for file in files:
 
 <!-- ******************************** -->
 ----
-## 学習/テストデータ作成
-次のコマンドを実行することで、
-前節で変換されたnpzファイルから学習・テストデータを生成する。
+## Generate train/test data
+The following command generates training and test data from the npz file converted in the previous section.
 
 ```bash 
 $ python3 2_make_dataset.py
@@ -188,24 +185,23 @@ $ python3 2_make_dataset.py
 ./bag/rollout_005.npz
 ```
 
-本プログラムは次の3ステップから構成され、生成された各データは `data` フォルダ内に保存される。
-はじめに、 `load_data` 関数を用いて全データの読み込みを行う。
-この時、21,22,28,29行目では以下の処理が行われる。
+This program consists of the following three steps, and each generated data is stored in the `data` folder.
+First, all data are loaded using the `load_data` function.
+Lines 21, 22, 28, and 29 perform the following operations.
 
-- **resize_img** : 指定した画像サイズに変更する。 `cv2.resize` 関数をベースに、時系列画像に対応している。
-- **cos_interpolation** : ロボットハンドの開閉コマンドのように、急激に変化する0/1のバイナリデータの学習と予測を容易にするために、cos波を用いて滑らかな開閉コマンドに整形する。詳細は [こちら](../tips/normalization.md#cos-interpolation)。
-- **list_to_numpy** : `rosbag record` 時に保存時間 `--duration` を指定しても、ROSシステムの実行タイミングの関係上、必ず全てのrosbagデータのシーケンス長が同じになるとは限らない。そこで、最も長いシーケンスに合わせてpadding処理を行うことで、データ長の統一・整形を行う。
+- **resize_img** : Resizes the image to the specified size. Based on the `cv2.resize` function, this function supports time-series images.
+- **cos_interpolation** : To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see [here](../tips/normalization.md#cos-interpolation).
+- **list_to_numpy** : Even if you specify a storage time `--duration` for `rosbag record`, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
 
-次に45-48行目では、ユーザが指定するインデックス（38,39行目）に基づいて学習・テストデータの仕分けを行う。
-教示位置とインデックスの関係は以下の表に示す通りである。
-表の位置A-Eは[物体位置](./overview.md#task())に対応しており、学習データは各教示位置でそれぞれ4つ、テストデータは全位置でそれぞれ1つ収集した。
-すなわち、合計で15データを収集した。
-教示位置で収集したテストデータのみを用いてモデルを評価した場合、教示位置に過学習してしまい、未学習位置における汎化動作を獲得しにくい。
-そのため、多様な位置における汎化性能を獲得するために、少量でも未学習位置をテストデータに含めることが重要である。
+Lines 45-48 then sort the training and test data based on the indexes specified by the user (lines 38 and 39).
+The relationship between the teaching position and the index is shown in the table below.
+Positions A-E in the table are [object position](./overview.md#task). 4 training data were collected for each teaching position and 1 test data for all positions.
+In other words, a total of 15 data were collected.
+When the model is evaluated using only the test data collected at the teaching positions, it is difficult to acquire generalization behavior at unlearned positions due to overlearning at the teaching positions.
+Therefore, it is important to include even a small amount of untrained positions in the test data in order to acquire generalization performance in a variety of positions.
 
-最後に51-52行目で、関節角度の正規化パラメータとして各関節角度の上下限を計算し、保存する。
-関節角度の上下限を計算する理由については、[こちら](../tips/normalization.md#joint_norm)を参照ください。
-
+Finally, in lines 51-52, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles.
+For more information on why the upper and lower limits of the joint angles are calculated, see [here](../tips/normalization.md#joint_norm).
 
 | Position    | A       | B     | C     | D     | E           |
 | :---------- | :-----: |:-----:|:-----:|:-----:| :----------:|
@@ -269,12 +265,14 @@ if __name__ == "__main__":
 
 <!-- ******************************** -->
 ----
-## データ可視化
-次のコマンドを実行することで、 ロボットの画像と関節角度がgifアニメーションとして保存される。
-引数 `idx` は可視化したいデータのインデックスである。
-実行結果より、関節角度の範囲が [-0.92, 1.85] から [0.1, 0.9] になっており、ユーザが指定した正規化範囲内に収まっていることがわかる。
-また下図は、実際に生成されたgifアニメーションを示しており、左からカメラ画像、ロボット関節角度、正規化後のロボット関節角度である。
-仮に画像のトリミングや関節角度の正規化範囲が期待と異なる場合、前節の `resize_img`、 `calc_minmax` 処理で誤りが発生している可能性が高い。
+## Visualization of datasets
+
+The following command will save the robot's image and joint angles as a gif animation.
+The argument `idx` is the index of the data to be visualized.
+The result shows that the joint angles range from [-0.92, 1.85] to [0.1, 0.9], which is within the normalized range specified by the user.
+The following figure shows the actually generated GIF animation, from left to right: camera image, robot joint angles, and robot joint angles after normalization.
+If the cropping of the image or the normalization range of the joint angle is different from the expected range, it is highly likely that errors occurred in the `resize_img` and `calc_minmax` processes in the previous section.
+
 
 ```bash
 $ python3 3_check_data.py --idx 4
@@ -283,7 +281,7 @@ Joint: shape=(5, 187, 8), min=-0.92, max=1.85
 Norm joint: shape=(5, 187, 8), min=0.1, max=0.9
 ```
 
-![AIRECを用いた物体把持動作生成データの一例](img/check_data_2.webp){: .center}
+![visualization_results](img/check_data_2.webp){: .center}
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/3_check_data.py>[SOURCE] 3_check_data.py</a>" linenums="1"

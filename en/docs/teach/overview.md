@@ -1,34 +1,27 @@
-# 概要
+# Overview
 
-ここでは、ROSを用いて動作教示した際のロボットセンサデータ `rosbag` から機械学習のためのデータセットの作成方法について述べる。
-本章では理解を深めるために、収集済みのデータとスクリプトを
- [ダウンロード（1.3GB）](https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar) し、マニュアルに沿って実行することを推奨する。
-
-<!-- ******************************** -->
-----
-## 実験タスク {#task}
-東京ロボティクス社製のスマートロボット
-[AIREC（AI-driven Robot for Embrace and Care）](https://airec-waseda.jp/)
-を用いて、物体把持動作を教示する。
-下図はタスクの概要を示しており、図中に示す教示位置（丸点3か所）での物体把持経験に基づいて、未学習位置（2か所）における汎化性能を評価する。
-学習データは各教示位置でそれぞれ4回合計12データ、
-テストデータは未学習位置も含む全5か所でそれぞれ1回合計5データ収集した。
-
-![AIRECを用いた物体把持タスクの概要](img/teaching.webp){: .center}
-
+This section describes how to create a dataset for deep predictive learning from robot sensor data `rosbag` obtained from motion instruction using ROS.
+For better understanding, it is recommended to [download (1.3GB)](https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar) the collected data and scripts and run them according to the manual.
 
 <!-- ******************************** -->
 ----
-## 動作教示 {#teaching}
-AIRECは、以下に示すようにバイラテラル遠隔操作が可能なロボットシステムであり、
-操作者はモニタに表示されたロボット視覚画像とロボットからの力覚フィードバックに基づいて動作教示を行うことで、
-多自由度ロボットをより直感的に教示することが可能である。
-ここでは、遠隔操作装置を用いてタスクを教示した際のロボットのセンサ情報（関節角度、カメラ画像、トルク情報など）を
-`rosbag` 形式で保存し、以降では機械学習モデルのためのデータセットを作成する。
+## Experimental Task {#task}
 
-なお、このような専用デバイス無しでもロボットに動作教示することは可能である。
-[OpenManipulatorを用いた動作教示セクション](./robot/overview)では、
-リーダ・フォロワシステムとジョイスティックの2種類の動作教示方法とデータセットの作成方法について述べる。
+The AIREC(AI-driven Robot for Embrace and Care), a smart robot manufactured by [Tokyo Robotics](https://robotics.tokyo/), is used to teach object grasping.
+The following figure shows an overview of the task. Based on the object grasping experience at the teaching positions shown in the figure (three circled points), the generalization performance at the unlearned positions (two points) is evaluated.
+The training data was collected 4 times for each teaching position for a total of 12 data, and the test data was collected once for each of the 5 locations, including the unlearned positions, for a total of 5 data.
+
+
+![task_overview](img/teaching.webp){: .center}
+
+
+<!-- ******************************** -->
+----
+## Motion Teaching {#teaching}
+AIREC is a robot system that enables bilateral teleoperation as shown below. The operator can teach a multi-degree-of-freedom robot more intuitively by teaching its motion based on the robot visual image displayed on the monitor and force feedback from the robot. Here, the sensor information (joint angle, camera image, torque information, etc.) of the robot when teaching a task using the teleoperation device is saved in 'rosbag' format, and a dataset is created for the machine learning model in the following sections.
+
+Note that it is possible to teach motion to a robot without such a specialized device.
+In the [Real Robot Application section](./robot/overview), two types of motion teaching methods using OpenManipulator are described: leader-follower system and joystick.
 
 
 <html lang="ja">

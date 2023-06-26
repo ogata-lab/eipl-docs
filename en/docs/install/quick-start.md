@@ -1,12 +1,11 @@
-# クイックスタート
+# Quick Start
 
-ここでは、EIPLの環境が適切にインストールされたかを確認するために、学習済み重みと[空間注意機構付き動作生成モデル（SARNN：Spatial Attention with Recurrent Neural Network）](../model/SARNN.md)を用いて検証を行う。
-モデルの具体的な学習方法やモデルの詳細については次章以降を参照ください。
+In this section, a test program will be run using the pre-trained weights and the motion generation model with spatial attention mechanism (SARNN: Spatial Attention with Recurrent Neural Network) to verify that the EIPL environment has been properly installed. 
+Please refer to the next and subsequent chapters for specific model training methods and model details.
 
-## 推論
-以下に、学習済みの重みとを用いたSARNNの推論方法を示す。
-チュートリアルフォルダ内の`test.py`を実行すると推論結果が`output`フォルダに保存される。
-このとき、`--pretrained`引数を指定することで、学習済み重みとサンプルデータが自動的にダウンロードされる。
+## Inference
+The following shows how to infer SARNN using the pre-trained weights and running `test.py` in the tutorial folder will save the inference results in the output folder.
+At this time, by specifying the --pretrained argument, the pre-trained weights and sample data are automatically downloaded.
 
 ``` bash linenums="1"
 $ cd eipl/tutorials/sarnn
@@ -15,27 +14,27 @@ $ ls ./output/
 SARNN_20230514_2312_17_4_1.0.gif
 ```
 
-## 結果
-下図は推論の結果を示しており、図中内の青点は画像から抽出した注意点、そして赤点はRNNが予測した注意点であり、ロボットハンドと把持対象物に着目しながら関節角度を予測していることがわかる。
+## Results
+The following figure shows the result of inference. The blue dots in the figure are the points of attention extracted from the CNN (Convolutional Neural Network),
+and the red dots are the points of attention predicted by the RNN (Recurrent Neural Network),
+indicating that the joint angles are predicted while focusing on the robot hand and grasped object.
 
-![SARNNを用いた推論結果](img/sarnn-rt_4.webp){: .center}
+![results_of_SARNN](img/sarnn-rt_4.webp){: .center}
 
 
-## ヘルプ
-プログラムが適切に実行できない場合、以下3つの原因が考えられる。
+## HELP
+If an error occurs, there are three possible causes:
 
-1. **インストールエラー**
-    ライブラリが適切にインストールされていない可能性があるため、
-    `pip freeze`コマンドを用いて、インストールされているか確認してください。
-    もしライブラリがインストールされている場合、そのバージョン情報が表示されます。
-    表示されなければ、パッケージがインストールされていない可能性があるため、再度[インストール手順](./install-software.md#pip_install)を確認してください。
+1. **Installation error**
+
+    Since the libraries may not be properly installed, use the `pip freeze` command to verify that they are installed. If the library is installed, its version information will be displayed. If not, the package may not have been installed, so please double check the [installation procedure](./install-software.md#pip_install).
 
         pip freeze | grep eipl
 
 
-2. **ダウンロードエラー**
+2. **Download error**
 
-    Proxyなどが原因でサンプルデータや学習済みモデルを用いた推論ができない場合は、[重みファイル](https://dl.dropboxusercontent.com/s/o29j0kiqwtqlk9v/pretrained.tar)と[データセット](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar)を手動でダウンロードし、`~/.eipl/` フォルダ内に保存した後に、展開してください。
+    If you are unable to perform inference using sample data or trained models due to a proxy or other reason, manually download the [weights file](https://dl.dropboxusercontent.com/s/o29j0kiqwtqlk9v/pretrained.tar) and [dataset](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar), save them in the `~/.eipl/` folder, and then extract them.
         
         $ cd ~/
         $ mkdir .eipl
@@ -51,25 +50,25 @@ SARNN_20230514_2312_17_4_1.0.gif
         ...
 
 
-3. **描画エラー**
+3. **Drawing error**
 
-    プログラム実行後に下記のようなエラーが表示される場合、アニメーションファイルの生成に失敗している可能性がある。
-    この場合、アニメーション描画時のwriterを変更することで解決する。
+    If the following error message appears after program execution, the animation file may have failed to be generated.
+    In this case, changing the WRITER when drawing the animation will solve the problem.
     
         File "/usr/lib/python3/dist-packages/matplotlib/animation.py", line 410, in cleanup
             raise subprocess.CalledProcessError(
         subprocess.CalledProcessError: Command '['ffmpeg', '-f', 'rawvideo', '-vcodec', 'rawvideo', '-s', '720x300', '-pix_fmt', 'rgba', '-r', '52.63157894736842', '-loglevel', 'error', '-i', 'pipe:', '-vcodec', 'h264', '-pix_fmt', 'yuv420p', '-y', './output/CAE-RNN-RT_20230510_0134_03_0_0.8.gif']' returned non-zero exit status 1.
 
 
-    初めに、aptを用いてimagemagickとffmpegをインストールする。
+    First, install imagemagick and ffmpeg using the `apt` command.
         
         $ sudo apt install imagemagick
         $ sudo apt install ffmpeg
     
-    次に、`test.py`の最下部のコードを以下のように編集することでwriterを指定することが可能である。
+    Next, edit the code at the bottom of `test.py` as follows:
 
-        # imagemagickを用いる場合
+        # Using imagemagick
         ani.save( './output/SARNN_{}_{}_{}.gif'.format(params['tag'], idx, args.input_param), writer="imagemagick") 
         
-        # ffmpegを用いる場合
+        # Using ffmpeg
         ani.save( './output/SARNN_{}_{}_{}.gif'.format(params['tag'], idx, args.input_param), writer="ffmpeg") 

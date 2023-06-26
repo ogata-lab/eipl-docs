@@ -5,35 +5,30 @@ site_url: https://ogata-lab.github.io/eipl-docs/en/
 repo_url: https://github.com/ogata-lab/eipl-docs/
 copyright: 'Copyright &copy; 2023 Ogata Laboratory, Waseda University'
 nav:
-  - 'はじめに': 'index.md'
-  - '深層予測学習': 'overview.md'
-  - '環境構築':
-    - 'インストール': 'install/install-software.md'
-    - 'クイックスタート': 'install/quick-start.md'
-  - '動作教示':
-    - '概要': 'teach/overview.md'
-    - '実行環境': 'teach/environment.md'
-    - 'データセット作成': 'teach/dataset.md'
-  - 'モデル学習':
-    - 'データローダ': 'model/dataloader.md'
-    - 'モデル実装': 'model/SARNN.md'
-    - '学習': 'model/train.md'
-    - '推論': 'model/test.md'
-  - '実ロボット応用':
-    - '概要': 'robot/overview.md'
-#    - 'ハードウェア': 'robot/hardware.md'
-#    - 'ROS環境': 'robot/ros.md'
-#    - '遠隔操作': 'robot/teleop.md'
-#    - '前処理': 'robot/preprocess.md'
-#    - 'データセット作成': 'robot/dataset.md'
+  - 'Introduction': 'index.md'
+  - 'Deep Predictive Learning': 'overview.md'
+  - 'Setup':
+    - 'Install': 'install/install-software.md'
+    - 'Quick Start': 'install/quick-start.md'
+  - 'Motion Teaching':
+    - 'Overview': 'teach/overview.md'
+    - 'Setup': 'teach/environment.md'
+    - 'Generate Dataset': 'teach/dataset.md'
+  - 'Train Model':
+    - 'Dataloader': 'model/dataloader.md'
+    - 'Model Implementation': 'model/SARNN.md'
+    - 'Train': 'model/train.md'
+    - 'Inference': 'model/test.md'
+  - 'Real Robot Application':
+    - 'Overview': 'robot/overview.md'
   - 'Model Zoo':
-    - '概要': 'zoo/overview.md'
+    - 'Overview': 'zoo/overview.md'
     - 'MTRNN': 'zoo/MTRNN.md'
     - 'CAE-RNN': 'zoo/CAE-RNN.md'
     - 'CNNRNN': 'zoo/CNNRNN.md'
   - 'Tips':
-    - '関節角度処理': 'tips/normalization.md'
-    - '画像拡張': 'tips/augmentation.md'
+    - 'Pre-process': 'tips/normalization.md'
+    - 'Image Augmentation': 'tips/augmentation.md'
   - 'FAQ': 'faq.md'
   - 'License': 'license.md'
 

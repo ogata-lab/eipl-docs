@@ -1,18 +1,16 @@
-# 概要
+# Overview
 
-ここでは物体把持動作を例に、[Open Manpulator](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/)を用いた動作教示から実機動作生成までの一連手順について述べる。
-以下の5点について記載する予定である。
+Here, we describe a sequence of procedures from motion teaching to motion generation using [Open Manpulator](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/).
+The following five points will be described.
 
-1. ハードウェア構成
-2. ROS環境構築
-3. データ収集
-4. データセット作成
-5. モデル学習
-6. 実機動作生成
+1. Hardware Configuration
+2. ROS Environment
+3. Data Collection
+4. Generate Dataset
+5. Model Training
+6. Online Motion Generation
 
-<!-- ![動作教示例](img/om_teach.webp){: .center}
--->
 
 
 !!! note
-    各種パッケージについては7月中に提供予定
+    The packages will be available in end of July.

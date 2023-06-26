@@ -13,17 +13,22 @@ from torch.utils.data import Dataset
 class MultimodalDataset(Dataset):
     #:: MultimodalDataset
     """
-    このクラスは、CNNRNN/SARNNのようなマルチモーダルデータ（画像、関節など）を扱うモデルの学習に使用される。
+    This class is used to train models that deal with multimodal data (e.g., images, joints), such as CNNRNN/SARNN.
+
+    Args:
+        images (numpy array): Set of images in the dataset, expected to be a 5D array [data_num, seq_num, channel, height, width].
+        joints (numpy array): Set of joints in the dataset, expected to be a 3D array [data_num, seq_num, joint_dim].
+        stdev (float, optional): Set the standard deviation for normal distribution to generate noise.
     """
 
     def __init__(self, images, joints, stdev=0.02):
         """
-        画像、関節角度、データ拡張を設定する。
+        The constructor of Multimodal Dataset class. Initializes the images, joints, and transformation.
 
         Args:
-            images (numpy array): 画像時系列データ [データ数、時系列長、チャネル、縦、横]
-            joints (numpy array): 関節角度時系列データ [データ数、時系列長、関節角度]
-            stdev (float, optional): ガウシアンノイズの分散値、なお平均は0である。
+            images (numpy array): The images data, expected to be a 5D array [data_num, seq_num, channel, height, width].
+            joints (numpy array): The joints data, expected to be a 3D array [data_num, seq_num, joint_dim].
+            stdev (float, optional): The standard deviation for the normal distribution to generate noise. Defaults to 0.02.
         """
         self.stdev = stdev
         self.images = images
@@ -32,19 +37,20 @@ class MultimodalDataset(Dataset):
 
     def __len__(self):
         """
-        データ数を返す
+        Returns the number of the data.
         """
         return len(self.images)
 
     def __getitem__(self, idx):
         """
-        指定されたインデックスの画像と関節角度にノイズを付与し、モデル学習のための入出力データのペアを返す。
+        Extraction and preprocessing of images and joints at the specified indexes.
 
         Args:
-            idx (int): インデックス
+            idx (int): The index of the element.
 
         Returns:
-            input_output_data (list): ノイズが付加された画像と関節角度（x_img, x_joint）と、元の画像と関節角度（y_img, y_joint）のペア
+            dataset (list): A list containing lists of transformed and noise added image
+                            and joint (x_img, x_joint) and the original image and joint (y_img, y_joint).
         """
         y_img = self.images[idx]
         y_joint = self.joints[idx]
