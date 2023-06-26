@@ -1,0 +1,278 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//JP">
+<html lang="ja">
+
+<!-- Start : Google Analytics Code -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-J6RG9X05HL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('js', new Date());
+
+  gtag('config', 'G-J6RG9X05HL');
+</script>
+<!-- End : Google Analytics Code -->
+
+<script type="text/javascript" src="resources/hidebib.js"></script>
+<link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,600,400italic,600italic,300,300italic'
+  rel='stylesheet' type='text/css'>
+<!-- <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet"> -->
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <link rel="stylesheet" href="../css/index.css">
+  <link rel="icon" href="https://hiroshi-ito.github.io/eipl-docs/top/resources/favicon.ico" />
+  <link rel="apple-touch-icon" href="https://hiroshi-ito.github.io/eipl-docs/top/resources/apple-touch-icon.png">
+  <title>EIPL: Embodied Intelligence with Deep Predictive Learning</title>
+  <meta name="HandheldFriendly" content="True" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="canonical" href="https://hiroshi-ito.github.io/eipl-docs/" />
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+
+  <meta property="og:site_name" content="EIPL" />
+  <meta property="og:type" content="video.other" />
+  <meta property="og:title" content="EIPL: Embodied Intelligence with Deep Predictive Learning" />
+  <meta property="og:description"
+    content="Hiroshi Ito, Tetsuya Ogata. EIPL: Embodied Intelligence with Deep Predictive Learning." />
+  <meta property="og:url" content="https://hiroshi-ito.github.io/eipl-docs/" />
+  <meta property="og:image" content="https://hiroshi-ito.github.io/eipl-docs/top/resources/logo.png" />
+
+  <meta property="article:publisher" content="https://ogata-lab.jp/" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="EIPL: Embodied Intelligence with Deep Predictive Learning" />
+  <meta name="twitter:description"
+    content="Hiroshi Ito, Tetsuya Ogata, 'EIPL: Embodied Intelligence with Deep Predictive Learning'" />
+  <meta name="twitter:url" content="https://hiroshi-ito.github.io/eipl-docs/" />
+  <meta name="twitter:image" content="https://hiroshi-ito.github.io/eipl-docs/top/resources/logo.png" />
+  <meta property="og:image:width" content="1600" />
+  <meta property="og:image:height" content="900" />
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <meta name="twitter:card" content="player" />
+  <meta name="twitter:image" content="https://hiroshi-ito.github.io/eipl-docs/top/resources/logo.png" />
+  <meta name="twitter:player:width" content="640" />
+  <meta name="twitter:player:height" content="360" />
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+    </script>
+
+</head>
+
+<body>
+  <a href="../../" class="btn btn-flat"><span>English</span></a>
+
+  <br>
+  <center><span style="font-size:44px;font-weight:bold;">EIPL: Embodied Intelligence with <br> Deep Predictive
+      Learning</span></center><br />
+  <table align=center width=600px cellpadding=0 cellspacing=0>
+    <tr>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href="https://sites.google.com/view/hiroshi-ito/" target="_blank">伊藤
+              洋</a></span></center>
+      </td>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href="https://ogata-lab.jp/" target="_blank">尾形 哲也</a></span>
+        </center>
+      </td>
+      <tr />
+  </table>
+  <table align=center width=600px style="padding-top:20px">
+    <tr>
+      <td align=center width=650px>
+        <center><span style="font-size:22px"><a href="https://www.waseda.jp/" target="_blank">早稲田大学</a></span></center>
+      </td>
+      <tr />
+  </table>
+  <table align=center width=700px>
+    <tr>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href="https://arxiv.org/abs/2112.06442">[Paper]</a></span>
+        </center>
+      </td>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href="https://hiroshi-ito.github.io/eipl-docs/ja/">[Documentation]</a></span>
+        </center>
+      </td>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href='https://github.com/hiroshi-ito/eipl-docs/'>[GitHub Code]</a></span>
+        </center>
+      </td>
+      <tr />
+  </table><br />
+
+  <table align=center width=300px>
+    <p style="margin-top:4px;"></p>
+    <tr>
+      <td width=1000px>
+        <center><a href="../resources/robots.webp"><img src="../resources/robots.webp" height="300px"></img></a><br>
+        </center>
+      </td>
+    </tr>
+  </table>
+  <br>
+
+  <center id="method">
+    <h1>概要</h1>
+  </center>
+  <div style="width:800px; margin:0 auto; text-align=center">
+    実世界でロボットを稼働させるための本質的な課題は、人間によるモデルの設計コストである。
+    学習型アプローチは、このコストを削減する手法として有望であり、環境モデルを構築せずに認識と動作生成を同時に学習することが期待されている。
+    しかし、学習データの収集コストが課題であり、物理的な接触を伴うロボットの試行錯誤には時間と人的リソースが必要不可欠である。
+    シミュレーション環境での学習結果を実世界に転用する研究も行われているが、非線形物理現象のモデル化は困難であり、完全には解決できない。
+    この課題を解決するために著者らは、予測モデルの不完全性を前提とし、実世界の状況とモデルの予測誤差を最小化するアプローチである深層予測学習を提唱してきた。
+    本技術は、生体が実世界と脳の予測誤差が最小となるように振る舞うことを説明する「自由エネルギー原理」を参考に開発したもので、
+    ロボットは感覚運動情報に基づき近未来の状況を予測し、現実との誤差（ギャップ）を最小とする動作を生成する。
+    ロボットは学習時と現実の差を許容しながらリアルタイムに動作を調整し続けることで、未学習の状況下でも柔軟に作業を実行することが可能である。
+    本論文は、深層予測学習の概念、実装方法、更に実ロボットへの適用事例について述べる。
+  </div>
+  <br>
+  <hr>
+
+  <center id="method">
+    <h1>深層予測学習</h1>
+  </center>
+  <table align=center width=1000px>
+    <p style="margin-top:4px;"></p>
+    <tr>
+      <td width=1000px>
+        <center><a href="../resources/model_overview.webp"><img src="../resources/model_overview.webp"
+              height="300px"></img></a><br></center>
+      </td>
+    </tr>
+  </table>
+  <center>
+    深層予測学習は学習データの収集、学習、動作生成の3フェーズから構成される。
+    データ収集フェーズでは、遠隔操作やダイレクトティーチングなどを用いて、実世界でロボットが作業を経験したときの感覚運動情報を時系列データとして保存する。
+    学習フェーズでは、現在と次時刻の感覚運動情報の予測誤差が最小になるようにモデルを学習する。
+    具体的には、現在のロボット状態（\(i_t, s_t\)）をモデルに入力し、 次ステップのロボットの予測状態（\(\hat{i}_{t+1}, \hat{s}_{t+1}\)）と 真値（\(i_{i+1},
+    s_{i+1}\)）が一致するように学習する。
+    動作生成フェーズでは、ロボットの感覚運動情報からリアルタイムに近未来の感覚と運動を予測する。
+    ロボットは感覚運動情報に基づいて近未来の状況を予測し、現実との誤差（ギャップ）を最小にするようにロボットの各関節を制御する。
+    ロボットは学習時と現実の差を許容しながらリアルタイムに動作を調整し続けることで、未学習の状況下でも柔軟に作業可能である。
+  </center>
+  <br />
+  <hr>
+
+
+  <center id="video">
+    <h1>適用事例動画</h1>
+  </center>
+  <table align=center width=1050px>
+    <tr>
+      <td width=500px align=center>
+        <iframe width="500" height="290" src="https://www.youtube.com/embed/SC0BfTlnYmw" frameborder="0"
+          allowfullscreen></iframe>
+      </td>
+      <td width=500px align=center>
+        <iframe width="500" height="290" src="https://www.youtube.com/embed/pdOA-PeYO9Q" frameborder="0"
+          allowfullscreen></iframe>
+      </td>
+    </tr>
+    <td height=25px align=center>
+    </td>
+    <tr>
+      <td width=500px align=center>
+        <iframe width="500" height="290" src="https://www.youtube.com/embed/QwogmDqOxfE" frameborder="0"
+          allowfullscreen></iframe>
+      </td>
+      <td width=500px align=center>
+        <iframe width="500" height="290" src="https://www.youtube.com/embed/YH1TrL1q6Po" frameborder="0"
+          allowfullscreen></iframe>
+      </td>
+    </tr>
+  </table>
+  <br>
+  <hr>
+
+
+  <center id="sourceCode">
+    <h1>ソースコード</h1>
+  </center>
+  <div style="width:800px; margin:0 auto; text-align=center">
+    本ソースコードとドキュメントを参照することで、データ収集から動作生成モデルの学習、解析までを体系的に学ぶことが可能である。ドキュメントには安価なロボットアーム <a
+      href="https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/">OpenManipulator</a>と、多自由度ヒューマノイドロボット<a
+      href="https://airec-waseda.jp/en/toppage_en/">AIREC</a>を例に解説しているが、ロボット身体情報のパラメータ（例えば、関節自由度やカメラ画像の解像度）を適切に設定すれば、多様なロボットへ適用することが可能である。
+    また下図は、物体把持動作をロボットに学習させたときの注意機構付き動作生成モデルの推論結果を示しており、左から入力画像と注意点、予測画像、予測関節角度、そしてRNNの内部状態である。
+    各図の意味や可視化解析方法はドキュメントに記載しいるため参照されたい。
+  </div>
+
+  </center>
+  <table align=center width=1050px>
+    <tr>
+      <td width=500px align=center>
+        <center><a href="../resources/sarnn-rt.webp"><img src="../resources/sarnn-rt.webp" height="300px"></img></a><br>
+        </center>
+      </td>
+      <td width=500px align=center>
+        <center><a href="../resources/sarnn_pca.webp"><img src="../resources/sarnn_pca.webp"
+              height="300px"></img></a><br></center>
+      </td>
+    </tr>
+  </table>
+
+  <table align=center width=700px>
+    <tr>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href="https://hiroshi-ito.github.io/eipl-docs/ja/">[Documentation]</a></span>
+        </center>
+      </td>
+      <td align=center width=200px>
+        <center><span style="font-size:22px"><a href='https://github.com/hiroshi-ito/eipl-docs/'>[GitHub Code]</a></span>
+        </center>
+      </td>
+      <tr />
+  </table>
+  <br>
+  <hr>
+
+
+
+  <table align=center width=850px>
+    <!-- <center><h1>Citation</h1></center> -->
+    <h2 class="titile">BibTeX</h2>
+    <section class="section" id="BibTeX">
+      <div class="interpolation-panel">
+        <pre><code>@inproceedings{suzuki2023dpl,
+  author    = {Kanata Suzuki and Hiroshi Ito and Tatsuro Yamada and Kei Kase and Tetsuya Ogata},
+  title     = {Deep Predictive Learning: Cognitive Robotics-inspired Motion Learning Concept},
+  booktitle = {arXiv preprint arXiv:XXXX.YYYYY},
+  year      = {2023},
+}</code></pre>
+      </div>
+    </section>
+  </table>
+  <br>
+  <hr>
+
+
+  <table align=center width=800px>
+    <tr>
+      <td width=800px>
+        <left>
+          <center>
+            <h1>謝辞</h1>
+          </center>
+          また成果は、JST ムーンショット型研究開発事業（JPMJMS2031）、JST ACT-X（JPMJAX190I）、また日立製作所の支援を受けたものです。
+          本OSS開発及び解説論文を執筆するにあたり、
+          <a href="https://sites.google.com/site/canakanasuzu/">鈴木彼方氏</a>、<a
+            href="https://sites.google.com/view/yamadat/home-japanese">山田竜郎氏</a>、<a
+            href="https://sites.google.com/site/keikkase">加瀬敬唯氏</a>、
+          そして<a href="https://sites.google.com/site/78yb87go8/home">出井勇人氏</a>より貴重な意見を多数を頂きました。ここに感謝の意を表します。<br>
+        </left>
+      </td>
+    </tr>
+  </table>
+
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <p>Page template borrowed from <a href="https://pathak22.github.io/exploration-by-disagreement/"><span
+              class="dnerf">pathak22</span></a>.</p>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
