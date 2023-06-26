@@ -850,7 +850,7 @@
 Encoder上段とDecoderのCNN 層（Convolution layer and Transposed convolutional layer）は、画像の特徴量抽出と再構成をすることで物体の色や形に関する情報を抽出する。
 下段のCNNはSpatial Softmax層を用いることで物体の2D位置情報を抽出する。
 Recurrent部は、物体の位置情報 $p_{t+1}$ のみを予測しているため、Decoderで画像を再構成するだけの十分な情報は含まれていない。
-そこで予測位置情報 $p_{t+1}$ を中心としたヒートアップ $\hat h_{t+1}$ を生成し、上段のCNNで抽出した画像特徴量 $f_t$ と掛け合わせることで、予測注意点の周辺情報に基づいて予測画像 $\hat i_{t+1}$ を生成する。</p>
+そこで予測位置情報 $p_{t+1}$ を中心としたヒートマップ $\hat h_{t+1}$ を生成し、上段のCNNで抽出した画像特徴量 $f_t$ と掛け合わせることで、予測注意点の周辺情報に基づいて予測画像 $\hat i_{t+1}$ を生成する。</p>
 <p>ここでは、SARNNの特徴的な機能である<a href="#spatial_softmax">空間的注意機構</a> 、<a href="#heatmap">ヒートマップ生成機構</a>、<a href="#loss_scheduler">誤差スケジューラ</a>、<a href="#bptt">誤差逆伝播法</a>の実装方法とモデルクラスを示す。</p>
 <p><img alt="SARNNのネットワーク概要図" class="center" src="../img/sarnn.webp" /></p>
 <!-- #################################################################################################### -->
@@ -1509,7 +1509,7 @@ BPTTでは、各時刻での誤差を計算し、それを遡って勾配を計�
 <span class="normal"><a href="#__codelineno-0-139">139</a></span>
 <span class="normal"><a href="#__codelineno-0-140">140</a></span>
 <span class="normal"><a href="#__codelineno-0-141">141</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="k">class</span> <span class="nc">SARNN</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="c1">#:: ImageDataset</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>    <span class="c1">#:: SARNN</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;SARNN: Spatial Attention with Recurrent Neural Network.</span>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="sd">    `joint_dim` を設定することで、関節自由度が異なるロボットにも対応可能である。</span>
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="sd">    一方でロボットの視覚画像 `im_size` は128x128ピクセルのカラー画像に対応している。</span>

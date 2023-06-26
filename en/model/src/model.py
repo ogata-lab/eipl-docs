@@ -12,22 +12,21 @@ from eipl.utils import get_activation_fn
 
 
 class SARNN(nn.Module):
-    #:: ImageDataset
+    #:: SARNN
     """SARNN: Spatial Attention with Recurrent Neural Network.
-    `joint_dim` を設定することで、関節自由度が異なるロボットにも対応可能である。
-    一方でロボットの視覚画像 `im_size` は128x128ピクセルのカラー画像に対応している。
-    カメラ画像のピクセルサイズを変更する場合、データによってはEncoderやDecoderのCNN層の数を調整する必要がある。
-    `k_dim` は注意点の数を表しており、任意の数を設定することが可能である。活性化関数には `LeakyReLU` を用いた。
+    This model "explicitly" extracts positions from the image that are important to the task, such as the work object or arm position,
+    and learns the time-series relationship between these positions and the robot's joint angles.
+    The robot is able to generate robust motions in response to changes in object position and lighting.
 
     Arguments:
-        rec_dim (int): RNNの隠れ層のサイズ
-        k_dim (int, optional): 注意点の数
-        joint_dim (int, optional): ロボット関節角度の次元数
-        temperature (float, optional): 温度付きSoftmaxのハパラメータ
-        heatmap_size (float, optional): ヒートマップのサイズ
-        kernel_size (int, optional): CNNのカーネルサイズ
-        activation (str, optional): 活性化関数
-        im_size (list, optional): 入力画像のサイズ [縦、横].
+        rec_dim (int): The dimension of the recurrent state in the LSTM cell.
+        k_dim (int, optional): The dimension of the attention points.
+        joint_dim (int, optional): The dimension of the joint angles.
+        temperature (float, optional): The temperature parameter for the softmax function.
+        heatmap_size (float, optional): The size of the heatmap in the InverseSpatialSoftmax layer.
+        kernel_size (int, optional): The size of the convolutional kernel.
+        activation (str, optional): The name of activation function.
+        im_size (list, optional): The size of the input image [height, width].
     """
 
     def __init__(
@@ -103,21 +102,24 @@ class SARNN(nn.Module):
 
     def forward(self, xi, xv, state=None):
         """
-        時刻(t)の画像と関節角度から、次時刻(t+1)の画像、関節角度、注意点を予測する。
-        予測した関節角度をロボットの制御コマンドとして入力することで、
-        センサ情報に基づいた逐次的な動作生成が可能である。
+        Forward pass of the SARNN module.
+        Predicts the image, joint angle, and attention at the next time based on the image and joint angle at time t.
+        Predict the image, joint angles, and attention points for the next state (t+1) based on
+        the image and joint angles of the current state (t).
+        By inputting the predicted joint angles as control commands for the robot,
+        it is possible to generate sequential motion based on sensor information.
         
         Arguments:
-            xi (torch.Tensor): 時刻tの画像 [batch_size, channels, height, width]
-            xv (torch.Tensor): 時刻tの関節角度 [batch_size, input_dim]
-            state (tuple, optional): LSTMのセル状態と隠れ状態 [ [batch_size, rec_dim], [batch_size, rec_dim] ]
+            xi (torch.Tensor): Input image tensor of shape (batch_size, channels, height, width).
+            xv (torch.Tensor): Input vector tensor of shape (batch_size, input_dim).
+            state (tuple, optional): Initial hidden state and cell state of the LSTM cell.
 
         Returns:
-            y_image (torch.Tensor): 予測画像 [batch_size, channels, height, width]
-            y_joint (torch.Tensor): 予測関節角度 [batch_size, joint_dim]
-            enc_pts (torch.Tensor): Spatial softmaxで抽出した注意点 [batch_size, k_dim * 2]
-            dec_pts (torch.Tensor): RNNが予測した注意点 [batch_size, k_dim * 2]
-            rnn_hid (tuple): LSTMのセル状態と隠れ状態 [ [batch_size, rec_dim], [batch_size, rec_dim] ]
+            y_image (torch.Tensor): Decoded image tensor of shape (batch_size, channels, height, width).
+            y_joint (torch.Tensor): Decoded joint prediction tensor of shape (batch_size, joint_dim).
+            enc_pts (torch.Tensor): Encoded points tensor of shape (batch_size, k_dim * 2).
+            dec_pts (torch.Tensor): Decoded points tensor of shape (batch_size, k_dim * 2).
+            rnn_hid (tuple): Tuple containing the hidden state and cell state of the LSTM cell.
         """
 
         # Encode input image
