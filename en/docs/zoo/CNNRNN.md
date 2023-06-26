@@ -1,30 +1,30 @@
-# 概要 {#overview}
+# Overview {#overview}
 
-CAE-RNNは、画像特徴量抽出部（CAE）と時系列学習部（RNN）を独立して学習させるため、パラメータ調整やモデル学習時間などが課題であった。
-さらに、CAEは画像情報の次元圧縮に特化した画像特徴量を抽出しているため、必ずしもロボットの動作生成に適切な画像特徴量であるとは言えない。
-そこでCNNRNNは、画像特徴量抽出部（CAE）と時系列学習部（RNN）を同時に学習（End-to-End学習）することで、動作生成に重要な画像特徴量を自動抽出することが可能な動作生成モデルである。
-これによりロボットは作業に重要な対象物にのみ着目して動作を生成するため、CAE-RNNと比較して背景変化に対しロバストな動作を生成することが可能である [@ito2020visualization]。
+Because CAE-RNN trains the image feature extraction part (CAE) and the time series learning part (RNN) independently, parameter adjustment and model training time have been issues.
+Furthermore, CAE extracts image features that are specialized for dimensional compression of image information, not the image features that are necessarily appropriate for generating robot motions.
+Therefore, CNNRNN is a motion generation model that can automatically extract image features important for motion generation by simultaneously learning (end-to-end learning) the image feature extraction part (CAE) and the time series learning part (RNN).
+This allows the robot to focus only on objects that are important to the task and generate motions that are more robust to background changes than CAE-RNN [@ito2020visualization].
 
 ![Overview of CNNRNN](img/cnnrnn/cnnrnn.png){: .center}
 
 
 <!-- #################################################################################################### -->
 ----
-## ファイル {#files}
-CNNRNNで用いるプログラム一式と、フォルダ構成は以下のとおりである。
+## Files {#files}
+The programs and folders used in CNNRNN are as follows:
 
-- **bin/train.py**：データの読み込み、学習、そしてモデルの保存を行う学習プログラム。
-- **bin/test.py**：テストデータ（画像と関節角度）に基づいて毎時刻の動作指令値を予測し、推論結果を可視化するプログラム。
-- **bin/test_pca_cnnrnn.py**：主成分分析を用いてRNNの内部状態を可視化するプログラム。
-- **libs/fullBPTT.py**：時系列学習のための誤差逆伝播クラス。
-- **log**：学習結果として重みや学習曲線、パラメータの情報を保存。
-- **output**：推論結果を保存。
+- **bin/train.py**: Programs to load data, train, and save models.
+- **bin/test.py**: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.
+- **bin/test_pca_cnnrnn.py**: Program to visualize the internal state of RNN using Principal Component Analysis.
+- **libs/fullBPTT.py**: Back propagation class for time series learning.
+- **log**: Folder to store weights, learning curves, and parameter information.
+- **output**: Save inference results.
 
 
 <!-- #################################################################################################### -->
 ----
-## CNNRNNモデル {#model}
-CNNRNNは、マルチモーダルな時系列データの学習と推論が可能なニューラルネットワークであり、時刻$t$における画像`xi`、関節角度`xv`そして前時刻での状態 `state` に基づいて、次時刻$t+1$の画像`y_image`と関節角度 `y_joint` を予測する。
+## Model {#model}
+CNNRNN is a motion generation model capable of learning and inference of multimodal time series data. It predicts the image `y_image` and joint angle `y_joint` at the next time $t+1$ based on the image `xi`, joint angle `xv` and state `state` at the previous time $t$.
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1" hl_lines="50-51"
 class CNNRNN(nn.Module):
@@ -85,9 +85,9 @@ class CNNRNN(nn.Module):
 
 <!-- #################################################################################################### -->
 ----
-## 誤差逆伝播法 {#bptt}
-時系列学習を行うための誤差逆伝播アルゴリズムとしてBackpropagation Through Time（BPTT）を用いる。
-BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
+## Backpropagation Through Time {#bptt}
+Backpropagation Through Time (BPTT) is used as the error back propagation algorithm for time series learning.
+The details of BPTT have already been described in SARNN, please refer to [here](../../model/SARNN#bptt).
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="54"
 class fullBPTTtrainer:
@@ -146,10 +146,11 @@ class fullBPTTtrainer:
 
 <!-- #################################################################################################### -->
 ----
-## 学習 {#train}
-メインプログラム `train.py` を使用して、CNNRNNを学習する。
-プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/bin/train.py)ください。
+## Training {#train}
+The main program `train.py` is used to train CNNRNN.
+When the program is run, the trained weights (pth) and Tensorboard log files are saved in the `log` folder.
+Please [see](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/bin/train.py) the comments in the code for a detailed description of how the program works.
+
 
 ```bash
 $ cd eipl/tutorials/cnnrnn/
@@ -178,10 +179,10 @@ vmin : 0.0
 
 <!-- #################################################################################################### -->
 ----
-## 推論 {#inference}
-CNNRNNが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
-引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックス、
-`input_param` は推論時の混合係数であり、[詳細はこちら](../model/test.md)を参照ください。
+## Inference {#inference}
+Check that CNNRNN has been properly trained using the test program `test.py`.
+The arguments `filename` is the path of the trained weights file, `idx` is the index of the data you want to visualize,
+`input_param` is the mixing coefficient for inference, and more info are [here](../model/test.md).
 
 ```bash
 $ cd eipl/tutorials/cnnrnn/
@@ -201,59 +202,59 @@ $ ls ./output/
 CNNRNN_20230514_1958_07_4_1.0.gif
 ```
 
-下図に、[未学習位置](../teach/overview.md#task)での推論結果を示す。
-左から入力画像、予測画像、そして予測関節角度（点線は真値）である。
-CNNRNNは抽出した画像特徴量とロボット関節角度に基づいて次時刻のそれらを予測する。
-このとき、画像特徴量には把持対象物の色や位置などの情報が含まれていることが期待され、更に予測画像とロボット関節角度がセットで適切に予測されることが重要である。
-しかし実験より、関節角度は適切に予測できているのに対し、予測画像にはロボットハンドしか生成されていない。
-このことから、画像特徴量にはロボットハンドの情報「しか」含まれていないため、物体位置に応じた柔軟な動作生成は困難である。
+The following figure shows the results of inference at [unlearned position](../teach/overview.md#task).
+From left to right are the input image, the predicted image, and the predicted joint angles (dotted lines are true values).
+CNNRNN predicts the next time based on the extracted image features and robot joint angles.
+It is expected that the image features include information such as the color and position of the grasped object, and it is also important that the predicted image and robot joint angle are predicted appropriately as a set.
+However, experiments show that while the joint angles are appropriately predicted, only the robot hand is generated in the predicted image.
+Therefore, it is difficult to generate flexible motions based on object positions because the image features contain "only" information on the robot hand.
 
-![未教示位置におけるCNNRNNの予測結果](img/cnnrnn/cnnrnn-rt.webp){: .center}
+![results_of_CNNRNN](img/cnnrnn/cnnrnn-rt.webp){: .center}
 
 
 <!-- #################################################################################################### -->
 ----
-## 主成分分析 {#pca}
-下図は主成分分析を用いてCNNRNNの内部状態を可視化した結果である。
-各点線はCNNRNNの内部状態の時系列変化を示しており、黒色丸を始点に逐次内部状態が遷移する。
-各アトラクタの色は[物体位置](../teach/overview.md#task)を示しており、青、オレンジ、緑は教示位置A、C、Eに、赤、紫は未学習位置B、Dに対応している。
-教示位置ごとにアトラクタが自己組織化（整列）していることから、教示位置では適切に学習した動作が生成できると言える。
-一方で未教示位置のアトラクタは、教示位置のアトラクタに引き寄せられていることから、内挿動作を生成することはできない。
-これは、把持対象物の位置情報が画像特徴量として抽出できなかったことが原因としてあげられる。
+## Principal Component Analysis {#pca}
+The following figure shows the results of visualizing the internal state of CNNRNN using principal component analysis.
+Each dotted line shows the time-series change of the internal state of CNNRNN, and the internal state transitions sequentially starting from the black circle.
+The color of each attractor is [object position](../teach/overview.md#task), where blue, orange, and green correspond to teaching positions A, C, and E, and red and purple correspond to unlearned positions B and D.
+Since the attractors are self-organized (aligned) for each teaching position, it can be said that properly learned movements can be generated at the teaching positions.
+On the other hand, the attractors at the unteaching position are attracted to the attractors at the teaching position, and thus cannot generate interpolated motions.
+This is due to the fact that the position information of the grasped object could not be extracted as image features.
 
 ![Visualize the internal state of CNNRNN using PCA](img/cnnrnn/cnnrnn_pca.webp){: .center}
 
 
 <!-- #################################################################################################### -->
 ----
-## モデル改良 {#improvement}
-CAE-RNNでは、データ拡張を用いて多様な物体位置情報を学習させることで汎化性能を担保したが、CNNRNNは画像と関節角度情報を同時に学習させるため、画像と関節角度をセットでデータ拡張する必要があり、画像の位置変化に対応したロボット関節角度のデータ拡張方法課題である。そこで、CNNRNNで位置汎化性能を獲得するための解決策として、以下3つが挙げられる。
+## Model Improvement {#improvement}
+In CAE-RNN, generalization performance was ensured by learning various object position information using data augmentation. On the other hand, since CNNRNN learns images and joint angle information at the same time, the data augmentation method for robot joint angles corresponding to changes in image position is a challenge. The following three solutions can be proposed to obtain position generalization performance with CNNRNNs.
 
-1. **事前学習**
+1. **Pre-training**
 
-    CNNRNNのうち、CAEの部分のみを取り出し事前学習を行う。
-    データ拡張を用いて画像情報のみを学習させることで、CAEでは多様な物体位置情報を抽出することが可能になる。
-    そして事前学習した重みを用いてEnd-to-End学習を行うことで、画像と関節角度の対応付けを行う。
-    しかし、事前にCAEを学習させる必要があるため、CAE-RNNと同等の学習工数が発生するためCNNRNNの恩恵が少ない。
-    
-2. **正則化：CNNRNN with LayerNorm（CNNRNNLN）**
+    Only the CAE portion of the CNNRNN is extracted and pre-trained.
+    By learning only the image information using data augmentation, CAE can extract a variety of object location information.
+    Then, end-to-end learning is performed using the pre-trained weights to map images to joint angles.
+    However, since CAE needs to be trained in advance, the training man-hours are equivalent to those of CAE-RNN, so the benefit of CNNRNN is small.
 
-    CAE-RNNでは、CAEの学習を安定かつ高速に行うために正則化手法として `BatchNormalization` [@ioffe2015batch] を用いた。
-    しかし BatchNormalization はデータセットのバッチが小さいと学習が不安定になる、
-    再帰的ニューラルネットワークへの適用が困難という課題がある。
-    そこで、データセットのバッチが小さく、更に時系列長が変化しても安定して学習が行える
-    `Layer Normalization` [@ba2016layer] を用いることで汎化性能向上を実現する。
 
-    下図は主成分分析を用いて[CNNRNNLN](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py)の内部状態を可視化した結果である。
-    対象物の位置ごとにアトラクタが自己組織化（整列）していることから、未学習位置でも適切に動作を生成することが可能である。
+2. **Layer Normalization**
+
+    CAE-RNN used `BatchNormalization` [@ioffe2015batch] as a normalization method to make CAE training stable and fast.
+    However, BatchNormalization has the issues that learning becomes unstable when the batch of dataset is small and it is difficult to apply to recursive neural networks.
+    Therefore, we will improve generalization performance by using `Layer Normalization` [@ba2016layer], which can stably train on small batches of data sets and time-series data.
+
+    The following figure visualizes the internal state of [CNNRNNLN](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py) using principal component analysis.
+    The self-organization (alignment) of attractors for each object position allows the robot to properly generate motion even at unlearned positions.
 
     ![Visualize the internal state of CNNRNNLN using PCA](img/cnnrnn/cnnrnnln_pca.webp){: .center}
 
 
 
-3. **空間的注意機構（Spatial Attention）**
+3. **Spatial Attention**
 
-    これまで画像中の多様な情報（位置、色、形状、背景、照明状況など）が含まれた画像特徴量に基づいて動作学習が行われていたため、動作生成時のロバスト性が課題であった。
-    そこで、画像からタスクに重要な位置（作業対象物やアーム）の空間座標を「明示的」に抽出する空間的注意機構を用いて、空間座標とロボットの関節角度を学習することでロバスト性を向上させることが可能である。
-    空間的注意機構の詳細は[こちら](../model/SARNN.md)を参照ください。
+    Because CAE-RNN and CNNRNN were learning motions based on image features containing various information in the image (position, color, shape, background, lighting conditions, etc.), robustness during motion generation was an issue.
+    Therefore, it is possible to improve robustness by learning spatial coordinates and robot joint angles using a spatial attention mechanism that "explicitly" extracts spatial coordinates of locations (work objects and arms) important to the task from images.
+    For more information on the spatial attention mechanism, see [here](../model/SARNN.md).
+
 

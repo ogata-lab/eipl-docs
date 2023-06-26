@@ -1,10 +1,10 @@
-# 概要 {#cae-rnn}
+# CAE-RNN {#cae-rnn}
 
-CAE-RNNは、ロボットの感覚運動情報を学習するために、画像特徴抽出部と時系列学習部から構成される[@ito2022efficient, @yang2016repeatable]。
-下図は、CAE-RNNモデルのネットワーク構成を示しており、ロボットの視覚情報であるカメラ画像から画像特徴量を抽出するConvolutional Auto-Encoder(CAE)と、ロボットの身体情報である関節角と画像特徴量の時系列情報を学習するRecurrent Neural Network(RNN)から構成される。
-CAE-RNNは、画像特徴量抽出部と時系列学習部を独立して学習を行うことを特徴としており、CAEとRNNの順に学習を行う。
-多様な感覚運動情報を学習させることで、従来では認識困難な柔軟物体の位置、形状などの画像特徴量の抽出と、それに対応した動作を学習、生成することが可能である。
-ここでは、[CAE](#cae)、[RNN](#rnn)の順にモデルの実装、推論、[内部表現解析](#rnn_pca)そしてまでの一連のプロセスについて述べる。
+CAE-RNN is a motion generation model consisting of an image feature extraction part and a time series learning part to learn the robot's sensory-motor information [@ito2022efficient, @yang2016repeatable].
+The following figure shows the network structure of the CAE-RNN model, which consists of a Convolutional Auto-Encoder (CAE) that extracts image features from the robot's visual information, and a Recurrent Neural Network (RNN) that learns the time series information of robot's joint angles and image features.
+CAE-RNN features independent training of the image feature extraction part and the time series learning part, which are trained in the order of CAE and RNN.
+By learning a variety of sensory-motor information, it is possible to extract image features such as the position and shape of flexible objects that are conventionally difficult to recognize, and to learn and generate corresponding motions.
+This section describes a series of processes from the [CAE](#cae) and [RNN](#rnn) model implementation, training, inference, [internal representation analysis](#rnn_pca).
 
 ![CAE-RNN](img/cae-rnn/cae-rnn.png){: .center}
 
@@ -12,44 +12,39 @@ CAE-RNNは、画像特徴量抽出部と時系列学習部を独立して学習�
 <!-- #################################################################################################### -->
 ----
 ## CAE {#cae}
-###　概要 {#cae_overview}
+### Overview {#cae_overview}
+Since visual images are high-dimensional information compared to the robot's motion information, it is necessary to align the dimensions of each modal in order to properly learn sensory-motor information. 
+Furthermore, in order to learn the relationship between the position and motion of the object, it is necessary to extract low-dimensional image features (e.g., position, color, shape, etc.) of the object or robot's body from the high-dimensional visual image.
+Therefore, Convolutional Auto-Encoder (CAE) is used to extract image features.
+The following figure highlights only the CAE network structure in CAE-RNN, which consists of an Encoder that extracts image features from the robot's visual information ($i_t$) and a Decoder that reconstructs the image ($\hat i_t$) from the image features.
+By updating the weights of each layer to minizize the error between input and output values, the layer with the fewest number of neurons (bottleneck layer) in the middle layer is able to extract an abstract representation of the input information. 
 
-ロボットの運動情報と比較して視覚画像は高次元情報であるため、感覚運動情報を適切に学習するためには、各モーダルの次元を揃える必要がある。
-さらに、対象物の位置と運動の関係を学習させるために、高次元な視覚画像から対象物やロボットの身体の特徴（位置や色、形状など）を低次元の画像特徴量として抽出する必要がある。
-そこで、画像特徴量の抽出にConvolutional Auto-Encoder(CAE)を用いる。
-下図はCAE-RNNのうち、CAEのネットワーク構造のみをハイライトしており、ロボットの視覚情報（$i_t$）から画像特徴量を抽出するEncoderと、画像特徴量から画像（$\hat i_t$）を再構成するDecoderから構成される。
-入出力値が一致するように各層の重みを更新することで、中間層のうち最もニューロン数が少ない層（ボトルネック層）では、入力情報の抽象表現を抽出することが可能である。
-ここでは、モデル、誤差逆伝播法、学習、そして推論プログラムの実装方法について述べる。
 
 ![Network structure of CAE](img/cae-rnn/cae.png){: .center}
 
 <!-- #################################################################################################### -->
 ----      
-### ファイル {#cae_files}
-CAEで用いるプログラム一式と、フォルダ構成は以下のとおりである。
+### Files {#cae_files}
+The programs and folders used in CAE are as follows:
 
-- **bin/train.py**：データの読み込み、学習、そしてモデルの保存を行う学習プログラム。
-- **bin/test.py**：テストデータの推論結果の可視化を行う評価プログラム。
-- **bin/extract.py**：CAEが抽出した画像特徴量と、正規化のための上下限値を計算し、保存するプログラム。
-- **libs/trainer.py**：CAEのための誤差逆伝播クラス。
-- **log**：学習結果として重みや学習曲線、パラメータの情報を保存。
-- **output**：推論結果を保存。
-- **data**：RNNの学習データ（関節角度、画像特徴量、正規化情報など）を保存。
+- **bin/train.py**: Programs to load data, train, and save models.
+- **bin/test.py**: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.
+- **bin/extract.py**：Program to calculate and store the image features extracted by the CAE and the upper and lower limits for normalization.
+- **libs/trainer.py**：Back propagation class for CAE.
+- **log**: Folder to store weights, learning curves, and parameter information.
+- **output**: Save inference results.
+- **data**：Store RNN training data (joint angles, image features, normalization information, etc.).
 
 
 
 <!-- #################################################################################################### -->
 ----
-### CAEモデル  {#cae_model}
-CAEは、畳み込み層と逆畳み込み層、そして全結合層から構成される。
-画像の特徴量抽出に Convolution layer (CNN) を用いることで、Linear layer だけで構成されるAutoEncoder [@hinton2006reducing]と比較して、少ないパラメータで高次元情報を扱うことができる。
-更にCNNは、フィルタをシフトしながら畳み込むことで、多様な画像特徴量を抽出することができる。
-一般的にCNNの後に適用される Pooling layer は、入力データの次元圧縮を行うために、画像認識分野などで多用される。
-しかし、位置不変性と情報圧縮が同時に行える反面、画像の空間的な構造の情報が喪失するという問題がある [@sabour2017dynamic] 。
-ロボット動作生成では、操作対象物やロボットハンドなどの空間的な位置情報は必要不可欠であるため、Pooling Layer の代わりにCNNフィルタの畳み込みの適用間隔（stride）を用いて次元圧縮を行う。
+### CAE Model  {#cae_model}
+CAE consists of a convolution layer, transposed convolution layer, and a linear layer.
+By using the Convolution layer (CNN) to extract image features, CAE can handle high-dimensional information with fewer parameters compared to AutoEncoder [@hinton2006reducing], which consists of only a Linear layer. Furthermore, CNN can extract a variety of image features by convolving with shifting filters. The Pooling layer, which is generally applied after CNN, is often used in image recognition and other fields to compress the dimensionality of input data. However, while position invariance and information compression can be achieved simultaneously, there is a problem that information on the spatial structure of the image is lost [@sabour2017dynamic]. Since spatial position information of manipulated objects and robot hands is essential for robot motion generation, dimensional compression is performed using the convolution application interval (stride) of the CNN filter instead of the Pooling Layer.
 
-以下はCAEモデルのプログラムを示しており、128x128ピクセルのカラー画像から `feat_dim` で指定した次元の画像特徴量を抽出することが可能である。
-本モデルはCAEの概要と実装方法を理解するために、シンプルなネットワーク構造である。
+The following is a program of the CAE model, which can extract image features of the dimension specified by `feat_dim` from a 128x128 pixel color image.
+This model is a simple network structure to understand the outline and implementation of CAE.
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAE.py>[SOURCE] BasicCAE.py</a>" linenums="1"
 class BasicCAE(nn.Module):
@@ -85,11 +80,11 @@ class BasicCAE(nn.Module):
         return self.decoder( self.encoder(x) )
 ```
 
+By using the ReLU function and Batch Normalization [@ioffe2015batch], it is possible to improve the expressiveness of each layer, prevent gradient loss, and furthermore make learning more efficient and stable.
+In this library, CAE models using Batch Normalization have already been implemented and can be loaded as follows.
+The difference between `BasicCAENE` and `CAEBN` is the structure of the model (parameter size), see [source code](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) for details.
+Note that the input format of the implemented model is a color image of 128x128 pixels; if you want to input any other image size, you need to modify the parameters.
 
-活性化関数にReLU関数やBatch Normalization [@ioffe2015batch] を用いることで、各層の表現力向上や勾配消失を防ぎ、更に学習を効率的かつ安定に行うことが可能である。
-本ライブラリでは、Batch Normalization を用いたCAEモデルは実装済みであり、以下のようにモデルを読み込むことが可能である。
-`BasicCAENE` と `CAEBN` の違いはモデルの構造（パラメータサイズ）であり、詳細は [ソースコード](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) を参照されたい。
-なお、実装済みモデルの入力フォーマットは128x128ピクセルのカラー画像であり、それ以外の画像サイズを入力する場合、パラメータの修正が必要である。
 
 ```python
 from eipl.model import BasicCAENE, CAEBN
@@ -98,13 +93,14 @@ from eipl.model import BasicCAENE, CAEBN
 
 <!-- #################################################################################################### -->
 ----
-### 誤差逆伝搬法 {#cae_bp}
-CAEの学習過程では、ロボットのカメラ画像（$i_t$） を入力し、再構成画像（$\hat i_t$） を生成する。
-次に、入力画像と再構成画像の誤差が最小になるように誤差逆伝搬法 [@rumelhart1986learning] を用いてモデルのパラメータを更新する。
-45-52行目では、 バッチサイズ分の画像 $xi$ をモデルに入力し、再構成画像 $yi_hat$ を得る。
-そして再構成画像と真値 $yi$ の平均二乗誤差 `nn.MSELoss` を計算し、誤差値 `loss` に基づいて誤差伝番を行う。
-この自己回帰的な学習により、従来のロボティクスで必要であった画像のための詳細なモデル設計が不要となる。
-なお、実世界の多様なノイズに対しロバストな画像特徴量を抽出するために、[データ拡張](../tips/augmentation.md) を用いることで、輝度やコントラスト、そして位置をランダムに変化させた画像をモデルに学習させる。
+### Back Propagation {#cae_bp}
+In the CAE learning process, input camera images of the robot ($i_t$) and generate the reconstructed images ($\hat i_t$).
+Next, the parameters of the model are updated using the back propagation method [@rumelhart1986learning] to minimize the error between the input and reconstructed images.
+In lines 45-52, the batch size image $xi$ is input to the model to obtain the reconstructed image $yi_hat$.
+Then, the mean square error `nn.MSELoss` between the reconstructed image and the true value $yi$ is calculated, and error propagation is performed based on the error value `loss`.
+This autoregressive learning eliminates the need for detailed model design for images, which is required in conventional robotics.
+Note that in order to extract image features that are robust against a variety of real-world noise, [data extension](../tips/augmentation.md) is used to train the model on images with randomly varying brightness, contrast, and position.
+
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1"
 class Trainer:
@@ -151,13 +147,14 @@ class Trainer:
 
 <!-- #################################################################################################### -->
 ----
-### 学習 {cae_train}
-`Model`、`Trainer Class`、そしてすでに実装されているメインプログラム `train.py` を使用して、CAEを学習する。
-プログラムを実行すると、実行した日時を示すフォルダ名（例：20230427_1316_29）が `log` フォルダ内に作成される。
-フォルダには学習済みの重み（pth）とTensorBoardのログファイルが保存される。
-このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
-また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する（ `save_ckpt=True` ）。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py)ください。
+### Training {cae_train}
+We will use `Model`, `Trainer Class` and the already implemented main program `train.py` to train CAE.
+When the program is run, a folder name (e.g. 20230427_1316_29) is created in the `log` folder indicating the execution date and time.
+The folder will contain the trained weights (pth) and the TensorBoard log file.
+The program can use command line arguments to specify parameters necessary for training, such as model type, number of epochs, batch size, training rate, and optimization method.
+It also uses the EarlyStopping library to determine when to end training early as well as to save weights when the test error is minimized (`save_ckpt=True`).
+Please [see](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py) the comments in the code for a detailed description of how the program works.
+
 
 ```bash
 $ cd eipl/tutorials/cae/
@@ -184,13 +181,13 @@ vmin : 0.0
 
 <!-- #################################################################################################### -->
 ----
-### 推論 {cae_inference}
-CAEが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
-引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックスである。
-下図（上段）は、本プログラムを用いて、`CAEBN` モデルの推論結果を示しており、左図は入力画像、右図は再構成画像である。
-特にロボット動作生成に重要なロボットハンドと「未学習位置」にある把持対象物が再構成されていることから、画像特徴量には物体の位置や形状などの情報が表現されていると考えられる。
-また下図（下段）は失敗例であり、ネットワーク構造がシンプルな `Basic CAE` モデルでは、対象物が適切に予測できていないことがわかる。
-この場合、最適化アルゴリズムの手法や学習率、誤差関数、更にモデルの構造を調整する必要がある。
+### Inference {cae_inference}
+Check that CAE has been properly trained using the test program `test.py`.
+The argument `filename` is the path of the trained weights file and `idx` is the index of the data to be visualized.
+The lower (top) figure shows the inference results of the `CAEBN` model using this program, with the input image on the left and the reconstructed image on the right.
+Since the robot hand and the grasping object in the "unlearned position" are reconstructed, which is important for generating robot motion, it can be assumed that the image features represent information such as the object's position and shape.
+The lower figure (bottom) is also an example of failure, showing that the object is not adequately predicted by the `Basic CAE` model with a simple network structure.
+In this case, it is necessary to adjust the method of the optimization algorithm, the learning rate, the loss function, and the structure of the model.
 
 
 ```bash
@@ -208,11 +205,11 @@ CAEBN_20230424_1107_01_4.gif
 
 <!-- #################################################################################################### -->
 ---
-### 画像特徴量抽出 {cae_extract_feat}
-RNNで画像特徴量とロボット関節角度の時系列学習を行うための前準備として、CAEの画像特徴量を抽出する。
-以下のプログラムを実行すると、 `data` フォルダ内に学習・テストデータの画像特徴量と関節角度がnpy形式で保存される。
-この時、抽出された画像特徴量と関節角度のデータ数と時系列長が一致しているか確認すること。
-なお、関節角度を改めて保存する理由として、RNNの学習を行う際にデータセットの読み込みを容易にするためである。
+### Extract image features {cae_extract_feat}
+Extract image features of CAE as a preparation for time series learning of image features and robot joint angles with RNN.
+Executing the following program, image features and joint angles of training and test data are stored in the `data` folder in npy format.
+At this time, confirm that the number of data and time series length of the extracted image features and joint angles are the same.
+The reason for storing the joint angles again is to make it easier to load the dataset when training RNN.
 
 ```bash
 $ cd eipl/tutorials/cae/
@@ -237,12 +234,13 @@ data/train:
 features.npy  joints.npy
 ```
 
-以下は `extract.py` のソースコードの一部であり、画像特徴量の抽出と保存処理を行っている。
-4行目ではCAEのEncoder処理が行われ、抽出された低次元な画像特徴量が戻り値として返される。
-CAEで抽出された画像特徴量は、ユーザが指定した範囲内に正規化された後に、RNNの学習に利用される。
-モデルの活性化関数に `tanh` を用いた場合、画像特徴量の上下限（ `feat_bounds` ）は定数（-1.0～1.0）である。
-しかしCAEBNは、活性化関数に `ReLU` を用いているため画像特徴量の上下限値は未定である。
-そこで25行目では、抽出した学習・テストデータの画像特徴量から最大値と最小値を計算することで、画像特徴量の上下限を決定する。
+The following code is part of the source code of `extract.py`, which extracts and saves image features.
+In the fourth line, the Encoder process of CAE is performed and the extracted low-dimensional image features are returned as the return value.
+The image features extracted by CAE are normalized to within the range specified by the user, and then used for training RNN.
+When `tanh` is used as the activation function of the model, the upper and lower bounds of the image features (`feat_bounds`) are constant (-1.0 to 1.0).
+However, CAEBN uses `ReLU` for the activation function, so the upper and lower bounds of the image features are undetermined.
+Therefore, in line 25, the upper and lower bounds of the image features are determined by calculating the maximum and minimum values from the extracted image features of the training and test data.
+
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/extract.py>[SOURCE] extract.py</a>" linenums="1" hl_lines="4 25"
     # extract image feature
@@ -279,41 +277,41 @@ np.save('./data/feat_bounds.npy', feat_minmax )
 ----
 ## RNN {#rnn}
 
-### 概要 {#rnn_overview}
-ロボットの感覚運動情報を統合学習するために、再帰型ニューラルネットワーク（Recurrent Neural Network：以下、RNN）を用いる。
-下図はCAE-RNNのうち、RNNのネットワーク構造のみをハイライトしており、時刻 `t` の画像特徴量（$f_t$） と関節角度（$a_t$）を入力し、次時刻 `t+1` のそれらを予測する。
-ここでは、モデル、誤差逆伝播法、学習、そして推論プログラムの実装方法について述べる。
+### Overview {#rnn_overview}
+A Recurrent Neural Network (RNN) is used to integrate and learn the robot's sensory-motor information.
+The following figure highlights only the network structure of RNN among CAE-RNNs, which inputs image features ($f_t$) and joint angles ($a_t$) at time `t` and predicts them at the next time `t+1`.
 
 ![Network structure of RNN](img/cae-rnn/rnn.png){: .center}
 
 
 <!-- #################################################################################################### -->
 ----
-### ファイル {#rnn_files}
-RNNで用いるプログラム一式と、フォルダ構成は以下のとおりである。
+### Files {#rnn_files}
+The programs and folders used in RNN are as follows:
 
-- **bin/train.py**：データの読み込み、学習、そしてモデルの保存を行う学習プログラム。
-- **bin/test.py**：テストデータの推論結果を可視化するプログラム。
-- **bin/test_pca_rnn.py**：主成分分析を用いてRNNの内部状態を可視化するプログラム。
-- **bin/rt_predict.py**：学習済みのCAEとRNNを統合し、画像と関節角度に基づいて毎時刻の動作指令値を予測するプログラム。
-- **libs/fullBPTT.py**：時系列学習のための誤差逆伝播クラス。
-- **libs/dataloader.py**：CAEで抽出した画像特徴量と関節角度のためのDataLoader。
-- **log**：学習結果として重みや学習曲線、パラメータの情報を保存。
-- **output**：推論結果を保存。
+- **bin/train.py**: Programs to load data, train, and save models.
+- **bin/test.py**: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.
+- **bin/test_pca_cnnrnn.py**: Program to visualize the internal state of RNN using Principal Component Analysis.
+- **libs/fullBPTT.py**: Back propagation class for time series learning.
+- **bin/rt_predict.py**: Program that integrates trained CAE and RNN model to predict motor command based on images and joint angles.
+- **libs/dataloader.py**: DataLoader for RNN, returning image features and joint angles.
+- **log**: Folder to store weights, learning curves, and parameter information.
+- **output**: Save inference results.
 
 
 <!-- #################################################################################################### -->
 ----
-### RNNモデル  {#rnn_model}
-RNNは、時系列データの学習や推論が可能なニューラルネットワークであり、ある時刻 `t` での入力値 $x_t$ と前時刻での状態 $s_{t-1}$ に基づいて次の状態 $s_t$ に遷移し、予測値 $y_t$ を推論する。
-入力値に基づいて状態を逐次遷移させることで、時系列予測を行うことが可能である。
-ただし、Vanilla RNNでは逆誤差伝搬の際に勾配消失が発生しやすいため、Long Short-Term Memory (LSTM)や[Multiple Timescales RNN (MTRNN)](../zoo/MTRNN.md)といった派生型が提案されている。
+### RNN Model  {#rnn_model}
+RNN is a neural network that can learn and infer time-series data, and it can perform time-series prediction by sequentially changing states based on input values.
+However, Vanilla RNN is prone to gradient loss during bask propagation, to solve this problem,
+Long Short-Term Memory (LSTM) and [Multiple Timescales RNN (MTRNN)](../zoo/MTRNN.md) have been proposed.
 
-ここでは、LSTMを用いてロボットの感覚運動情報を統合学習する方法について述べる。
-LSTMは、3つのゲート（input gate、forget gate、output gate）を持ち、それぞれ重みとバイアスが設定される。
-$h_{t-1}$ は短期記憶として時系列の細かい変化を、$c_{t-1}$ は長期記憶として時系列全体の特徴を学習し、各ゲートを介して過去の情報の保持や忘却が可能である。
-以下は実装例を示しており、あらかじめCAEで抽出した低次元の画像特徴量とロボット関節角度を結合した入力値 $x$ をLSTMに入力する。
-そしてLSTMは内部状態に基づいて、次時刻の画像特徴量とロボット関節角度の予測値 $\hat y$ 出力する。
+Here, we describe a method for learning integrated sensory-motor information of a robot using LSTM.
+LSTM has three gates (input gate, forget gate, and output gate), each with its own weight and bias.
+The $h_{t-1}$ gate learns detailed changes in the time series as short-term memory, and the $c_{t-1}$ gate learns features of the entire time series as long-term memory, allowing retention and forgetting of past information through each gate.
+The following shows an example of implementation. Input value $x$, which is a combination of low-dimensional image features and robot joint angles extracted by CAE in advance, is input to LSTM.
+LSTM then outputs the predicted value $\hat y$ of the image features and robot joint angles at the next time based on the internal state.
+
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" title="BasicRNN.py" linenums="1"
 class BasicLSTM(nn.Module):
@@ -344,13 +342,9 @@ class BasicLSTM(nn.Module):
 
 <!-- #################################################################################################### -->
 ----
-### 誤差逆伝播法 {#rnn_bptt}
-Backpropagation Through Time（BPTT）とは、RNNにおいて使用される誤差逆伝播アルゴリズムの一種である [@rumelhart1986learning]。
-BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
-
-RNNの学習過程では、事前抽出した画像特徴量 :$f_{t}$ とロボット関節角度 $a_{t}$ をRNNに入力し、次状態（$\hat f_{t+1}$, $ \hat a_{t+1}$）を出力（予測）する。
-52行目では、全シーケンスの予測値と真値（$f_{t+1}$, $a_{t+1}$）の平均二乗誤差 `nn.MSELoss` を計算し、誤差値 `loss` に基づいて誤差伝番を行う。
-この学習過程は、LSTMとMTRNNの両方に適用することが可能である。
+### Backpropagation Through Time {#rnn_bptt}
+Backpropagation Through Time (BPTT) is used as the error back propagation algorithm for time series learning.
+The details of BPTT have already been described in SARNN, please refer to [here](../../model/SARNN#bptt).
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="52"
@@ -405,10 +399,11 @@ class fullBPTTtrainer:
 
 <!-- #################################################################################################### -->
 ----
-### データローダ {#rnn_dataloader}
-CAEで抽出した画像特徴量とロボット関節角度をRNNで学習するための DataLoader について述べる。
-35,36行目に示す通り、入力情報にガウシアンノイズを加える。
-予測値はノイズ加算前の元データに近くなるように学習を行うことで、実世界で動作予測する際に入力情報にノイズが付与されたとしても、適切な動作指令を予測することが可能である。
+### Dataloader {#rnn_dataloader}
+We describe DataLoader for learning image features and robot joint angles extracted by CAE with RNN.
+As shown in lines 35 and 36, gaussian noise is added to the input data.
+By training the model to minimize the error between the prediction values and the original data, the robot can predict appropriate motion commands even if noise is added in the real world.
+
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="20-21"
 class TimeSeriesDataSet(Dataset):
@@ -443,11 +438,11 @@ class TimeSeriesDataSet(Dataset):
 
 <!-- #################################################################################################### -->
 ----
-### 学習 {#rnn_train}
-`libs/fullBPTT.py`、 `libs/dataloader.py`、そしてすでに実装されているメインプログラム `train.py` を使用して、RNNを学習する。
-モデルは実装済みの `BasicLSTM` もしくは `BasicMTRNN` を用い、引数で選択することが可能である。
-CAE同様、プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py)ください。
+### Training {#rnn_train}
+The main program `train.py` is used to train RNN.
+When the program is run, the trained weights (pth) and Tensorboard log files are saved in the `log` folder.
+Please [see](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py) the comments in the code for a detailed description of how the program works.
+
 
 ```bash 
 $ cd eipl/tutorials/rnn/
@@ -475,12 +470,13 @@ vmin : 0.0
 
 <!-- #################################################################################################### -->
 ----
-### 推論 {#rnn_inference}
-RNNが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
-引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックスである。
-モデルの汎化性能を評価するために、[未学習位置](../../teach/overview#task)で収集したテストデータを入力し、真値と予測値の比較を行う。
-下図は`RNN` 予測結果を示しており、左図はロボット関節角度、右図は画像特徴量である。
-図中の黒点線は真値、色線は予測値を表しており、ほぼ一致していることから適切に動作学習ができたといえる。
+### Inference {#rnn_inference}
+Check that RNN has been properly trained using the test program `test.py`.
+The arguments `filename` is the path of the trained weights file, `idx` is the index of the data you want to visualize,
+To evaluate the generalization performance of the model, test data collected at [untrained location](../../teach/overview#task) are input and the true values are compared with the predicted values.
+The figure below shows the `RNN` prediction results, where the left figure is the robot joint angles and the right figure is the image features.
+The black dotted line in the figure represents the true value and the colored line represents the predicted value, and since they are almost identical, we can say that motion learning was done appropriately.
+
 
 ```bash 
 $ cd eipl/tutorials/rnn/
@@ -496,8 +492,9 @@ LSTM_20230510_0134_03_4.gif
 
 <!-- #################################################################################################### -->
 ----
-### 主成分分析 {#rnn_pca}
-主成分分析を概要と具体的な実装は[こちら](../model/test.md#pca)を参照されたい。
+### Principal Component Analysis {#rnn_pca}
+For an overview and concrete implementation of PCA, see [here](. /model/test.md#pca).
+
 
 ```bash
 $ cd eipl/tutorials/rnn/
@@ -506,11 +503,13 @@ $ ls output/
 PCA_LSTM_20230510_0134_03.gif
 ```
 
-下図は主成分分析を用いてRNNの内部状態を可視化した結果である。
-各点線はRNNの内部状態の時系列変化を示しており、黒色丸を始点に逐次内部状態が遷移する。
-以降、内部状態の遷移軌道をアトラクタと呼ぶ。
-各アトラクタの色は[物体位置](../teach/overview.md#task)を示しており、青、オレンジ、緑は教示位置A、C、Eに、赤、紫は未学習位置B、Dに対応している。
-物体位置に応じてアトラクタが自己組織化（整列）していることから、物体位置に応じた動作が学習（記憶）されていると言える。
-特に未学習位置のアトラクタは、教示位置の間に生成されていることから、物体位置が異なる把持動作を複数回教示し学習させるだけで、未学習の内挿動作を生成することが可能である。
+The figure figure shows the result of visualizing the internal state of RNN using PCA.
+Each dotted line shows the time-series change of the RNN's internal state, and the internal state transitions sequentially starting from the black circle.
+The transition trajectory of the internal state is called an attractor.
+The color of each attractor is indicated by [object position](../teach/overview.md#task), with blue, orange, and green corresponding to taught positions A, C, and E, 
+and red and purple corresponding to unlearned positions B and D.
+Since the attractors are self-organized (aligned) according to the object position, it can be said that the behavior is learned (memorized) according to the object position.
+In particular, since the attractors at the unlearned positions are generated between the taught positions, it is possible to generate unlearned interpolated motions by simply teaching and learning grasping motions with different object positions multiple times.
+
 
 ![Visualize the internal state of RNNs using Principal Component Analysis](img/cae-rnn/rnn_pca.webp){: .center}

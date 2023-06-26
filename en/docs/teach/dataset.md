@@ -24,13 +24,13 @@ $ ls
 The contents of the download file consist of the following files.
 Users can generate training data from rosbag data simply by executing the programs in the order of program number 1.
 
-- **1_rosbag2npy.py**：Extracts only the specified information (topic data) from rosbag data and converts it to npz format.
-- **2_make_dataset.py**：This program performs three processes: First, formatting the data length. Even if the `--duration` argument is set at `rosbag record`, the time-series length of the data differs depending on the timing of program execution, so it is necessary to align the time-series length of all the data. The second is to sort and save training and test data based on a specified index. The third is to calculate the normalization parameters (upper and lower limits) for the joint angles. For details of this process, please click [here](../tips/normalization.md).
-- **3_check_data.py**：A program to visualize the collected data, this program saves the image and joint angles of the robot as gifs. Before executing the training program, be sure to check the cropping range of the image and the normalized range of the joint angles.
-- **utils.py**：Pre-processing programs (e.g., normalization) required for the data set are stored.
-- **bag**：The collected `rosbag` data are stored.
-- **data**： After running `2_make_dataset.py`, the training and test data and the normalization parameters for the joint angles are saved.
-- **output**：The visualization results are saved. The number at the end of the file name indicates the index of the training data.
+- **1_rosbag2npy.py**: Extracts only the specified information (topic data) from rosbag data and converts it to npz format.
+- **2_make_dataset.py**: This program performs three processes: First, formatting the data length. Even if the `--duration` argument is set at `rosbag record`, the time-series length of the data differs depending on the timing of program execution, so it is necessary to align the time-series length of all the data. The second is to sort and save training and test data based on a specified index. The third is to calculate the normalization parameters (upper and lower limits) for the joint angles. For details of this process, please click [here](../tips/normalization.md).
+- **3_check_data.py**: A program to visualize the collected data, this program saves the image and joint angles of the robot as gifs. Before executing the training program, be sure to check the cropping range of the image and the normalized range of the joint angles.
+- **utils.py**: Pre-processing programs (e.g., normalization) required for the data set are stored.
+- **bag**: The collected `rosbag` data are stored.
+- **data**: After running `2_make_dataset.py`, the training and test data and the normalization parameters for the joint angles are saved.
+- **output**: The visualization results are saved. The number at the end of the file name indicates the index of the training data.
 
 
 
@@ -41,8 +41,8 @@ Users can generate training data from rosbag data simply by executing the progra
 The following command can extract only the specified information (topic data) from rosbag data.
 The details of the arguments are as follows:
 
-- **bag_dir** ： Specify the directory where rosbag data are stored.
-- **freq** ： Since the sampling rate (Hz) varies by sensor, the data is extracted and stored at the specified sampling rate.
+- **bag_dir**: Specify the directory where rosbag data are stored.
+- **freq**: Since the sampling rate (Hz) varies by sensor, the data is extracted and stored at the specified sampling rate.
 
 ```bash
 $ python3 1_rosbag2npz.py ./bag/ --freq 10
@@ -189,9 +189,9 @@ This program consists of the following three steps, and each generated data is s
 First, all data are loaded using the `load_data` function.
 Lines 21, 22, 28, and 29 perform the following operations.
 
-- **resize_img** : Resizes the image to the specified size. Based on the `cv2.resize` function, this function supports time-series images.
-- **cos_interpolation** : To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see [here](../tips/normalization.md#cos-interpolation).
-- **list_to_numpy** : Even if you specify a storage time `--duration` for `rosbag record`, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
+- **resize_img**: Resizes the image to the specified size. Based on the `cv2.resize` function, this function supports time-series images.
+- **cos_interpolation**: To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see [here](../tips/normalization.md#cos-interpolation).
+- **list_to_numpy**: Even if you specify a storage time `--duration` for `rosbag record`, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
 
 Lines 45-48 then sort the training and test data based on the indexes specified by the user (lines 38 and 39).
 The relationship between the teaching position and the index is shown in the table below.
