@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -531,8 +531,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#off-line-inference" class="md-nav__link">
-    Off-line inference
+  <a href="#offline-inference" class="md-nav__link">
+    Offline inference
   </a>
   
 </li>
@@ -546,7 +546,7 @@
       
         <li class="md-nav__item">
   <a href="#online" class="md-nav__link">
-    Online Motion Generation
+    Motion Generation
   </a>
   
 </li>
@@ -724,14 +724,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -819,14 +819,10 @@
 
 <h1 id="test">Inference</h1>
 <!-- #################################################################################################### -->
-<h2 id="off-line-inference">Off-line inference</h2>
-<p>Check that SARNN has been properly trained using the test program <code>test.py</code>.
-The argument <code>filename</code> is the path of the trained weights file and <code>idx</code> is the index of the data to be visualized.
-The <code>input_param</code> is a mixing coefficient to generate stable behavior against real-world noise. The sensor information at time $t$ is mixed with the predictions of the model at the previous time $t-1$ in a certain ratio and input to the model.
-This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
-Note that if the mixing coefficient is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/sarnn/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230521_1247_41/SARNN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span><span class="w"> </span>--input_param<span class="w"> </span><span class="m">1</span>.0
+<h2 id="offline-inference">Offline inference</h2>
+<p>To verify that SARNN has been trained correctly, use the test program <code>test.py</code>. The argument <code>filename</code> should be the path of the trained weights file, and <code>idx</code> is the index of the data to be visualized. The input_param is a mixing coefficient that produces stable behavior against real-world noise. It mixes the sensor information at a given time with the model predictions at the previous time $t-1$ in a certain ratio and feeds it as input to the model. This process can be seen as a low-pass filter, where the predicted values from the previous time can complement the prediction of stable motion commands, even if the robot's sensor values are noisy. It is important to note that if the mixing coefficient is too small, it becomes difficult to adjust the motion based on real sensor information, and the robustness to position changes decreases.</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/sarnn/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230521_1247_41/SARNN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span><span class="w"> </span>--input_param<span class="w"> </span><span class="m">1</span>.0
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>images<span class="w"> </span>shape:<span class="o">(</span><span class="m">187</span>,<span class="w"> </span><span class="m">128</span>,<span class="w"> </span><span class="m">128</span>,<span class="w"> </span><span class="m">3</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span><span class="m">0</span>,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">255</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>joints<span class="w"> </span>shape:<span class="o">(</span><span class="m">187</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span>-0.8595600128173828,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">1</span>.8292399644851685
@@ -841,21 +837,13 @@ Note that if the mixing coefficient is too small, it becomes difficult to modify
 </span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>SARNN_20230521_1247_41_4_1.0.gif
 </span></code></pre></div>
-<p>The following figure shows the inference results at the unlearned position (<a href="../../teach/overview/#task">point D</a>). From left to right, the input image, the predicted image, and the predicted joint angles (dotted lines are true values). The blue points in the input image are the points of interest extracted from the image, and the red points are the points of interest predicted by the RNN, indicating that the joint angle is predicted while focusing on the robot hand and the grasped object.</p>
+The following figure shows the inference results at an untaught position (<a href="../../teach/overview/#task">point D</a>). From left to right are the input image, the predicted image, and the predicted joint angles (dotted lines represent the true values). The blue points in the input image represent the POIs (Point of Interest) extracted from the image, while the red points represent the POIs predicted by the RNN. This indicates that the joint angle is predicted while focusing on the robot hand and the grasped object.</p>
 <p><img alt="results_of_SARNN" class="center" src="../img/sarnn-rt_4.webp" /></p>
 <!-- #################################################################################################### -->
 <hr />
 <h2 id="pca">Principal Component Analysis</h2>
-<p>In deep predictive learning, it is recommended to visualize the internal representation using Principal Component Analysis (PCA)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> in order to preliminarily examine whether the trained model has generalization performance.
-In order to acquire generalization motion with small data, it is necessary to embed the motion in the RNN's internal state, and the internal state should be self-organized (structured) for each teaching motion.
-Hereafter, we use PCA to compress the internal state of the RNN to a lower dimension, and visualize the elements (first through third principal components) that represent the characteristics of the data to verify how the sensorimotor information (images and joint angles) are represented.</p>
-<p>The following program is a partial excerpt of the inference and PCA process.
-First, input test data into the model and store the internal state <code>state</code> of the RNN at each time as a list.
-In the case of <a href="https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html">LSTM</a>, <code>hidden state</code> and <code>cell state</code> are returned as <code>state</code>.
-Here we use <code>hidden state</code> for visualization and analysis.
-Next, we transform the shape of state, from [number of data, time series length, number of dimensions of state] to [number of data x time series length, number of dimensions of state] in order to compare the internal state at each object position.
-Finally, the high-dimensional state is compressed into low-dimensional information (3 dimensions) by applying PCA as shown in line 12.
-By restoring the compressed principal component <code>pca_val</code> to its original shape [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by coloring each object position and plotting it in 3D space.</p>
+<p>In deep predictive learning, it is recommended to visualize the internal representation using Principal Component Analysis (PCA)<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> to preliminarily examine the generalization performance of the trained model. By embedding motion into the internal state of the RNN and ensuring that the internal state is self-organized and structured for each learning motion, we can achieve generalization motion with a small amount of data. To verify how the sensorimotor information (images and joint angles) is represented, we use PCA to compress the internal state of the RNN into a lower dimension and visualize the elements that represent the characteristics of the data, specifically the first through third principal components.</p>
+<p>The following code snippet demonstrates the inference and PCA process. First, the test data is fed into the model and the internal state <code>state</code> of the RNN at each time step is stored as a list. In the case of <a href="https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html">LSTM</a>, the <code>hidden state</code> and the <code>cell state</code> are returned as <code>state</code>. For visualization and analysis purposes we use the <code>hidden state</code>. Next, we reshape the state from [number of data, time series length, number of state dimensions] to [number of data x time series length, number of state dimensions] to compare the internal state at each object position. Finally, we apply PCA to compress the high-dimensional state into low-dimensional information (3 dimensions), as shown in line 12. By restoring the compressed principal component pca_val to its original form [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by assigning a unique color to each object position and plotting the points in 3D space.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-1-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-1-3"> 3</a></span>
@@ -908,46 +896,38 @@ By restoring the compressed principal component <code>pca_val</code> to its orig
 </span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25"></a>
 </span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26"></a>    <span class="n">c_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;C0&#39;</span><span class="p">,</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span><span class="s1">&#39;C3&#39;</span><span class="p">,</span><span class="s1">&#39;C4&#39;</span><span class="p">]</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Use <code>test_pca_sarnn.py</code> for the program to visualize the internal state using PCA.
-The argument filename is the path of the weights file.</p>
+<p>Use the <code>test_pca_sarnn.py</code> program to visualize the internal state using PCA. The filename argument should be the path to the weight file.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/sarnn/
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_sarnn.py<span class="w"> </span>--filename<span class="w"> </span>log/20230521_1247_41/SARNN.pth
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>PCA_SARNN_20230521_1247_41.gif
 </span></code></pre></div>
-<p>The figure below shows the inference result of SARNN. Each dotted line shows the time series change of the internal state.
-The color of each attractor corresponds to <a href="../../teach/overview/#task">object position</a>, with blue, orange, and green corresponding to taught positions A, C,and E,
-and red and purple to untrained positions B and D.
-Since the attractors are self-organized (aligned) according to the object position, it can be said that the behavior is learned (memorized) according to the object position.
-In particular, since the attractors at unlearned positions are generated between taught positions, it is possible to generate unlearned interpolated motions by simply teaching and learning grasping motions with different object positions multiple times.</p>
+<p>The figure below shows the inference results of SARNN. Each dotted line represents the time evolution of the internal state. The color of each attractor corresponds to the <a href="../../teach/overview/#task">object position</a>: blue, orange, and green correspond to the teaching positions A, C, and E, while red and purple correspond to the untrained positions B and D. The self-organization of the attractors based on the object position indicates that the behavior is learned and memorized according to the object position. In particular, the attractors at the untrained positions are generated between the teaching positions, allowing the generation of interpolated movements by teaching grasping movements with different object positions multiple times.</p>
 <p><img alt="Visualize_the_internal_state_of_SARNN_using_Principal_Component_Analysis" class="center" src="../img/sarnn_pca.webp" /></p>
 <!-- #################################################################################################### -->
 <hr />
-<h2 id="online">Online Motion Generation</h2>
-<p>The following describes an online motion generation method using a real robot with pseudo code.
-The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.</p>
+<h2 id="online">Motion Generation</h2>
+<p>The following pseudocode describes an online motion generation method using a real robot. The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.</p>
 <ol>
 <li>
-<p><strong>Model loading (line 23)</strong></p>
+<p><strong>Load model (line 23)</strong></p>
 <p>After defining the model, load the trained weights.</p>
 </li>
 <li>
-<p><strong>Get and normalize sensor information (line 38)</strong></p>
-<p>Get the robot sensor information and perform the normalization process.
-For example, if you are using ROS, the Subscribed image and joint angles as <code>raw_image</code> and <code>raw_joint</code>.</p>
+<p><strong>Retrieve and normalize sensor information (line 38)</strong></p>
+<p>Retrieve the robot's sensor information and perform the normalization process. For example, if you are using ROS, subscribe to the image and joint angles and assign them to the <code>raw_image</code> and <code>raw_joint</code> variables.</p>
 </li>
 <li>
 <p><strong>Inference (line 51)</strong></p>
-<p>Predict the image <code>y_image</code> and joint angle <code>y_joint</code> at the next time using the normalized image <code>x_img</code> and joint angle <code>x_joint</code>.</p>
+<p>Predict the image <code>y_image</code> and joint angle <code>y_joint</code> for the next time step using the normalized image <code>x_img</code> and joint angle <code>x_joint</code>.</p>
 </li>
 <li>
 <p><strong>Send command (line 61)</strong></p>
-<p>By using the predicted joint angle <code>pred_joint</code> as the robot's motor command, the robot can generate sequential motions.
-In the case of ROS, by publishing the joint angles to the motors, the robot controls each motor based on the motor command.</p>
+<p>By using the predicted joint angle <code>pred_joint</code> as the robot's motor command, the robot can generate sequential motions. When using ROS, publish the joint angles to the motors to control each motor based on the motor command.</p>
 </li>
 <li>
 <p><strong>Sleep (line 65)</strong></p>
-<p>Finally, timing is adjusted by inserting a sleep process to perform inference at the specified sampling rate. The sampling rate should be the same as during training data collection.</p>
+<p>Finally, insert a sleep process to adjust the timing and perform inference at the specified sampling rate. The sampling rate should be the same as that used during training data collection.</p>
 </li>
 </ol>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">online.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>

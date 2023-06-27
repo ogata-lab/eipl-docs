@@ -18,7 +18,7 @@
         <link rel="prev" href="../../install/quick-start/">
       
       
-        <link rel="next" href="../environment/">
+        <link rel="next" href="../setup/">
       
       <link rel="icon" href="../../img/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -440,7 +440,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../environment/" class="md-nav__link">
+      <a href="../setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -717,14 +717,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -811,21 +811,17 @@
 
 
 <h1 id="overview">Overview</h1>
-<p>This section describes how to create a dataset for deep predictive learning from robot sensor data <code>rosbag</code> obtained from motion instruction using ROS.
-For better understanding, it is recommended to <a href="https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar">download (1.3GB)</a> the collected data and scripts and run them according to the manual.</p>
+<p>This section provides instructions on how to create a dataset for deep predictive learning using robot sensor data collected by the ROS system. For better understanding, it is recommended to download <a href="https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar">the collected data and scripts (1.3GB)</a> and follow the instructions to run them.</p>
 <!-- ******************************** -->
 <hr />
 <h2 id="task">Experimental Task</h2>
-<p>The AIREC (AI-driven Robot for Embrace and Care), a smart robot manufactured by <a href="https://robotics.tokyo/">Tokyo Robotics</a>, is used to teach object grasping.
-The following figure shows an overview of the task. Based on the object grasping experience at the teaching positions shown in the figure (three circled points), the generalization performance at the unlearned positions (two points) is evaluated.
-The training data was collected 4 times for each teaching position for a total of 12 data, and the test data was collected once for each of the 5 locations, including the unlearned positions, for a total of 5 data.</p>
+<p>AIREC (AI-driven Robot for Embrace and Care), a humanoid robot developed by <a href="https://robotics.tokyo/">Tokyo Robotics</a>, is used to teach object grasping. The figure below shows an overview of the task. The generalization performance is evaluated by comparing the object grasping experience at the teaching positions (three circled points) with the unlearned positions (two points) shown in the figure. Training data are collected four times for each teaching position, for a total of 12 data points. Test data is collected once for each of the five positions, including the unlearned positions, for a total of five data</p>
 <p><img alt="task_overview" class="center" src="../img/teaching.webp" /></p>
 <!-- ******************************** -->
 <hr />
 <h2 id="teaching">Motion Teaching</h2>
-<p>AIREC is a robot system that enables bilateral teleoperation as shown below. The operator can teach a multi-degree-of-freedom robot more intuitively by teaching its motion based on the robot visual image displayed on the monitor and force feedback from the robot. Here, the sensor information (joint angle, camera image, torque information, etc.) of the robot when teaching a task using the teleoperation device is saved in 'rosbag' format, and a dataset is created for the machine learning model in the following sections.</p>
-<p>Note that it is possible to teach motion to a robot without such a specialized device.
-In the <a href="../../robot/overview/">Real Robot Application section</a>, two types of motion teaching methods using OpenManipulator are described: leader-follower system and joystick.</p>
+<p>AIREC is a robotic system that enables bilateral teleoperation, as shown below. The operator can teach a multi-degree of freedom robot more intuitively by instructing its motion based on the visual image of the robot displayed on the monitor and receiving force feedback from the robot. During the task teaching process using the teleoperation device, sensor information such as joint angles, camera images, torque information, etc. is stored in the "rosbag" format and a dataset is created for the deep predictive learning model in the following sections.</p>
+<p>Note that it is possible to teach motion to a robot without using such specialized equipment.  <a href="../../robot/overview/">The Real Robot Application section</a> describes two motion teaching methods using OpenManipulator: the leader-follower system and joystick control.</p>
 <p><html lang="ja">
 <head>
   <link rel="stylesheet" href="index.css">

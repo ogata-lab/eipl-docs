@@ -15,7 +15,7 @@
         <link rel="canonical" href="https://ogata-lab.github.io/eipl-docs/en/teach/dataset/">
       
       
-        <link rel="prev" href="../environment/">
+        <link rel="prev" href="../setup/">
       
       
         <link rel="next" href="../../model/dataloader/">
@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -392,7 +392,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../environment/" class="md-nav__link">
+      <a href="../setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -455,21 +455,21 @@
       
         <li class="md-nav__item">
   <a href="#data-extraction" class="md-nav__link">
-    Data extraction
+    Data Extraction
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#generate-traintest-data" class="md-nav__link">
-    Generate train/test data
+  <a href="#dataset-preparation" class="md-nav__link">
+    Dataset Preparation
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#visualization-of-datasets" class="md-nav__link">
-    Visualization of datasets
+  <a href="#visualization" class="md-nav__link">
+    Visualization
   </a>
   
 </li>
@@ -738,14 +738,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -834,9 +834,7 @@
 <h1 id="generate-dataset">Generate dataset</h1>
 <!-- ******************************** -->
 <h2 id="download">Download</h2>
-<p>Here, we generate a dataset for deep predictive learning using sensor information from teaching object grasping movements using AIREC.
-In this section, we describe how to extract only specific files from multiple rosbag data and save them in npz format using the collected sample data and scripts.
-Follow the commands below to download and extract the files.</p>
+<p>In this section, we generate a dataset for deep predictive learning using sensor information obtained during object grasping training with AIREC. We provide instructions on how to extract specific files from multiple rosbag data and save them in npz format using the provided sample data and scripts. Please follow the instructions below to download and extract the files.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>mkdir<span class="w"> </span>~/tmp
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>tmp
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>$<span class="w"> </span>wget<span class="w"> </span>https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar
@@ -848,25 +846,23 @@ Follow the commands below to download and extract the files.</p>
 <!-- ******************************** -->
 <hr />
 <h2 id="files">Files</h2>
-<p>The contents of the download file consist of the following files.
-Users can generate training data from rosbag data simply by executing the programs in the order of program number 1.</p>
+<p>The downloaded file contains the following files. Users can generate datasets from rosbag data by running the programs in numerical order.</p>
 <ul>
-<li><strong>1_rosbag2npy.py</strong>: Extracts only the specified information (topic data) from rosbag data and converts it to npz format.</li>
-<li><strong>2_make_dataset.py</strong>: This program performs three processes: First, formatting the data length. Even if the <code>--duration</code> argument is set at <code>rosbag record</code>, the time-series length of the data differs depending on the timing of program execution, so it is necessary to align the time-series length of all the data. The second is to sort and save training and test data based on a specified index. The third is to calculate the normalization parameters (upper and lower limits) for the joint angles. For details of this process, please click <a href="../../tips/normalization/">here</a>.</li>
-<li><strong>3_check_data.py</strong>: A program to visualize the collected data, this program saves the image and joint angles of the robot as gifs. Before executing the training program, be sure to check the cropping range of the image and the normalized range of the joint angles.</li>
-<li><strong>utils.py</strong>: Pre-processing programs (e.g., normalization) required for the data set are stored.</li>
-<li><strong>bag</strong>: The collected <code>rosbag</code> data are stored.</li>
-<li><strong>data</strong>: After running <code>2_make_dataset.py</code>, the training and test data and the normalization parameters for the joint angles are saved.</li>
-<li><strong>output</strong>: The visualization results are saved. The number at the end of the file name indicates the index of the training data.</li>
+<li><strong>1_rosbag2npy.py</strong>: Extracts the specified information (topic data) from rosbag files and converts it to the npz format.</li>
+<li><strong>2_make_dataset.py</strong>: This program does three things. First, it adjusts the data length to ensure a consistent time series length for all data, regardless of the <code>--duration</code> argument set during <code>rosbag recording</code>. Second, it sorts and stores the training and test data based on a specified index. Third, it calculates the normalization parameters (upper and lower bounds) for the joint angles. For detailed information on this process, please refer to <a href="../../tips/normalization/">the link</a> provided.</li>
+<li><strong>3_check_data.py</strong>: This program visualizes the collected data by saving images and joint angles of the robot as gif animation. Before running the training program, it is important to check the cropping range of the images and the normalized range of the joint angles.</li>
+<li><strong>utils.py</strong>: This file contains preprocessing programs (e.g. normalization) required for the dataset.</li>
+<li><strong>bag</strong>: This directory stores the collected <code>rosbag</code> data.</li>
+<li><strong>data</strong>: After running <code>2_make_dataset.py</code>, this directory stores the training and test data, along with the normalization parameters for the joint angles.</li>
+<li><strong>output</strong>: This directory stores the visualization results, with the training data index in the filename.</li>
 </ul>
 <!-- ******************************** -->
 <hr />
-<h2 id="data-extraction">Data extraction</h2>
-<p>The following command can extract only the specified information (topic data) from rosbag data.
-The details of the arguments are as follows:</p>
+<h2 id="data-extraction">Data Extraction</h2>
+<p>The following command can be used to extract specific information (topic data) from rosbag files. See the details of the arguments below:</p>
 <ul>
-<li><strong>bag_dir</strong>: Specify the directory where rosbag data are stored.</li>
-<li><strong>freq</strong>: Since the sampling rate (Hz) varies by sensor, the data is extracted and stored at the specified sampling rate.</li>
+<li><strong>bag_dir</strong>: Specify the directory where the rosbag data is stored.</li>
+<li><strong>freq</strong>: Since the sampling rate (Hz) of different sensors varies, the data will be extracted and saved at the specified sampling rate.</li>
 </ul>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>python3<span class="w"> </span>1_rosbag2npz.py<span class="w"> </span>./bag/<span class="w"> </span>--freq<span class="w"> </span><span class="m">10</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>Failed<span class="w"> </span>to<span class="w"> </span>load<span class="w"> </span>Python<span class="w"> </span>extension<span class="w"> </span><span class="k">for</span><span class="w"> </span>LZ4<span class="w"> </span>support.<span class="w"> </span>LZ4<span class="w"> </span>compression<span class="w"> </span>will<span class="w"> </span>not<span class="w"> </span>be<span class="w"> </span>available.
@@ -876,11 +872,7 @@ The details of the arguments are as follows:</p>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="m">1664630682</span>.1616075
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="m">1664630682</span>.2616074
 </span></code></pre></div>
-<p>Since saving all topics in the npz file consumes a huge amount of memory, this script saves the robot sensor information (camera image, joint angle, and gripper state) as an example.
-In line 31-35, the names of the topics to be saved are listed, and in lines 50-87, data is extracted from the messages of each topic and saved in a list prepared in advance.
-Note that saving the camera image as it is requires a huge amount of space, so it is recommended to resize or crop the image in advance.
-Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end timing of the rosbag record, so the time series length is adjusted after line 95.
-The program can be applied to the user's own robot by changing the topic name and data extraction method.</p>
+<p>Since storing all topics in the npz file consumes a significant amount of memory, this script provides an example of storing specific robot sensor information, such as camera images, joint angles, and gripper status. Lines 31-35 list the names of the topics to save, and lines 50-87 extract data from the messages of each topic and save it to a predefined list. Note that saving the camera image as it is may require a large amount of storage space, so it is recommended to resize or crop the image beforehand. Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end time of the rosbag recording. Therefore, after line 95, the time series length is adjusted accordingly. The program can be adapted to the user's robot by changing the topic names and the data extraction method.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">  1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">  2</a></span>
 <span class="normal"><a href="#__codelineno-2-3">  3</a></span>
@@ -1093,7 +1085,7 @@ The program can be applied to the user's own robot by changing the topic name an
 </span></code></pre></div></td></tr></table></div>
 <!-- ******************************** -->
 <hr />
-<h2 id="generate-traintest-data">Generate train/test data</h2>
+<h2 id="dataset-preparation">Dataset Preparation</h2>
 <p>The following command generates training and test data from the npz file converted in the previous section.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span>python3<span class="w"> </span>2_make_dataset.py
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>./bag/rollout_001.npz
@@ -1102,22 +1094,14 @@ The program can be applied to the user's own robot by changing the topic name an
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>./bag/rollout_004.npz
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>./bag/rollout_005.npz
 </span></code></pre></div>
-<p>This program consists of the following three steps, and each generated data is stored in the <code>data</code> folder.
-First, all data are loaded using the <code>load_data</code> function.
-Lines 21, 22, 28, and 29 perform the following operations.</p>
+<p>This program consists of three steps, and all generated data is stored in the <code>data</code> folder. First, all data is loaded using the <code>load_data</code> function. The operations performed in lines 21, 22, 28, and 29 are as follows</p>
 <ul>
-<li><strong>resize_img</strong>: Resizes the image to the specified size. Based on the <code>cv2.resize</code> function, this function supports time-series images.</li>
-<li><strong>cos_interpolation</strong>: To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see <a href="../../tips/normalization/#cos-interpolation">here</a>.</li>
-<li><strong>list_to_numpy</strong>: Even if you specify a storage time <code>--duration</code> for <code>rosbag record</code>, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.</li>
+<li><strong>resize_img</strong>: Resizes the image to the given size. This function supports time series images based on the <code>cv2.resize</code> function.</li>
+<li><strong>cos_interpolation</strong>: To facilitate learning and prediction of rapidly changing 0/1 binary data, such as robot hand open/close commands, cosine interpolation is used to transform the data into smooth open/close commands. See the provided <a href="../../tips/normalization/#cos-interpolation">link</a> for more information.</li>
+<li><strong>list_to_numpy</strong>: Even if you specify a storage time <code>--duration</code> for the <code>rosbag record</code>, the sequence length of all rosbag data may not be the same due to the timing of the ROS system execution. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.</li>
 </ul>
-<p>Lines 43-46 then sort the training and test data based on the indexes specified by the user (lines 36 and 37).
-The relationship between the teaching position and the index is shown in the table below.
-Positions A-E in the table are <a href="../overview/#task">object position</a>. 4 training data were collected for each teaching position and 1 test data for all positions.
-In other words, a total of 15 data were collected.
-When the model is evaluated using only the test data collected at the teaching positions, it is difficult to acquire generalization behavior at unlearned positions due to overlearning at the teaching positions.
-Therefore, it is important to include even a small amount of untrained positions in the test data in order to acquire generalization performance in a variety of positions.</p>
-<p>Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles.
-For more information on why the upper and lower limits of the joint angles are calculated, see <a href="../../tips/normalization/#joint_norm">here</a>.</p>
+<p>Lines 43-46 sort the training and test data based on user-specified indices (lines 36 and 37). The relationship between the training positions and the indexes is shown in the table below. The positions A-E in the table represent the <a href="../overview/#task">object position</a>. Four training data points were collected for each teaching position, and one test data point was collected for all positions. A total of 15 data points were collected. When evaluating the model using only the test data collected at the teaching positions, it can be difficult to observe generalization behavior at unlearned positions due to overlearning at the teaching positions. Therefore, it is important to include even a small amount of untrained items in the test data to obtain generalization performance across items.</p>
+<p>Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles. For more information on why the upper and lower limits of the joint angles are calculated, see the <a href="../../tips/normalization/#joint_norm">link</a> provided.</p>
 <table>
 <thead>
 <tr>
@@ -1250,12 +1234,8 @@ For more information on why the upper and lower limits of the joint angles are c
 </span></span></code></pre></div></td></tr></table></div>
 <!-- ******************************** -->
 <hr />
-<h2 id="visualization-of-datasets">Visualization of datasets</h2>
-<p>The following command will save the robot's image and joint angles as a gif animation.
-The argument <code>idx</code> is the index of the data to be visualized.
-The result shows that the joint angles range from [-0.92, 1.85] to [0.1, 0.9], which is within the normalized range specified by the user.
-The following figure shows the actually generated GIF animation, from left to right: camera image, robot joint angles, and robot joint angles after normalization.
-If the cropping of the image or the normalization range of the joint angle is different from the expected range, it is highly likely that errors occurred in the <code>resize_img</code> and <code>calc_minmax</code> processes in the previous section.</p>
+<h2 id="visualization">Visualization</h2>
+<p>The following command saves the image and joint angles of the robot as a GIF animation. The <code>idx</code> argument represents the index of the data to visualize. The result will display the range of joint angles within the normalized range specified by the user, from [-0.92, 1.85] to [0.1, 0.9]. The figure below shows the actual GIF animation generated, with the camera image, robot joint angles, and normalized robot joint angles displayed from left to right. If the cropping or normalization range of the joint angles differs from the expected range, it is most likely that errors have occurred in the "resize_img" and "calc_minmax" processes described in the previous section.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span>python3<span class="w"> </span>3_check_data.py<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>load<span class="w"> </span><span class="nb">test</span><span class="w"> </span>data,<span class="w"> </span>index<span class="w"> </span>number<span class="w"> </span>is<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>Joint:<span class="w"> </span><span class="nv">shape</span><span class="o">=(</span><span class="m">5</span>,<span class="w"> </span><span class="m">187</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span>-0.92,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">1</span>.85

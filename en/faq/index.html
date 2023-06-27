@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../teach/environment/" class="md-nav__link">
+      <a href="../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -667,14 +667,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -754,29 +754,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#q-motion-is-not-smoothly" class="md-nav__link">
-    Q. Motion is not smoothly.
+  <a href="#q-motion-is-not-smooth" class="md-nav__link">
+    Q. Motion is not smooth.
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#q-predicted-image-is-abnormal" class="md-nav__link">
-    Q. Predicted image is abnormal
+  <a href="#q-the-predicted-image-looks-abnormal" class="md-nav__link">
+    Q. The predicted image looks abnormal.
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#q-not-focusing-attention-on-the-object" class="md-nav__link">
-    Q. Not focusing attention on the object.
+  <a href="#q-the-model-does-not-focus-on-the-object" class="md-nav__link">
+    Q. The model does not focus on the object.
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#q-customize-the-data-loader" class="md-nav__link">
-    Q. Customize the data loader
+  <a href="#q-how-can-i-customize-the-data-loader" class="md-nav__link">
+    Q. How can I customize the data loader?
   </a>
   
 </li>
@@ -823,52 +823,37 @@
 
 
 <h1 id="faq">FAQ</h1>
-<h2 id="q-motion-is-not-smoothly">Q. Motion is not smoothly.</h2>
+<h2 id="q-motion-is-not-smooth">Q. Motion is not smooth.</h2>
+<p>To generate stable and smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value from the previous time $t-1$ in a certain ratio and then fed into the RNN. This process acts as a low-pass filter, allowing the predicted values from the previous time to supplement the motion prediction even in the presence of noisy sensor values. It is important to note that if the mixing factor (<code>input_param</code>) is too small, it becomes difficult to modify the motion based on real sensor information, resulting in reduced robustness to position changes. When <code>input_param=0.0</code>, the motion is generated based solely on the sensor information obtained at the initial time. Below is an example implementation that shows data mixing using the robot's camera image and joint angles.</p>
+<div class="language-text highlight"><pre><span></span><code>```python
+x_image, x_joint = robot.get_sensor_data()
+
+if loop_ct &gt; 1:
+    x_image = x_image * input_param + y_image * (1.0-input_param)
+    x_joint = x_joint * input_param + y_joint * (1.0-input_param)
+
+y_image , y_joint, state = mode(x_image, x_joint, state)
+```
+</code></pre></div>
+<h2 id="q-the-predicted-image-looks-abnormal">Q. The predicted image looks abnormal.</h2>
+<p>When applying a trained model to a real robot, there may be problems such as objects not being visible in the predicted image, or the image being noisy. This could be due to automatic changes in camera parameters (e.g. white balance). To avoid this, it is recommended to fix the camera parameters during motion teaching, or to adjust the inference camera parameters to match the visual image during motion teaching.</p>
+<h2 id="q-the-model-does-not-focus-on-the-object">Q. The model does not focus on the object.</h2>
 <ol>
 <li>
-<p>Mixing predictive data
-    In order to generate stable/smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value of RNN at the previous time $t-1$ in a specific ratio and then input to RNN.
-    This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
-    Note that if the mixing factor (<code>input_param</code>) is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.
-    If <code>input_param=0.0</code>, the motion will be generated using only the sensor information acquired at the initial time.
-    The following is an example implementation, in which data is mixed with the robot's camera image and joint angles.</p>
-<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x_image</span><span class="p">,</span> <span class="n">x_joint</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">get_sensor_data</span><span class="p">()</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">if</span> <span class="n">loop_ct</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">x_image</span> <span class="o">=</span> <span class="n">x_image</span> <span class="o">*</span> <span class="n">input_param</span> <span class="o">+</span> <span class="n">y_image</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">input_param</span><span class="p">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">x_joint</span> <span class="o">=</span> <span class="n">x_joint</span> <span class="o">*</span> <span class="n">input_param</span> <span class="o">+</span> <span class="n">y_joint</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">input_param</span><span class="p">)</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">y_image</span> <span class="p">,</span> <span class="n">y_joint</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">x_image</span><span class="p">,</span> <span class="n">x_joint</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
-</span></code></pre></div>
-</li>
-</ol>
-<h2 id="q-predicted-image-is-abnormal">Q. Predicted image is abnormal</h2>
-<ol>
-<li>Fix camera parameters
-    When the trained model is applied to a real robot, the problem occurs that no objects are seen in the predicted image or the predicted image is noisy.
-    This may be due to the fact that camera parameters (e.g. white balance) are automatically changed, fix the camera parameters at the time of <code>motion teaching</code>.
-    Or adjust the <code>inference</code> camera parameters to get the same visual image as the <code>motion teaching</code>.</li>
-</ol>
-<h2 id="q-not-focusing-attention-on-the-object">Q. Not focusing attention on the object.</h2>
-<ol>
-<li>
-<p>Adjusting the camera position</p>
-<p>It is recommended that the robot's body (hand or arm) and the object be constantly displayed in the image in order to acquire stable attention and motion.
-When attention is directed to the robot's body and the object part, it is easier to learn the time-series relationship between the both.</p>
+<p>Adjust the camera position</p>
+<p>It is recommended to make sure that the robot's body (hand or arm) and the object are consistently displayed in the image to facilitate stable attention and movement. When attention is directed to both the robot's body and the object, it becomes easier to learn the temporal relationship between them.</p>
 </li>
 <li>
-<p>Enlarge the object</p>
-<p>Therefore, either make the object physically larger, crop the image around the object, or move the camera closer to the object.</p>
+<p>Enlarging the object</p>
+<p>Consider physically enlarging the object, cropping the image around the object, or moving the camera closer to the object.</p>
 </li>
 <li>
-<p>Re-training the mode
-    The initial weights of the model may cause the objects to be inattentive.
-    Training multiple times with the same parameters yields good results 3 out of 5 times.</p>
+<p>Retrain the model</p>
+<p>The initial weights of the model may cause inattention to the objects. Training the model multiple times with the same parameters has yielded positive results 3 out of 5 times.</p>
 </li>
 </ol>
-<h2 id="q-customize-the-data-loader">Q. Customize the data loader</h2>
-<p>It is possible to add/remove any sensor by changing the number of data to pass the <code>MultimodalDataset</code> class or by changing some of the input/output definitions.
-The following shows an example of adding a new torque sensor.</p>
+<h2 id="q-how-can-i-customize-the-data-loader">Q. How can I customize the data loader?</h2>
+<p>It is possible to add or remove any sensor by adjusting the amount of data passed to the <code>MultimodalDataset</code> class or by modifying the input/output definitions. Here is an example that shows how to add a new torque sensor.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">class</span> <span class="nc">MultimodalDataset</span><span class="p">(</span><span class="n">Dataset</span><span class="p">):</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">images</span><span class="p">,</span> <span class="n">joints</span><span class="p">,</span> <span class="n">torque</span><span class="p">,</span> <span class="n">stdev</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>        <span class="k">pass</span>

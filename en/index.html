@@ -304,14 +304,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -398,7 +398,7 @@
   
   
     <li class="md-nav__item">
-      <a href="teach/environment/" class="md-nav__link">
+      <a href="teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -675,14 +675,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -769,35 +769,35 @@
 
 
 <h1 id="introduction">Introduction</h1>
-<p>EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robot motion generation using deep predictive learning developed at <a href="https://ogata-lab.jp/">Tetsuya Ogata Laboratory</a>, Waseda University. <a href="overview/">Deep predictive learning</a> is a method that enables flexible motion generation for unlearned environments and work targets by predicting in real time the appropriate motion for the real world based on past learning experience. In this study, using the smart robot <a href="https://airec-waseda.jp/en/toppage_en/">AIREC (AIREC：AI-driven Robot for Embrace and Care)</a> and<a href="https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/">Open Manpulator</a> as real robots, it is possible to learn systematically from model implementation to learning and real-time motion generation using collected visual and joint angle data. The EIPL system enables users to learn systematically from model implementation to learning and real-time motion generation using the collected visual and joint angle data. In the future, newly developed motion generation models using EIPL will be released on <a href="zoo/overview/">Model Zoo</a>. The following is an overview of each chapter.</p>
+<p>EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robot motion generation using deep predictive learning developed at the  <a href="https://ogata-lab.jp/">Ogata Laboratory</a>, Waseda University. <a href="overview/">Deep predictive learning</a> is a method that enables flexible motion generation for unlearned environments and work goals by predicting the appropriate motion for the real world in real time based on past learning experience. In this study, we use the humanoid robot AIREC <a href="https://airec-waseda.jp/en/toppage_en/">AIREC (AIREC：AI-driven Robot for Embrace and Care)</a> and <a href="https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/">Open Manpulator</a> as real robots, which enables systematic learning from model implementation to learning and real-time motion generation. In the future, newly developed motion generation models using EIPL will be published in the <a href="zoo/overview/">Model Zoo</a>. Below is an overview of each chapter.</p>
 <ol>
 <li>
 <p><a href="overview/"><strong>Deep Predictive Learning</strong></a></p>
-<p>The concept of deep predictive learning and the three steps toward robot implementation, motion teaching, learning, and motion generation, are described.</p>
+<p>This section explains the concept of deep predictive learning and outlines the three steps towards robot implementation: motion teaching, learning, and motion generation.</p>
 </li>
 <li>
-<p><a href="install/install-software"><strong>Setup</strong></a></p>
-<p>Describes how to install EIPL and check the program using pre-trained weights.</p>
+<p><a href="install/install-software"><strong>Set Uup</strong></a></p>
+<p>This section provides instructions on how to install EIPL and verify the program using pre-trained weights.</p>
 </li>
 <li>
 <p><a href="teach/overview"><strong>Motion Teaching</strong></a></p>
-<p>Describes how to extract data from ROSbag data and create dataset. EIPL provides an object grasping motion data set using AIREC as sample data.</p>
+<p>This section describes the process of extracting data from ROSbag files and creating datasets. EIPL provides a sample dataset of object grasping motion using AIREC.</p>
 </li>
 <li>
-<p><a href="model/dataloader"><strong>Train Model</strong></a></p>
-<p>Using the motion generation model with attention mechanism as an example, describes a series of implementation methods from model training to inference.</p>
+<p><a href="model/dataloader"><strong>Teaching Model</strong></a></p>
+<p>Using the attention mechanism based motion generation model as an example, this section explains the implementation steps for training the model and performing inference.</p>
 </li>
 <li>
 <p><a href="robot/overview"><strong>Real Robot Application</strong></a></p>
-<p>Describes a series of procedures from motion teaching to real robot control using Open Manpulator.</p>
+<p>This section provides a detailed explanation of the procedures involved in applying motion learning to real robot control using Open Manpulator.</p>
 </li>
 <li>
-<p><a href="zoo/overview"><strong>ModelZoo</strong></a></p>
-<p>The motion generation models developed using EIPL will be released in a phased manner.</p>
+<p><a href="zoo/overview"><strong>Model Zoo</strong></a></p>
+<p>The motion generation models developed with EIPL will be gradually released in the ModelZoo.</p>
 </li>
 <li>
-<p><a href="tips/normalization/"><strong>Tips</strong></a></p>
-<p>Describes the know-how of motion learning.</p>
+<p><a href="tips/normalization/"><strong>Tips and Tricks</strong></a></p>
+<p>This section provides valuable insights and tips on motion learning techniques.</p>
 </li>
 </ol>
 <hr />

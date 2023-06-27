@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -679,14 +679,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -773,20 +773,41 @@
 
 
 <h1 id="overview">Overview</h1>
-<p>Here, we describe a sequence of procedures from motion teaching to motion generation using <a href="https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/">Open Manpulator</a>.
-The following five points will be described.</p>
-<ol>
-<li>Hardware Configuration</li>
-<li>ROS Environment</li>
-<li>Data Collection</li>
-<li>Generate Dataset</li>
-<li>Model Training</li>
-<li>Online Motion Generation</li>
-</ol>
+<p>Here we will describe a sequence of procedures from motion teaching to motion generation using <a href="https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/">Open Manpulator</a>. The following five points will be covered:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The packages will be available in end of July.</p>
+<p>The packages will be available at the end of July.</p>
 </div>
+<ol>
+<li>
+<p>Motion Teaching</p>
+<p>In this step, the motion is taught to the Open Manipulator robot. Different methods can be used to teach the motion, such as using a leader-follower system or a joystick.</p>
+</li>
+<li>
+<p>Data Collection</p>
+<p>After motion teaching, data collection is performed to capture the robot's sensor information, including joint angles, camera images, and other relevant data. This data is used to train the motion generation model.</p>
+</li>
+<li>
+<p>Data Set Preparation</p>
+<p>Once the data is collected, it must be prepared in a suitable format for training the motion generation model. This includes organizing the data, performing any necessary preprocessing steps such as normalization or resizing, and dividing the data into training and test sets.</p>
+</li>
+<li>
+<p>Model Training</p>
+<p>With the prepared data set, the motion generation model is trained using machine learning techniques. This typically involves feeding the input data, such as joint angles and camera images, into the model and adjusting the model parameters to minimize the prediction error. </p>
+</li>
+<li>
+<p>Motion Generation</p>
+<p>After the model is trained, it can be used to generate motion. By providing the desired input, such as target joint angles or desired end-effector positions, the model can generate appropriate motion commands for the robot. These motion commands can be sent to the robot's actuators, allowing it to perform the desired motions.</p>
+</li>
+</ol>
+<!-- 
+1. Hardware Configuration
+2. ROS Environment
+3. Data Collection
+4. Generate Dataset
+5. Model Training
+6. Online Motion Generation
+-->
 
 
   

@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -708,7 +708,7 @@
         
           <li class="md-nav__item">
   <a href="#extract-image-features" class="md-nav__link">
-    Extract image features
+    Extract Image Features
   </a>
   
 </li>
@@ -834,14 +834,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -928,42 +928,32 @@
 
 
 <h1 id="cae-rnn">CAE-RNN</h1>
-<p>CAE-RNN is a motion generation model consisting of an image feature extraction part and a time series learning part to learn the robot's sensory-motor information<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.
-The following figure shows the network structure of the CAE-RNN model, which consists of a Convolutional Auto-Encoder (CAE) that extracts image features from the robot's visual information, and a Recurrent Neural Network (RNN) that learns the time series information of robot's joint angles and image features.
-CAE-RNN features independent training of the image feature extraction part and the time series learning part, which are trained in the order of CAE and RNN.
-By learning a variety of sensory-motor information, it is possible to extract image features such as the position and shape of flexible objects that are conventionally difficult to recognize, and to learn and generate corresponding motions.
-This section describes a series of processes from the <a href="#cae">CAE</a> and <a href="#rnn">RNN</a> model implementation, training, inference, <a href="#rnn_pca">internal representation analysis</a>.</p>
+<p>CAE-RNN is a motion generation model that consists of an image feature extraction part and a time series learning part, which aims to learn the robot's sensorimotor information<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>. The network structure of the CAE-RNN model is shown in the figure below. It consists of a Convolutional Auto-Encoder (CAE), which is responsible for extracting image features from the robot's visual information, and a Recurrent Neural Network (RNN), which learns the time-series information of the robot's joint angles and image features. CAE-RNN enables independent training of the image feature extraction part and the time series learning part, which are sequentially trained first with CAE and then with RNN. By learning a variety of sensorimotor information, CAE-RNN can extract image features such as the position and shape of flexible objects, which are traditionally difficult to recognize, and generate corresponding motions. This section provides a step-by-step explanation of the implementation, training, inference, and analysis of <a href="#rnn_pca">internal representation analysis</a>.</p>
 <p><img alt="CAE-RNN" class="center" src="../img/cae-rnn/cae-rnn.png" /></p>
 <!-- #################################################################################################### -->
 <hr />
 <h2 id="cae">CAE</h2>
 <h3 id="cae_overview">Overview</h3>
-<p>Since visual images are high-dimensional information compared to the robot's motion information, it is necessary to align the dimensions of each modal in order to properly learn sensory-motor information. 
-Furthermore, in order to learn the relationship between the position and motion of the object, it is necessary to extract low-dimensional image features (e.g., position, color, shape, etc.) of the object or robot's body from the high-dimensional visual image.
-Therefore, Convolutional Auto-Encoder (CAE) is used to extract image features.
-The following figure highlights only the CAE network structure in CAE-RNN, which consists of an Encoder that extracts image features from the robot's visual information ($i_t$) and a Decoder that reconstructs the image ($\hat i_t$) from the image features.
-By updating the weights of each layer to minizize the error between input and output values, the layer with the fewest number of neurons (bottleneck layer) in the middle layer is able to extract an abstract representation of the input information. </p>
+<p>Since visual images are high-dimensional compared to the robot's motion information, it is essential to align the dimensions of each modality to properly learn sensorimotor information. In addition, to capture the relationship between object position and motion, it is necessary to extract low-dimensional image features (such as position, color, shape, etc.) from the high-dimensional visual images. To achieve this, a Convolutional Auto-Encoder (CAE) is used to extract image features. The figure below focuses specifically on the CAE network structure within CAE-RNN, which consists of an encoder responsible for extracting image features from the robot's visual information ($i_t$) and a decoder that reconstructs the image ($\hat i_t$) from the extracted features. By updating the weights of each layer to minimize the error between input and output values, the layer with the fewest number of neurons (known as the bottleneck layer) in the middle layer can abstractly represent the input information.</p>
 <p><img alt="Network structure of CAE" class="center" src="../img/cae-rnn/cae.png" /></p>
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="cae_files">Files</h3>
 <p>The programs and folders used in CAE are as follows:</p>
 <ul>
-<li><strong>bin/train.py</strong>: Programs to load data, train, and save models.</li>
-<li><strong>bin/test.py</strong>: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.</li>
-<li><strong>bin/extract.py</strong>：Program to calculate and store the image features extracted by the CAE and the upper and lower limits for normalization.</li>
-<li><strong>libs/trainer.py</strong>：Back propagation class for CAE.</li>
-<li><strong>log</strong>: Folder to store weights, learning curves, and parameter information.</li>
-<li><strong>output</strong>: Save inference results.</li>
-<li><strong>data</strong>：Store RNN training data (joint angles, image features, normalization information, etc.).</li>
+<li><strong>bin/train.py</strong>: This program is used to load data, train models, and save the trained models.</li>
+<li><strong>bin/test.py</strong>: This program performs off-line inference of models using test data (images and joint angles) and visualizes the inference results.</li>
+<li><strong>bin/extract.py</strong>：This program calculates and stores the image features extracted by the CAE, as well as the upper and lower bounds for normalization.</li>
+<li><strong>libs/trainer.py</strong>：This is the backpropagation class for the CAE, responsible for training the model.</li>
+<li><strong>log</strong>: This folder is used to store the weights, learning curves, and parameter information.</li>
+<li><strong>output</strong>: This folder stores the inference results.</li>
+<li><strong>data</strong>：This folder stores the RNN training data, including joint angles, image features, and normalization information.</li>
 </ul>
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="cae_model">CAE Model</h3>
-<p>CAE consists of a convolution layer, transposed convolution layer, and a linear layer.
-By using the Convolution layer (CNN) to extract image features, CAE can handle high-dimensional information with fewer parameters compared to AutoEncoder<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, which consists of only a Linear layer. Furthermore, CNN can extract a variety of image features by convolving with shifting filters. The Pooling layer, which is generally applied after CNN, is often used in image recognition and other fields to compress the dimensionality of input data. However, while position invariance and information compression can be achieved simultaneously, there is a problem that information on the spatial structure of the image is lost <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>. Since spatial position information of manipulated objects and robot hands is essential for robot motion generation, dimensional compression is performed using the convolution application interval (stride) of the CNN filter instead of the Pooling Layer.</p>
-<p>The following is a program of the CAE model, which can extract image features of the dimension specified by <code>feat_dim</code> from a 128x128 pixel color image.
-This model is a simple network structure to understand the outline and implementation of CAE.</p>
+<p>CAE consists of a convolution layer, a transposed convolution layer, and a linear layer. By using the convolutional layer (CNN) to extract image features, CAE can handle high-dimensional information with fewer parameters compared to AutoEncoder<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>, which only consists of a linear layer. In addition, CNN can extract different image features by convolving with shifting filters. The pooling layer, usually applied after CNN, is often used in image recognition and other fields to reduce the dimensionality of the input data. However, while it simultaneously achieves position invariance and information compression, there is a problem of losing spatial structure information in the image<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>. Since spatial position information of manipulated objects and robot hands is crucial for robot motion generation, dimensional compression is performed using the convolution stride (the interval at which the CNN filter is applied) instead of the pooling layer.</p>
+<p>The following program shows the CAE model capable of extracting image features with the specified dimension <code>feat_dim</code> from a 128x128 pixel color image. This model uses a simple network structure to help understand the overall architecture and implementation of CAE.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAE.py>[SOURCE] BasicCAE.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -1052,22 +1042,14 @@ This model is a simple network structure to understand the outline and implement
 </span><span id="__span-0-43"><a id="__codelineno-0-43" name="__codelineno-0-43"></a>    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
 </span><span id="__span-0-44"><a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
 </span></code></pre></div></td></tr></table></div>
-<p>By using the <code>ReLU</code> function and <code>Batch Normalization</code><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>, it is possible to improve the expressiveness of each layer, prevent gradient loss, and furthermore make learning more efficient and stable.
-In this library, CAE models using <code>Batch Normalization</code> have already been implemented and can be loaded as follows.
-The difference between BasicCAENE and CAEBN is the structure of the model (parameter size), see <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py">source code</a> for details.
-Note that the input format of the implemented model is a color image of 128x128 pixels; if you want to input any other image size, you need to modify the parameters.</p>
+<p>By incorporating the <code>ReLU</code> function and <code>Batch Normalization</code><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>, it is possible to increase the expressiveness of each layer, mitigate gradient loss, and improve the efficiency and stability of the learning process. This software library already contains CAE models that use <code>Batch Normalization</code>, which can be loaded as shown below. The difference between BasicCAENE and CAEBN lies in the structure of the model (parameter size), more details can be found in the <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py">source code</a>. Please note that the implemented model expects input in the format of a 128x128 pixel color image. If you want to input images of different sizes, you will need to adjust the parameters accordingly.</p>
 <div class="language-python highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span> <span class="nn">eipl.model</span> <span class="kn">import</span> <span class="n">BasicCAENE</span><span class="p">,</span> <span class="n">CAEBN</span>
 </span></code></pre></div>
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="cae_bp">Back Propagation</h3>
-<p>In the CAE learning process, input camera images of the robot ($i_t$) and generate the reconstructed images ($\hat i_t$).
-Here, the parameters of the model are updated using the back propagation method<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup> to minimize the error between the input and reconstructed images.
-In lines 27-33, the batch size image <code>xi</code> is input to the model to obtain the reconstructed image <code>yi_hat</code>.
-Then, the mean square error <code>nn.MSELoss</code> between the reconstructed image and the true value <code>yi</code> is calculated, and error propagation is performed based on the error value <code>loss</code>.
-This autoregressive learning eliminates the need for detailed model design for images, which is required in conventional robotics.
-Note that in order to extract image features that are robust against a variety of real-world noise, <a href="../../tips/augmentation/">data extension</a> is used to train the model on images with randomly varying brightness, contrast, and position.</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<p>During the CAE learning process, the robot's camera images ($i_t$) are used as input to generate reconstructed images ($\hat i_t$). In this process, the model parameters are updated using the backpropagation method <sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup> to minimize the error between the input and reconstructed images. In lines 27-33 of the code, the batch of input images <code>xi</code> is passed through the model to obtain the reconstructed images <code>yi_hat</code>. The mean square error (nn.MSELoss) between the reconstructed images and the corresponding true images <code>yi</code> is then computed, and the error value <code>loss</code> is used to propagate the gradients through the model for parameter updates. This autoregressive learning approach eliminates the need for the complex manual design of image features typically required in conventional robotics. It is worth noting that <a href="../../tips/augmentation/">data augmentation techniques</a>, such as randomly adjusting brightness, contrast, and position, are used during training to extract image features that are robust to various real-world noise sources.</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/libs/trainer.py>[SOURCE] trainer.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
@@ -1142,14 +1124,9 @@ Note that in order to extract image features that are robust against a variety o
 <!-- #################################################################################################### -->
 <hr />
 <h3 cae_train="cae_train" id="training">Training</h3>
-<p>We will use <code>Model</code>, <code>Trainer Class</code> and the already implemented main program <code>train.py</code> to train CAE.
-When the program is run, a folder name (e.g. 20230427_1316_29) is created in the <code>log</code> folder indicating the execution date and time.
-The folder will contain the trained weights (pth) and the TensorBoard log file.
-The program can use command line arguments to specify parameters necessary for training, such as model type, number of epochs, batch size, training rate, and optimization method.
-It also uses the EarlyStopping library to determine when to end training early as well as to save weights when the test error is minimized (<code>save_ckpt=True</code>).
-Please <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py">see</a> the comments in the code for a detailed description of how the program works.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$<span class="w"> </span>python3<span class="w"> </span>train.py
+<p>We use the <code>Model</code>, the <code>Trainer Class</code>, and the pre-implemented main program <code>train.py</code> to train the CAE model. When the program is run, a folder with a name indicating the execution date and time of execution (e.g., 20230427_1316_29) is created in the <code>log</code> folder. This folder will contain the trained weights (pth) and the TensorBoard log file. The program allows command line arguments to specify essential training parameters, such as the model type, number of epochs, batch size, learning rate, and optimization method. The EarlyStopping library is also used to determine when to stop training early and to save the weights when the test error is minimized (<code>save_ckpt=True</code>). For a detailed explanation of how the program works, please refer to the comments inside the <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/train.py">code</a>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">20230427_1316_29</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="o">================================</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>batch_size<span class="w"> </span>:<span class="w"> </span><span class="m">128</span>
@@ -1170,14 +1147,9 @@ Please <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae
 <!-- #################################################################################################### -->
 <hr />
 <h3 cae_inference="cae_inference" id="inference">Inference</h3>
-<p>Check that CAE has been properly trained using the test program <code>test.py</code>.
-The argument <code>filename</code> is the path of the trained weights file and <code>idx</code> is the index of the data to be visualized.
-The lower (top) figure shows the inference results of the CAEBN model using this program, with the input image on the left and the reconstructed image on the right.
-Since the robot hand and the grasping object in the "unlearned position" are reconstructed, which is important for generating robot motion, it can be assumed that the image features represent information such as the object's position and shape.
-The lower figure (bottom) is also an example of failure, showing that the object is not adequately predicted by the Basic CAE model with a simple network structure.
-In this case, it is necessary to adjust the method of the optimization algorithm, the learning rate, the loss function, and the structure of the model.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
+<p>Use the <code>test.py</code> program to verify that the CAE has been trained correctly. The argument <code>filename</code> is the path to the file containing the trained weights, and <code>idx</code> is the index of the data to be visualized. The lower (top) figure shows the inference results of the CAEBN model using this program, with the input image on the left and the reconstructed image on the right. Since the robot hand and the grasping object are reconstructed in the "untaught position", which is important for the generation of the robot motion, it can be assumed that the image features represent information such as the object's position and shape. The lower figure (bottom) is also an example of failure, showing that the object is not adequately predicted by the basic CAE model with a simple network structure. In this case, it is necessary to adjust the method of the optimization algorithm, the learning rate, the loss function, and the structure of the model.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>CAEBN_20230424_1107_01_4.gif
 </span></code></pre></div>
@@ -1185,13 +1157,10 @@ In this case, it is necessary to adjust the method of the optimization algorithm
 <p><img alt="Reconstructed image using BasicCAE" class="center" src="../img/cae-rnn/caebn_inference.webp" /></p>
 <!-- #################################################################################################### -->
 <hr />
-<h3 cae_extract_feat="cae_extract_feat" id="extract-image-features">Extract image features</h3>
-<p>Extract image features of CAE as a preparation for time series learning of image features and robot joint angles with RNN.
-Executing the following program, image features and joint angles of training and test data are stored in the <code>data</code> folder in npy format.
-At this time, confirm that the number of data and time series length of the extracted image features and joint angles are the same.
-The reason for storing the joint angles again is to make it easier to load the dataset when training RNN.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>extract.py<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth
+<h3 cae_extract_feat="cae_extract_feat" id="extract-image-features">Extract Image Features</h3>
+<p>To prepare for time series learning of image features and robot joint angles with RNN, you need to extract the image features from CAE. Running the following program will save the image features and joint angles of the training and test data in the <code>data</code> folder in npy format. Make sure that the number of data and the length of the time series for the extracted image features and joint angles are the same. The joint angles are saved again to make it easier to load the dataset during RNN training.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/extract.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>train<span class="w"> </span><span class="nv">data</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="o">==================================================</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Shape<span class="w"> </span>of<span class="w"> </span>joints<span class="w"> </span>angle:<span class="w"> </span>torch.Size<span class="o">([</span><span class="m">12</span>,<span class="w"> </span><span class="m">187</span>,<span class="w"> </span><span class="m">8</span><span class="o">])</span>
@@ -1211,13 +1180,8 @@ The reason for storing the joint angles again is to make it easier to load the d
 </span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>data/train:
 </span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>features.npy<span class="w">  </span>joints.npy
 </span></code></pre></div>
-<p>The following code is part of the source code of <code>extract.py</code>, which extracts and saves image features.
-In the fourth line, the Encoder process of CAE is performed and the extracted low-dimensional image features are returned as the return value.
-The image features extracted by CAE are normalized to within the range specified by the user, and then used for training RNN.
-When <code>tanh</code> is used as the activation function of the model, the upper and lower bounds of the image features (<code>feat_bounds</code>) are constant (-1.0 to 1.0).
-However, CAEBN uses <code>ReLU</code> for the activation function, so the upper and lower bounds of the image features are undetermined.
-Therefore, in line 25, the upper and lower bounds of the image features are determined by calculating the maximum and minimum values from the extracted image features of the training and test data.</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/extract.py>[SOURCE] extract.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<p>The following code snippet is part of the source code of <code>extract.py</code>, which performs the extraction and saving of the image features. In the fourth line, the encoder process of CAE is executed and the resulting low-dimensional image features are returned. The extracted image features from CAE are then normalized to fit within the range specified by the user and used for RNN training. When <code>tanh</code> is used as the activation function for the model, the upper and lower bounds of the image features (<code>feat_bounds</code>) remain constant (-1.0 to 1.0). However, for CAEBN, which uses <code>ReLU</code> as the activation function, the upper and lower bounds of the image features are indeterminate. Therefore, in line 25, the upper and lower bounds of the image features are determined by calculating the maximum and minimum values from the extracted image features of both the training and test data.</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/extract.py>[SOURCE] extract.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
@@ -1273,34 +1237,27 @@ Therefore, in line 25, the upper and lower bounds of the image features are dete
 <hr />
 <h2 id="rnn">RNN</h2>
 <h3 id="rnn_overview">Overview</h3>
-<p>A Recurrent Neural Network (RNN) is used to integrate and learn the robot's sensory-motor information.
-The following figure highlights only the network structure of RNN among CAE-RNNs, which inputs image features ($f_t$) and joint angles ($a_t$) at time $t$ and predicts them at the next time $t+1$.</p>
+<p>A Recurrent Neural Network (RNN) is used to integrate and learn the robot's sensorimotor information of the robot. The figure below shows the network structure of the RNN within CAE-RNN, which takes image features ($f_t$) and joint angles ($a_t$) at time $t$ and predicts them at the next time step $t+1$.</p>
 <p><img alt="Network structure of RNN" class="center" src="../img/cae-rnn/rnn.png" /></p>
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_files">Files</h3>
 <p>The programs and folders used in RNN are as follows:</p>
 <ul>
-<li><strong>bin/train.py</strong>: Programs to load data, train, and save models.</li>
-<li><strong>bin/test.py</strong>: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.</li>
-<li><strong>bin/test_pca_cnnrnn.py</strong>: Program to visualize the internal state of RNN using Principal Component Analysis.</li>
-<li><strong>libs/fullBPTT.py</strong>: Back propagation class for time series learning.</li>
-<li><strong>bin/rt_predict.py</strong>: Program that integrates trained CAE and RNN model to predict motor command based on images and joint angles.</li>
-<li><strong>libs/dataloader.py</strong>: DataLoader for RNN, returning image features and joint angles.</li>
-<li><strong>log</strong>: Folder to store weights, learning curves, and parameter information.</li>
-<li><strong>output</strong>: Save inference results.</li>
+<li><strong>bin/train.py</strong>: Program to load data, train and save models.</li>
+<li><strong>bin/test.py</strong>: Program for offline inference of models using test data (images and joint angles) and visualization of inference results.</li>
+<li><strong>bin/test_pca_cnnrnn.py</strong>: Program to visualize the internal state of an RNN using principal component analysis.</li>
+<li><strong>libs/fullBPTT.py</strong>: Backpropagation class for time series learning.</li>
+<li><strong>bin/rt_predict.py</strong>: Program that integrates the trained CAE and RNN models to predict motor commands based on images and joint angles.</li>
+<li><strong>libs/dataloader.py</strong>: DataLoader for RNN providing image features and joint angles.</li>
+<li><strong>log</strong>: Folder for storing weights, learning curves, and parameter information.</li>
+<li><strong>output</strong>: Folder for storing inference results.</li>
 </ul>
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_model">RNN Model</h3>
-<p>RNN is a neural network that can learn and infer time-series data, and it can perform time-series prediction by sequentially changing states based on input values.
-However, Vanilla RNN is prone to gradient loss during bask propagation, to solve this problem,
-Long Short-Term Memory (LSTM) and <a href="../MTRNN/">Multiple Timescales RNN (MTRNN)</a> have been proposed.</p>
-<p>Here, we describe a method for learning integrated sensory-motor information of a robot using LSTM.
-LSTM has three gates (input gate, forget gate, and output gate), each with its own weight and bias.
-The $h_{t-1}$ gate learns detailed changes in the time series as short-term memory, and the $c_{t-1}$ gate learns features of the entire time series as long-term memory, allowing retention and forgetting of past information through each gate.
-The following shows an example of implementation. Input value <code>x</code>, which is a combination of low-dimensional image features and robot joint angles extracted by CAE in advance, is input to LSTM.
-LSTM then outputs the predicted value <code>y_hat</code> of the image features and robot joint angles at the next time based on the internal state.</p>
+<p>RNN is a type of neural network that can learn and infer time series data, allowing sequential state changes based on input values for time series prediction. However, vanilla RNN is susceptible to gradient loss during backpropagation. To address this problem, Long Short-Term Memory (LSTM) and <a href="../MTRNN/">Multiple Timescales RNN (MTRNN)</a> have been proposed.</p>
+<p>In this context, we describe a method for learning the integrated sensorimotor information of a robot using LSTM. LSTM includes three gates (input gate, forget gate, and output gate), each with its own weights and biases. The $h_{t-1}$ gate learns detailed changes in the time series as short-term memory, and the $c_{t-1}$ gate learns features of the entire time series as long-term memory. These gates allow the LSTM to remember and forget past information. The following example shows the implementation. The input value <code>x</code>, which is a combination of low-dimensional image features and robot joint angles previously extracted by CAE, is fed into the LSTM. LSTM then outputs the predicted value <code>y_hat</code> for the image features and robot joint angles at the next time step based on its internal state.</p>
 <div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">BasicRNN.py</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-7-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-7-3"> 3</a></span>
@@ -1334,9 +1291,9 @@ LSTM then outputs the predicted value <code>y_hat</code> of the image features a
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_bptt">Backpropagation Through Time</h3>
-<p>Backpropagation Through Time (BPTT) is used as the error back propagation algorithm for time series learning.
-The details of BPTT have already been described in SARNN, please refer to <a href="../../model/SARNN#bptt">here</a>.</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<p>Backpropagation Through Time (BPTT) is used as the error backpropagation algorithm for time series learning.
+The details of BPTT have already been described in SARNN, please see <a href="../../model/SARNN#bptt">here</a>.</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
@@ -1425,10 +1382,8 @@ The details of BPTT have already been described in SARNN, please refer to <a hre
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_dataloader">Dataloader</h3>
-<p>We describe DataLoader for learning image features and robot joint angles extracted by CAE with RNN.
-As shown in lines 15 and 16, gaussian noise is added to the input data.
-By training the model to minimize the error between the prediction values and the original data, the robot can predict appropriate motion commands even if noise is added in the real world.</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<p>We describe the <code>DataLoader</code> for integrating the image features and robot joint angles extracted by CAE with RNN. As shown in lines 15 and 16, Gaussian noise is added to the input data. By training the model to minimize the error between the predicted values and the original data, the robot can generate appropriate motion commands even in the presence of real-world noise.</p>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
@@ -1471,10 +1426,8 @@ By training the model to minimize the error between the prediction values and th
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_train">Training</h3>
-<p>The main program <code>train.py</code> is used to train RNN.
-When the program is run, the trained weights (pth) and Tensorboard log files are saved in the <code>log</code> folder.
-Please <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py">see</a> the comments in the code for a detailed description of how the program works.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+<p>The main program, <code>train.py</code>, is used to train the RNN. When executing the program, the trained weights (pth) and Tensorboard log files are saved in the <code>log</code> folder. For a detailed description of how the program works, please refer to the comments within the <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/bin/train.py">code</a>.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py<span class="w"> </span>--device<span class="w"> </span>-1
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">20230510_0134_03</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="o">================================</span>
@@ -1496,12 +1449,8 @@ Please <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_inference">Inference</h3>
-<p>Check that RNN has been properly trained using the test program <code>test.py</code>.
-The arguments <code>filename</code> is the path of the trained weights file, <code>idx</code> is the index of the data you want to visualize,
-To evaluate the generalization performance of the model, test data collected at <a href="../../teach/overview#task">untrained location</a> are input and the true values are compared with the predicted values.
-The figure below shows the RNN prediction results, where the left figure is the robot joint angles and the right figure is the image features.
-The black dotted line in the figure represents the true value and the colored line represents the predicted value, and since they are almost identical, we can say that motion learning was done appropriately.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+<p>To verify that the RNN is sufficiently trained, the test program <code>test.py</code> is used. The argument <code>filename</code> represents the path to the trained weights file, while <code>idx</code> corresponds to the index of the data to be visualized. To evaluate the generalization performance of the model, <a href="../../teach/overview#task">untrained position</a> test data is provided and the predicted values are compared with the ground truth. The figure below illustrates the RNN prediction results, with the robot joint angles on the left and the image features on the right. The black dotted line represents the ground truth, while the colored line represents the predicted values. The close resemblance between them indicates that the motion learning process was performed effectively.</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230510_0134_03/LSTM.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>LSTM_20230510_0134_03_4.gif
@@ -1510,19 +1459,13 @@ The black dotted line in the figure represents the true value and the colored li
 <!-- #################################################################################################### -->
 <hr />
 <h3 id="rnn_pca">Principal Component Analysis</h3>
-<p>For an overview and concrete implementation of PCA, see <a href="../../model/test/#pca">here</a>.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+<p>For an overview and concrete implementation of Principal Component Analysis (PCA), please refer to the <a href="../../model/test/#pca">link provided</a>..</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_rnn.py<span class="w"> </span>--filename<span class="w"> </span>log/20230510_0134_03/LSTM.pth
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>PCA_LSTM_20230510_0134_03.gif
 </span></code></pre></div>
-<p>The figure figure shows the result of visualizing the internal state of RNN using PCA.
-Each dotted line shows the time-series change of the RNN's internal state, and the internal state transitions sequentially starting from the black circle.
-The transition trajectory of the internal state is called an attractor.
-The color of each attractor is indicated by <a href="../../teach/overview/#task">object position</a>, with blue, orange, and green corresponding to taught positions A, C, and E, 
-and red and purple corresponding to unlearned positions B and D.
-Since the attractors are self-organized (aligned) according to the object position, it can be said that the behavior is learned (memorized) according to the object position.
-In particular, since the attractors at the unlearned positions are generated between the taught positions, it is possible to generate unlearned interpolated motions by simply teaching and learning grasping motions with different object positions multiple times.</p>
+<p>The following figure shows the visualization of the internal state of the RNN using PCA. Each dotted line represents the time evolution of the internal state of the RNN, with transitions starting from the black circle. These transition trajectories of the internal state are called attractors. The color assigned to each attractor indicates the <a href="../../teach/overview/#task">object position</a>, where blue, orange, and green correspond to the teaching positions A, C, and E, while red and purple correspond to the untaught positions B and D. The self-organization (alignment) of the attractors based on the object position suggests that behavior is learned and stored accordingly. In particular, the attractors at the untaught positions are generated between the teaching positions, allowing the generation of interpolated movements by repeatedly teaching and learning reaching movements with varying object positions.</p>
 <p><img alt="Visualize the internal state of RNNs using Principal Component Analysis" class="center" src="../img/cae-rnn/rnn_pca.webp" /></p>
 <div class="footnote">
 <hr />

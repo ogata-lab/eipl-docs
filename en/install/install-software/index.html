@@ -298,14 +298,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -349,22 +349,22 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#files" class="md-nav__link">
-    Files
+  <a href="#software-files" class="md-nav__link">
+    Software Files
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#pip_install" class="md-nav__link">
-    Install from pip
+    Install via pip
   </a>
   
 </li>
       
         <li class="md-nav__item">
   <a href="#docker" class="md-nav__link">
-    docker
+    Docker
   </a>
   
 </li>
@@ -447,7 +447,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -724,14 +724,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -818,23 +818,20 @@
 
 
 <h1 id="overview">Overview</h1>
-<p>EPIL officially supports Linux (Ubuntu 20.04) and Python 3.8.
-Pytorch is used as the deep learning framework and it is recommended to install the <a href="https://pytorch.org/get-started/locally/">latest version of pytorch</a>.
-In particular, Pytorch 2.0 and above can perform training of large models faster because it is precompiled, which improves training speed and reduces GPU memory usage.
-Note that CUDA and Nvidia drivers must be installed according to the <a href="https://pytorch.org/get-started/previous-versions/">version</a> of Pytorch used.</p>
+<p>EPIL officially supports Linux (Ubuntu 20.04), Python 3.8 and PyTorch with the <a href="https://pytorch.org/get-started/locally/">latest version</a>. In particular, PyTorch 2.0 allows faster training of large models through precompilation, resulting in improved training speed and reduced GPU memory usage. Please make sure that CUDA and Nvidia drivers are installed according to the PyTorch <a href="https://pytorch.org/get-started/previous-versions/">version</a> you are using.</p>
 <hr />
-<h2 id="files">Files</h2>
-<p>This library is composed of the following:</p>
+<h2 id="software-files">Software Files</h2>
+<p>This library consists of the following components:</p>
 <ul>
-<li><strong>data</strong>: A sample data downloader and a Dataloader for model training are implemented.</li>
-<li><strong>layer</strong>: A layered model (<a href="../../zoo/MTRNN/">Hierarchical RNNs</a>, <a href="../../model/SARNN/#spatial_softmax">spatial attention mechanisms</a>, etc.) are implemented.</li>
-<li><strong>model</strong>: Multiple motion generation models are implemented, and inputs support joint angles (arbitrary degrees of freedom) and color images (128x128 pixels).</li>
-<li><strong>test</strong>: Test programs.</li>
-<li><strong>utils</strong>: Functions for normalization, visualization, arguments processing, etc.</li>
+<li><strong>data</strong>: Implements a sample dataset downloader and a Dataloader for model training.</li>
+<li><strong>layer</strong>: Implements layered models such as(<a href="../../zoo/MTRNN/">Hierarchical RNNs</a> and <a href="../../model/SARNN/#spatial_softmax">spatial attention mechanisms</a>, etc.</li>
+<li><strong>model</strong>: Implements multiple motion generation models, with support for inputs including joint angles (with arbitrary degrees of freedom) and color images (128x128 pixels).</li>
+<li><strong>test</strong>: Contains test programs.</li>
+<li><strong>utils</strong>: Provides functions for normalization, visualization, argument processing, etc.</li>
 </ul>
 <hr />
-<h2 id="pip_install">Install from pip</h2>
-<p>Clone the EIPL repository from Github and install the environment using the pip command.</p>
+<h2 id="pip_install">Install via pip</h2>
+<p>To set up the environment, clone the EIPL repository from GitHub and install it using the pip command.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span>
@@ -848,7 +845,7 @@ Note that CUDA and Nvidia drivers must be installed according to the <a href="ht
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </span></code></pre></div></td></tr></table></div>
 <hr />
-<h2 id="docker">docker</h2>
+<h2 id="docker">Docker</h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Coming soon.</p>

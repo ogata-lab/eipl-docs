@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         実行環境
       </a>
     </li>
@@ -834,14 +834,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -1072,7 +1072,7 @@ BasicCAENE と CAEBN の違いはモデルの構造（パラメータサイズ�
 そして再構成画像と真値 <code>yi</code> の平均二乗誤差 <code>nn.MSELoss</code> を計算し、誤差値 <code>loss</code> に基づいて誤差伝番を行う。
 この自己回帰的な学習により、従来のロボティクスで必要であった画像のための詳細なモデル設計が不要となる。
 なお、実世界の多様なノイズに対しロバストな画像特徴量を抽出するために、<a href="../../tips/augmentation/">データ拡張</a> を用いることで、輝度やコントラスト、そして位置をランダムに変化させた画像をモデルに学習させる。</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/libs/trainer.py>[SOURCE] trainer.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
@@ -1152,9 +1152,9 @@ BasicCAENE と CAEBN の違いはモデルの構造（パラメータサイズ�
 フォルダには学習済みの重み（pth）とTensorBoardのログファイルが保存される。
 このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
 また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する（<code>save_ckpt=True</code>）。
-プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py">参照</a>ください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$<span class="w"> </span>python3<span class="w"> </span>train.py
+プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/train.py">参照</a>ください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">20230427_1316_29</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="o">================================</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>batch_size<span class="w"> </span>:<span class="w"> </span><span class="m">128</span>
@@ -1181,8 +1181,8 @@ BasicCAENE と CAEBN の違いはモデルの構造（パラメータサイズ�
 特にロボット動作生成に重要なロボットハンドと「未学習位置」にある把持対象物が再構成されていることから、画像特徴量には物体の位置や形状などの情報が表現されていると考えられる。
 また下図（下段）は失敗例であり、ネットワーク構造がシンプルなBasic CAEモデルでは、対象物が適切に予測できていないことがわかる。
 この場合、最適化アルゴリズムの手法や学習率、誤差関数、更にモデルの構造を調整する必要がある。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>CAEBN_20230424_1107_01_4.gif
 </span></code></pre></div>
@@ -1195,8 +1195,8 @@ BasicCAENE と CAEBN の違いはモデルの構造（パラメータサイズ�
 以下のプログラムを実行すると、 <code>data</code> フォルダ内に学習・テストデータの画像特徴量と関節角度がnpy形式で保存される。
 この時、抽出された画像特徴量と関節角度のデータ数と時系列長が一致しているか確認すること。
 なお、関節角度を改めて保存する理由として、RNNの学習を行う際にデータセットの読み込みを容易にするためである。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/cae/
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>extract.py<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/cae/
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/extract.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230424_1107_01/CAEBN.pth
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>train<span class="w"> </span><span class="nv">data</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="o">==================================================</span>
 </span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>Shape<span class="w"> </span>of<span class="w"> </span>joints<span class="w"> </span>angle:<span class="w"> </span>torch.Size<span class="o">([</span><span class="m">12</span>,<span class="w"> </span><span class="m">187</span>,<span class="w"> </span><span class="m">8</span><span class="o">])</span>
@@ -1222,7 +1222,7 @@ CAEで抽出された画像特徴量は、ユーザが指定した範囲内に�
 モデルの活性化関数に <code>tanh</code> を用いた場合、画像特徴量の上下限（ <code>feat_bounds</code> ）は定数（-1.0～1.0）である。
 しかしCAEBNは、活性化関数に <code>ReLU</code> を用いているため画像特徴量の上下限値は未定である。
 そこで25行目では、抽出した学習・テストデータの画像特徴量から最大値と最小値を計算することで、画像特徴量の上下限を決定する。</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/extract.py>[SOURCE] extract.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/extract.py>[SOURCE] extract.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-6-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-6-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-6-4"> 4</a></span>
@@ -1342,7 +1342,7 @@ $h_{t-1}$ は短期記憶として時系列の細かい変化を、$c_{t-1}$ は
 <h3 id="rnn_bptt">誤差逆伝播法</h3>
 <p>Backpropagation Through Time（BPTT）とは、RNNにおいて使用される誤差逆伝播アルゴリズムの一種である<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。
 BPTTの詳細はSARNNで記載済みであるため、そちらを<a href="../../model/SARNN#bptt">参照</a>されたい。</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-8-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-8-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-8-4"> 4</a></span>
@@ -1434,7 +1434,7 @@ BPTTの詳細はSARNNで記載済みであるため、そちらを<a href="../..
 <p>CAEで抽出した画像特徴量とロボット関節角度をRNNで学習するための DataLoader について述べる。
 15-16行目に示す通り、入力情報にガウシアンノイズを加える。
 予測値はノイズ加算前の元データに近くなるように学習を行うことで、実世界で動作予測する際に入力情報にノイズが付与されたとしても、適切な動作指令を予測することが可能である。</p>
-<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
+<div class="language-python highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename"><a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a></span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-9-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-9-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-9-3"> 3</a></span>
 <span class="normal"><a href="#__codelineno-9-4"> 4</a></span>
@@ -1480,8 +1480,8 @@ BPTTの詳細はSARNNで記載済みであるため、そちらを<a href="../..
 <p><code>libs/fullBPTT.py</code>、 <code>libs/dataloader.py</code>、そしてすでに実装されているメインプログラム <code>train.py</code> を使用して、RNNを学習する。
 モデルは実装済みのBasicLSTMもしくはBasicMTRNNを用い、引数で選択することが可能である。
 CAE同様、プログラムを実行すると <code>log</code> フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
-プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py">参照</a>ください。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/bin/train.py">参照</a>ください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py<span class="w"> </span>--device<span class="w"> </span>-1
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">20230510_0134_03</span>
 </span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="o">================================</span>
@@ -1508,7 +1508,7 @@ CAE同様、プログラムを実行すると <code>log</code> フォルダ内�
 モデルの汎化性能を評価するために、<a href="../../teach/overview#task">未学習位置</a>で収集したテストデータを入力し、真値と予測値の比較を行う。
 下図はRNNの予測結果を示しており、左図はロボット関節角度、右図は画像特徴量である。
 図中の黒点線は真値、色線は予測値を表しており、ほぼ一致していることから適切に動作学習ができたといえる。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/20230510_0134_03/LSTM.pth<span class="w"> </span>--idx<span class="w"> </span><span class="m">4</span>
 </span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>LSTM_20230510_0134_03_4.gif
@@ -1518,7 +1518,7 @@ CAE同様、プログラムを実行すると <code>log</code> フォルダ内�
 <hr />
 <h3 id="rnn_pca">主成分分析</h3>
 <p>主成分分析を概要と具体的な実装は<a href="../../model/test/#pca">こちら</a>を参照されたい。</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/rnn/
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/zoo/rnn/
 </span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_rnn.py<span class="w"> </span>--filename<span class="w"> </span>log/20230510_0134_03/LSTM.pth
 </span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>$<span class="w"> </span>ls<span class="w"> </span>output/
 </span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>PCA_LSTM_20230510_0134_03.gif

@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Setup
+          Set Up
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Setup
+          Set Up
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -390,7 +390,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../teach/environment/" class="md-nav__link">
+      <a href="../../teach/setup/" class="md-nav__link">
         Setup
       </a>
     </li>
@@ -669,14 +669,14 @@
       
       
         <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
-          Tips
+          Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
-          Tips
+          Tips and Tricks
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -830,27 +830,23 @@
   <h1>Image Augmentation</h1>
 
 <h2 id="transformsrandomaffine">transforms.RandomAffine</h2>
-<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.RandomAffine.html">transforms.RandomAffine</a> is a function for applying a random affine transformation to an image. Affine transforms can transform an image by translating, rotating, scaling, or distorting it. The figure below shows the result of translating an image vertically and horizontally. When affine transforms are used for training AutoEncoder, the position information of objects is expressed (extracted) as image features, so that even unlearned positions can be reconstructed appropriately.</p>
+<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.RandomAffine.html">transforms.RandomAffine</a> is a function that applies a random affine transformation to an image. Affine transformations can translate, rotate, scale, or distort an image. The figure below shows the result of translating an image vertically and horizontally. When affine transforms are used during AutoEncoder training, they allow for the expression (extraction) of object position information as image features, allowing for appropriate reconstruction even for unlearned positions.</p>
 <p><a href="../img/random_affine.png"><img alt="random_affine" src="../img/random_affine.png" /></a></p>
 <hr />
 <h2 id="transformsrandomverticalflip">transforms.RandomVerticalFlip</h2>
-<p>[transforms.RandomVerticalFlip](https://pytorch.org/vision/main/generated/torchvision.transforms.RandomVerticalFlip.html is a function that randomly flips the input image upside down to increase data diversity.</p>
+<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.RandomVerticalFlip.html">transforms.RandomVerticalFlip</a> is a function that randomly flips the input image vertically to increase data diversity.</p>
 <p><a href="../img/vertical_flip.png"><img alt="vertical_flip" src="../img/vertical_flip.png" /></a></p>
 <hr />
 <h2 id="transformsrandomhorizontalflip">transforms.RandomHorizontalFlip</h2>
-<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.RandomHorizontalFlip.html">transforms.RandomHorizontalFlip</a> is a function that randomly flips the input image left and right, and can be combined with <code>RandomVerticalFlip</code> to improve the generalization performance of the model.</p>
+<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.RandomHorizontalFlip.html">transforms.RandomHorizontalFlip</a> is a function that randomly flips the input image horizontally and can be combined with <code>RandomVerticalFlip</code> to improve the generalization performance of the model.</p>
 <p><a href="../img/horizontal_flip.png"><img alt="horizontal_flip" src="../img/horizontal_flip.png" /></a></p>
 <hr />
 <h2 id="transformscolorjitter">transforms.ColorJitter</h2>
-<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.ColorJitter.html">transforms.ColorJitter</a> is a function that performs a random color transformation on an input image, allowing the brightness, contrast, saturation, and hue of the image to be changed, as shown in the figure below.</p>
+<p><a href="https://pytorch.org/vision/main/generated/torchvision.transforms.ColorJitter.html">transforms.ColorJitter</a> is a function that applies random color transformations to an input image, allowing adjustments to its brightness, contrast, saturation, and hue. The figure below illustrates the effects of such transformations.</p>
 <p><a href="../img/color_jitter.png"><img alt="color_jitter" src="../img/color_jitter.png" /></a></p>
 <hr />
 <h2 id="gridmask">GridMask</h2>
-<p>GridMask is a method to increase the diversity of training data by hiding parts of the image using a grid-like pattern<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.
-As shown in the figure below, the model is expected to improve generalization performance by learning image data with some part missing.
-When applied to a <a href="../../model/SARNN/">SARNN model</a>,
-the missing parts of the image will not attract attention, and as a result, the model can explore (learn) spatial attention that is important for motion prediction.
-Source code is available <a href="https://github.com/ogata-lab/eipl/blob/master/eipl/layer/GridMask.py">here</a>.</p>
+<p>GridMask is a method used to increase the diversity of the training data by masking parts of the image with a grid-like pattern<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>. As shown in the figure below, this technique aims to improve the generalization performance of the model by training it on image data where certain parts are missing. When applied to a <a href="../../model/SARNN/">SARNN model</a>, the missing parts of the image do not attract attention, allowing the model to learn spatial attention, which is crucial for motion prediction. The source code for GridMask is available [here] (https://github.com/ogata-lab/eipl/blob/master/eipl/layer/GridMask.py).</p>
 <p><a href="../img/grid_mask.png"><img alt="grid_mask" src="../img/grid_mask.png" /></a></p>
 <div class="footnote">
 <hr />
