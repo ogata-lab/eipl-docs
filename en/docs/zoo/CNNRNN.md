@@ -1,4 +1,4 @@
-# Overview {#overview}
+# CNNRNN {#overview}
 
 Due to the independent training of the image feature extraction part (CAE) and the time series learning part (RNN), CAE-RNN has faced challenges in parameter adjustment and model training time. In addition, CAE extracts image features specifically designed for dimensional compression of image information, rather than features suitable for robot motion generation. To address these issues, CNN-RNN is introduced as a motion generation model that can automatically extract image features essential for motion generation by simultaneously learning (end-to-end learning) the image feature extraction part (CAE) and the time series learning part (RNN). This approach enables the robot to prioritize objects critical to the task and generate motions that are more robust to background changes compared to CAE-RNN[@ito2020visualization].
 

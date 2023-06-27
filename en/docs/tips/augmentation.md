@@ -29,7 +29,7 @@
 
 ----
 ## GridMask
-GridMask is a method used to increase the diversity of the training data by masking parts of the image with a grid-like pattern[@chen2020gridmask]. As shown in the figure below, this technique aims to improve the generalization performance of the model by training it on image data where certain parts are missing. When applied to a [SARNN model](../model/SARNN.md), the missing parts of the image do not attract attention, allowing the model to learn spatial attention, which is crucial for motion prediction. The source code for GridMask is available [here] (https://github.com/ogata-lab/eipl/blob/master/eipl/layer/GridMask.py).
+GridMask is a method used to increase the diversity of the training data by masking parts of the image with a grid-like pattern[@chen2020gridmask]. As shown in the figure below, this technique aims to improve the generalization performance of the model by training it on image data where certain parts are missing. When applied to a [SARNN model](../model/SARNN.md), the missing parts of the image do not attract attention, allowing the model to learn spatial attention, which is crucial for motion prediction. The source code for GridMask is available [here](https://github.com/ogata-lab/eipl/blob/master/eipl/layer/GridMask.py).
 
 
 [![grid_mask](img/grid_mask.png)](img/grid_mask.png)

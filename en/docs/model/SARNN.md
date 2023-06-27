@@ -1,10 +1,10 @@
-# Model Overview {#model_overview}
+# SARNN {#model_overview}
 
 SARNN "explicitly" extracts the spatial coordinates of critical positions in the task, such as target objects and arms, from images, and learns the coordinates along with the robot's joint angles of the robot[@ichiwara2022contact]. This greatly improves robustness to changes in the object's position. The figure below illustrates the network structure of SARNN, which consists of an encoder responsible for extracting image features $f_t$ and object position coordinates $p_t$ from camera images $i_t$, a recurrent module that learns the temporal changes in the robot's joint angles and object position coordinates $p_t$, and a decoder that reconstructs images based on the image features $f_t$ and heat maps $\hat h_{t+1}$.
 
 The upper part of the encoder and decoder consists of CNN layers, including Convolutional and Transposed Convolutional layers, which extract and reconstruct color and shape information of objects from image features. The lower part of the CNN uses the Spatial Softmax layer to extract 2D position information of objects. The Recurrent module only predicts the position information $p_{t+1}$ of the object, which alone is not sufficient to reconstruct the image using the decoder. Therefore, a heat map $\hat h_{t+1}$ centered on the predicted coordinate information $p_{t+1}$ is generated. By multiplying it with the image features extracted by the CNN in the upper part, a predicted image $\hat i_{t+1}$ is generated based on the information around the predicted attention point.
 
-Here, we show the implementation method and model classes for the distinctive features of SARNN: [the Spatial Attention Mechanism](#spatial_softmax), [the Heatmap Generator](#heatmap), [the Loss Scheduler](#loss_scheduler), and [the Backpropagation Through Time](#bptt).
+Here, we show the implementation method and model classes for the distinctive features of SARNN: [Spatial Attention Mechanism](#spatial_softmax), [Heatmap Generator](#heatmap), [Loss Scheduler](#loss_scheduler), and [Backpropagation Through Time](#bptt).
 
 ![Network structure of SARNN](img/sarnn.webp){: .center}
 

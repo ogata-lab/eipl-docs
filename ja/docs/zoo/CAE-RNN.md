@@ -326,7 +326,7 @@ $h_{t-1}$ は短期記憶として時系列の細かい変化を、$c_{t-1}$ は
 以下は実装例を示しており、あらかじめCAEで抽出した低次元の画像特徴量とロボット関節角度を結合した入力値 $x$ をLSTMに入力する。
 そしてLSTMは内部状態に基づいて、次時刻の画像特徴量とロボット関節角度の予測値 $\hat y$ 出力する。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" title="BasicRNN.py" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" linenums="1"
 class BasicLSTM(nn.Module):
     def __init__(self, in_dim, rec_dim, out_dim, activation="tanh"):
         super(BasicLSTM, self).__init__()

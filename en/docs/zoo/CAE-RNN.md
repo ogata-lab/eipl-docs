@@ -282,7 +282,7 @@ In this context, we describe a method for learning the integrated sensorimotor i
 
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" title="BasicRNN.py" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" linenums="1"
 class BasicLSTM(nn.Module):
     def __init__(self, in_dim, rec_dim, out_dim, activation="tanh"):
         super(BasicLSTM, self).__init__()

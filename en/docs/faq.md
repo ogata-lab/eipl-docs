@@ -4,15 +4,15 @@
 
 To generate stable and smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value from the previous time $t-1$ in a certain ratio and then fed into the RNN. This process acts as a low-pass filter, allowing the predicted values from the previous time to supplement the motion prediction even in the presence of noisy sensor values. It is important to note that if the mixing factor (`input_param`) is too small, it becomes difficult to modify the motion based on real sensor information, resulting in reduced robustness to position changes. When `input_param=0.0`, the motion is generated based solely on the sensor information obtained at the initial time. Below is an example implementation that shows data mixing using the robot's camera image and joint angles.
 
-    ```python
-    x_image, x_joint = robot.get_sensor_data()
+```python
+x_image, x_joint = robot.get_sensor_data()
 
-    if loop_ct > 1:
-        x_image = x_image * input_param + y_image * (1.0-input_param)
-        x_joint = x_joint * input_param + y_joint * (1.0-input_param)
+if loop_ct > 1:
+    x_image = x_image * input_param + y_image * (1.0-input_param)
+    x_joint = x_joint * input_param + y_joint * (1.0-input_param)
 
-    y_image , y_joint, state = mode(x_image, x_joint, state)
-    ```
+y_image , y_joint, state = mode(x_image, x_joint, state)
+```
 
 
 ## Q. The predicted image looks abnormal.
