@@ -1,13 +1,8 @@
 # FAQ
 
-## Q. Motion is not smoothly.
+## Q. Motion is not smooth.
 
-1. Mixing predictive data
-    In order to generate stable/smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value of RNN at the previous time $t-1$ in a specific ratio and then input to RNN.
-    This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
-    Note that if the mixing factor (`input_param`) is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.
-    If `input_param=0.0`, the motion will be generated using only the sensor information acquired at the initial time.
-    The following is an example implementation, in which data is mixed with the robot's camera image and joint angles.
+To generate stable and smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value from the previous time $t-1$ in a certain ratio and then fed into the RNN. This process acts as a low-pass filter, allowing the predicted values from the previous time to supplement the motion prediction even in the presence of noisy sensor values. It is important to note that if the mixing factor (`input_param`) is too small, it becomes difficult to modify the motion based on real sensor information, resulting in reduced robustness to position changes. When `input_param=0.0`, the motion is generated based solely on the sensor information obtained at the initial time. Below is an example implementation that shows data mixing using the robot's camera image and joint angles.
 
     ```python
     x_image, x_joint = robot.get_sensor_data()
@@ -20,35 +15,31 @@
     ```
 
 
-## Q. Predicted image is abnormal
+## Q. The predicted image looks abnormal.
 
-1. Fix camera parameters
-    When the trained model is applied to a real robot, the problem occurs that no objects are seen in the predicted image or the predicted image is noisy.
-    This may be due to the fact that camera parameters (e.g. white balance) are automatically changed, fix the camera parameters at the time of `motion teaching`.
-    Or adjust the `inference` camera parameters to get the same visual image as the `motion teaching`.
+When applying a trained model to a real robot, there may be problems such as objects not being visible in the predicted image, or the image being noisy. This could be due to automatic changes in camera parameters (e.g. white balance). To avoid this, it is recommended to fix the camera parameters during motion teaching, or to adjust the inference camera parameters to match the visual image during motion teaching.
 
    
 
-## Q. Not focusing attention on the object.
+## Q. The model does not focus on the object.
 
-1. Adjusting the camera position
+1. Adjust the camera position
 
-    It is recommended that the robot's body (hand or arm) and the object be constantly displayed in the image in order to acquire stable attention and motion.
-    When attention is directed to the robot's body and the object part, it is easier to learn the time-series relationship between the both.
+    It is recommended to make sure that the robot's body (hand or arm) and the object are consistently displayed in the image to facilitate stable attention and movement. When attention is directed to both the robot's body and the object, it becomes easier to learn the temporal relationship between them.
     
-2. Enlarge the object
+2. Enlarging the object
 
-    Therefore, either make the object physically larger, crop the image around the object, or move the camera closer to the object.
+    Consider physically enlarging the object, cropping the image around the object, or moving the camera closer to the object.
 
-3. Re-training the mode
-    The initial weights of the model may cause the objects to be inattentive.
-    Training multiple times with the same parameters yields good results 3 out of 5 times.
+3. Retrain the model
+
+    The initial weights of the model may cause inattention to the objects. Training the model multiple times with the same parameters has yielded positive results 3 out of 5 times.
 
 
-## Q. Customize the data loader
 
-It is possible to add/remove any sensor by changing the number of data to pass the `MultimodalDataset` class or by changing some of the input/output definitions.
-The following shows an example of adding a new torque sensor.
+## Q. How can I customize the data loader?
+
+It is possible to add or remove any sensor by adjusting the amount of data passed to the `MultimodalDataset` class or by modifying the input/output definitions. Here is an example that shows how to add a new torque sensor.
 
 ```python
 class MultimodalDataset(Dataset):

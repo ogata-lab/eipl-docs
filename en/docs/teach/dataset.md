@@ -3,9 +3,7 @@
 
 <!-- ******************************** -->
 ## Download
-Here, we generate a dataset for deep predictive learning using sensor information from teaching object grasping movements using AIREC.
-In this section, we describe how to extract only specific files from multiple rosbag data and save them in npz format using the collected sample data and scripts.
-Follow the commands below to download and extract the files.
+In this section, we generate a dataset for deep predictive learning using sensor information obtained during object grasping training with AIREC. We provide instructions on how to extract specific files from multiple rosbag data and save them in npz format using the provided sample data and scripts. Please follow the instructions below to download and extract the files.
 
 ```bash 
 $ mkdir ~/tmp
@@ -21,28 +19,26 @@ $ ls
 <!-- ******************************** -->
 ----
 ## Files
-The contents of the download file consist of the following files.
-Users can generate training data from rosbag data simply by executing the programs in the order of program number 1.
+The downloaded file contains the following files. Users can generate datasets from rosbag data by running the programs in numerical order.
 
-- **1_rosbag2npy.py**: Extracts only the specified information (topic data) from rosbag data and converts it to npz format.
-- **2_make_dataset.py**: This program performs three processes: First, formatting the data length. Even if the `--duration` argument is set at `rosbag record`, the time-series length of the data differs depending on the timing of program execution, so it is necessary to align the time-series length of all the data. The second is to sort and save training and test data based on a specified index. The third is to calculate the normalization parameters (upper and lower limits) for the joint angles. For details of this process, please click [here](../tips/normalization.md).
-- **3_check_data.py**: A program to visualize the collected data, this program saves the image and joint angles of the robot as gifs. Before executing the training program, be sure to check the cropping range of the image and the normalized range of the joint angles.
-- **utils.py**: Pre-processing programs (e.g., normalization) required for the data set are stored.
-- **bag**: The collected `rosbag` data are stored.
-- **data**: After running `2_make_dataset.py`, the training and test data and the normalization parameters for the joint angles are saved.
-- **output**: The visualization results are saved. The number at the end of the file name indicates the index of the training data.
+- **1_rosbag2npy.py**: Extracts the specified information (topic data) from rosbag files and converts it to the npz format.
+- **2_make_dataset.py**: This program does three things. First, it adjusts the data length to ensure a consistent time series length for all data, regardless of the `--duration` argument set during `rosbag recording`. Second, it sorts and stores the training and test data based on a specified index. Third, it calculates the normalization parameters (upper and lower bounds) for the joint angles. For detailed information on this process, please refer to [the link](../tips/normalization.md) provided.
+- **3_check_data.py**: This program visualizes the collected data by saving images and joint angles of the robot as gif animation. Before running the training program, it is important to check the cropping range of the images and the normalized range of the joint angles.
+- **utils.py**: This file contains preprocessing programs (e.g. normalization) required for the dataset.
+- **bag**: This directory stores the collected `rosbag` data.
+- **data**: After running `2_make_dataset.py`, this directory stores the training and test data, along with the normalization parameters for the joint angles.
+- **output**: This directory stores the visualization results, with the training data index in the filename.
 
 
 
 
 <!-- ******************************** -->
 ----
-## Data extraction
-The following command can extract only the specified information (topic data) from rosbag data.
-The details of the arguments are as follows:
+## Data Extraction
+The following command can be used to extract specific information (topic data) from rosbag files. See the details of the arguments below:
 
-- **bag_dir**: Specify the directory where rosbag data are stored.
-- **freq**: Since the sampling rate (Hz) varies by sensor, the data is extracted and stored at the specified sampling rate.
+- **bag_dir**: Specify the directory where the rosbag data is stored.
+- **freq**: Since the sampling rate (Hz) of different sensors varies, the data will be extracted and saved at the specified sampling rate.
 
 ```bash
 $ python3 1_rosbag2npz.py ./bag/ --freq 10
@@ -54,11 +50,8 @@ Failed to load Python extension for LZ4 support. LZ4 compression will not be ava
 1664630682.2616074
 ```
 
-Since saving all topics in the npz file consumes a huge amount of memory, this script saves the robot sensor information (camera image, joint angle, and gripper state) as an example.
-In line 31-35, the names of the topics to be saved are listed, and in lines 50-87, data is extracted from the messages of each topic and saved in a list prepared in advance.
-Note that saving the camera image as it is requires a huge amount of space, so it is recommended to resize or crop the image in advance.
-Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end timing of the rosbag record, so the time series length is adjusted after line 95.
-The program can be applied to the user's own robot by changing the topic name and data extraction method.
+Since storing all topics in the npz file consumes a significant amount of memory, this script provides an example of storing specific robot sensor information, such as camera images, joint angles, and gripper status. Lines 31-35 list the names of the topics to save, and lines 50-87 extract data from the messages of each topic and save it to a predefined list. Note that saving the camera image as it is may require a large amount of storage space, so it is recommended to resize or crop the image beforehand. Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end time of the rosbag recording. Therefore, after line 95, the time series length is adjusted accordingly. The program can be adapted to the user's robot by changing the topic names and the data extraction method.
+
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-35 50-87 95-102"
@@ -172,7 +165,7 @@ for file in files:
 
 <!-- ******************************** -->
 ----
-## Generate train/test data
+## Dataset Preparation
 The following command generates training and test data from the npz file converted in the previous section.
 
 ```bash 
@@ -184,23 +177,17 @@ $ python3 2_make_dataset.py
 ./bag/rollout_005.npz
 ```
 
-This program consists of the following three steps, and each generated data is stored in the `data` folder.
-First, all data are loaded using the `load_data` function.
-Lines 21, 22, 28, and 29 perform the following operations.
+This program consists of three steps, and all generated data is stored in the `data` folder. First, all data is loaded using the `load_data` function. The operations performed in lines 21, 22, 28, and 29 are as follows
 
-- **resize_img**: Resizes the image to the specified size. Based on the `cv2.resize` function, this function supports time-series images.
-- **cos_interpolation**: To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see [here](../tips/normalization.md#cos-interpolation).
-- **list_to_numpy**: Even if you specify a storage time `--duration` for `rosbag record`, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
+- **resize_img**: Resizes the image to the given size. This function supports time series images based on the `cv2.resize` function.
+- **cos_interpolation**: To facilitate learning and prediction of rapidly changing 0/1 binary data, such as robot hand open/close commands, cosine interpolation is used to transform the data into smooth open/close commands. See the provided [link](../tips/normalization.md#cos-interpolation) for more information.
+- **list_to_numpy**: Even if you specify a storage time `--duration` for the `rosbag record`, the sequence length of all rosbag data may not be the same due to the timing of the ROS system execution. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
 
-Lines 43-46 then sort the training and test data based on the indexes specified by the user (lines 36 and 37).
-The relationship between the teaching position and the index is shown in the table below.
-Positions A-E in the table are [object position](./overview.md#task). 4 training data were collected for each teaching position and 1 test data for all positions.
-In other words, a total of 15 data were collected.
-When the model is evaluated using only the test data collected at the teaching positions, it is difficult to acquire generalization behavior at unlearned positions due to overlearning at the teaching positions.
-Therefore, it is important to include even a small amount of untrained positions in the test data in order to acquire generalization performance in a variety of positions.
+Lines 43-46 sort the training and test data based on user-specified indices (lines 36 and 37). The relationship between the training positions and the indexes is shown in the table below. The positions A-E in the table represent the [object position](./overview.md#task). Four training data points were collected for each teaching position, and one test data point was collected for all positions. A total of 15 data points were collected. When evaluating the model using only the test data collected at the teaching positions, it can be difficult to observe generalization behavior at unlearned positions due to overlearning at the teaching positions. Therefore, it is important to include even a small amount of untrained items in the test data to obtain generalization performance across items.
 
-Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles.
-For more information on why the upper and lower limits of the joint angles are calculated, see [here](../tips/normalization.md#joint_norm).
+Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles. For more information on why the upper and lower limits of the joint angles are calculated, see the [link](../tips/normalization.md#joint_norm) provided.
+
+
 
 | Position    | A       | B     | C     | D     | E           |
 | :---------- | :-----: |:-----:|:-----:|:-----:| :----------:|
@@ -265,14 +252,9 @@ if __name__ == "__main__":
 
 <!-- ******************************** -->
 ----
-## Visualization of datasets
+## Visualization
 
-The following command will save the robot's image and joint angles as a gif animation.
-The argument `idx` is the index of the data to be visualized.
-The result shows that the joint angles range from [-0.92, 1.85] to [0.1, 0.9], which is within the normalized range specified by the user.
-The following figure shows the actually generated GIF animation, from left to right: camera image, robot joint angles, and robot joint angles after normalization.
-If the cropping of the image or the normalization range of the joint angle is different from the expected range, it is highly likely that errors occurred in the `resize_img` and `calc_minmax` processes in the previous section.
-
+The following command saves the image and joint angles of the robot as a GIF animation. The `idx` argument represents the index of the data to visualize. The result will display the range of joint angles within the normalized range specified by the user, from [-0.92, 1.85] to [0.1, 0.9]. The figure below shows the actual GIF animation generated, with the camera image, robot joint angles, and normalized robot joint angles displayed from left to right. If the cropping or normalization range of the joint angles differs from the expected range, it is most likely that errors have occurred in the "resize_img" and "calc_minmax" processes described in the previous section.
 
 ```bash
 $ python3 3_check_data.py --idx 4

@@ -12,7 +12,7 @@ nav:
     - 'クイックスタート': 'install/quick-start.md'
   - '動作教示':
     - '概要': 'teach/overview.md'
-    - '実行環境': 'teach/environment.md'
+    - '実行環境': 'teach/setup.md'
     - 'データセット作成': 'teach/dataset.md'
   - 'モデル学習':
     - 'データローダ': 'model/dataloader.md'
@@ -31,7 +31,7 @@ nav:
     - 'MTRNN': 'zoo/MTRNN.md'
     - 'CAE-RNN': 'zoo/CAE-RNN.md'
     - 'CNNRNN': 'zoo/CNNRNN.md'
-  - 'Tips':
+  - 'Tips and Tricks':
     - '関節角度処理': 'tips/normalization.md'
     - '画像拡張': 'tips/augmentation.md'
   - 'FAQ': 'faq.md'

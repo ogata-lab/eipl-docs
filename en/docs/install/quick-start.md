@@ -1,11 +1,10 @@
 # Quick Start
 
-In this section, a test program will be run using the pre-trained weights and the motion generation model with spatial attention mechanism (SARNN: Spatial Attention with Recurrent Neural Network) to verify that the EIPL environment has been properly installed. 
-Please refer to the next and subsequent chapters for specific model training methods and model details.
+In this section, we run a test program to verify the proper installation of the EIPL environment. We will use the pre-trained weights and the motion generation model with spatial attention mechanism (SARNN: Spatial Attention with Recurrent Neural Network). For specific details on model training methods and model specifications, please refer to the following chapters.
 
 ## Inference
-The following shows how to infer SARNN using the pre-trained weights and running `test.py` in the tutorial folder will save the inference results in the output folder.
-At this time, by specifying the --pretrained argument, the pre-trained weights and sample data are automatically downloaded.
+To perform inference using SARNN and the pre-trained weights, execute the `test.py` file in the tutorial folder. The resulting inferences are saved in the output folder. Specifying the `--pretrained` argument will automatically download the pre-trained weights and sample data.
+
 
 ``` bash linenums="1"
 $ cd eipl/tutorials/sarnn
@@ -15,9 +14,7 @@ SARNN_20230514_2312_17_4_1.0.gif
 ```
 
 ## Results
-The following figure shows the result of inference. The blue dots in the figure are the points of attention extracted from the CNN (Convolutional Neural Network),
-and the red dots are the points of attention predicted by the RNN (Recurrent Neural Network),
-indicating that the joint angles are predicted while focusing on the robot hand and grasped object.
+The figure below shows the inference results. The blue dots in the figure represent the attention points extracted by the Convolutional Neural Network (CNN), while the red dots indicate the attention points predicted by the Recurrent Neural Network (RNN). This visualization shows the prediction of joint angles with a focus on the robot hand and the grasped object.
 
 ![results_of_SARNN](img/sarnn-rt_4.webp){: .center}
 
@@ -27,19 +24,19 @@ If an error occurs, there are three possible causes:
 
 1. **Installation error**
 
-    Since the libraries may not be properly installed, use the `pip freeze` command to verify that they are installed. If the library is installed, its version information will be displayed. If not, the package may not have been installed, so please double check the [installation procedure](./install-software.md#pip_install).
+    To ensure proper installation, use the "pip freeze" command to verify that the libraries are installed correctly. If the library is installed, its version information will be displayed. If not, it is possible that the package was not installed properly, so please [check](./install-software.md#pip_install) the installation procedure again.
 
         pip freeze | grep eipl
 
 
 2. **Download error**
 
-    If you are unable to perform inference using sample data or trained models due to a proxy or other reason, manually download the [weights file](https://dl.dropboxusercontent.com/s/o29j0kiqwtqlk9v/pretrained.tar) and [dataset](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar), save them in the `~/.eipl/` folder, and then extract them.
-        
+    If you have problems downloading the [sample data](https://dl.dropboxusercontent.com/s/5gz1j4uzpzhnttt/grasp_bottle.tar) or the [pre-trained weights file](https://dl.dropboxusercontent.com/s/o29j0kiqwtqlk9v/pretrained.tar) due to a proxy or other reason, you can manually download the weights file and the data set. Save them to the `~/.eipl/` folder and then extract the files.
+
         $ cd ~/
-        $ mkdir .eipl
-        $ cd .eipl
-        $ # copy grasp_bottle.tar and pretrained.tar to ~/.eipl/ directory
+        $ mkdir -p .eipl/airec/
+        $ cd .eipl/airec/
+        $ # copy grasp_bottle.tar and pretrained.tar to ~/.eipl/airec/ directory
         $ tar xvf grasp_bottle.tar && tar xvf pretrained.tar
         $ ls grasp_bottle/*
         grasp_bottle/joint_bounds.npy
@@ -52,20 +49,19 @@ If an error occurs, there are three possible causes:
 
 3. **Drawing error**
 
-    If the following error message appears after program execution, the animation file may have failed to be generated.
-    In this case, changing the WRITER when drawing the animation will solve the problem.
+    If you see the following error message after running the program, it may indicate an error in generating the animation file. In such cases, modifying the code at the end of test.py will solve the problem.
     
         File "/usr/lib/python3/dist-packages/matplotlib/animation.py", line 410, in cleanup
             raise subprocess.CalledProcessError(
         subprocess.CalledProcessError: Command '['ffmpeg', '-f', 'rawvideo', '-vcodec', 'rawvideo', '-s', '720x300', '-pix_fmt', 'rgba', '-r', '52.63157894736842', '-loglevel', 'error', '-i', 'pipe:', '-vcodec', 'h264', '-pix_fmt', 'yuv420p', '-y', './output/CAE-RNN-RT_20230510_0134_03_0_0.8.gif']' returned non-zero exit status 1.
 
 
-    First, install imagemagick and ffmpeg using the `apt` command.
-        
+    First, use the `apt` command to install imagemagick and ffmpeg.
+
         $ sudo apt install imagemagick
         $ sudo apt install ffmpeg
     
-    Next, edit the code at the bottom of `test.py` as follows:
+    Next, make the following changes to the code at the bottom of `test.py`:
 
         # Using imagemagick
         ani.save( './output/SARNN_{}_{}_{}.gif'.format(params['tag'], idx, args.input_param), writer="imagemagick") 

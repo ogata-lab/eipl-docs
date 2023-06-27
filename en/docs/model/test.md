@@ -1,16 +1,12 @@
 # Inference {#test}
 <!-- #################################################################################################### -->
-## Off-line inference 
-Check that SARNN has been properly trained using the test program `test.py`.
-The argument `filename` is the path of the trained weights file and `idx` is the index of the data to be visualized.
-The `input_param` is a mixing coefficient to generate stable behavior against real-world noise. The sensor information at time $t$ is mixed with the predictions of the model at the previous time $t-1$ in a certain ratio and input to the model.
-This process is equivalent to a low-pass filter, and even if the robot's sensor values are noisy, the predicted values from the previous time can be used as a supplement to predict stable motion commands.
-Note that if the mixing coefficient is too small, it becomes difficult to modify the motion based on real-world sensor information, and the robustness against position changes decreases.
+## Offline inference 
+To verify that SARNN has been trained correctly, use the test program `test.py`. The argument `filename` should be the path of the trained weights file, and `idx` is the index of the data to be visualized. The input_param is a mixing coefficient that produces stable behavior against real-world noise. It mixes the sensor information at a given time with the model predictions at the previous time $t-1$ in a certain ratio and feeds it as input to the model. This process can be seen as a low-pass filter, where the predicted values from the previous time can complement the prediction of stable motion commands, even if the robot's sensor values are noisy. It is important to note that if the mixing coefficient is too small, it becomes difficult to adjust the motion based on real sensor information, and the robustness to position changes decreases.
 
 
 ```bash
 $ cd eipl/tutorials/sarnn/
-$ python3 bin/test.py --filename ./log/20230521_1247_41/SARNN.pth --idx 4 --input_param 1.0
+$ python3 ./bin/test.py --filename ./log/20230521_1247_41/SARNN.pth --idx 4 --input_param 1.0
 
 images shape:(187, 128, 128, 3), min=0, max=255
 joints shape:(187, 8), min=-0.8595600128173828, max=1.8292399644851685
@@ -25,8 +21,7 @@ loop_ct:1, joint:[ 0.00307412 -0.73363686 -0.2815826   1.2874944   0.72176594  0
 $ ls output/
 SARNN_20230521_1247_41_4_1.0.gif
 ```
-
-The following figure shows the inference results at the unlearned position ([point D](../teach/overview.md#task)). From left to right, the input image, the predicted image, and the predicted joint angles (dotted lines are true values). The blue points in the input image are the points of interest extracted from the image, and the red points are the points of interest predicted by the RNN, indicating that the joint angle is predicted while focusing on the robot hand and the grasped object.
+The following figure shows the inference results at an untaught position ([point D](../teach/overview.md#task)). From left to right are the input image, the predicted image, and the predicted joint angles (dotted lines represent the true values). The blue points in the input image represent the POIs (Point of Interest) extracted from the image, while the red points represent the POIs predicted by the RNN. This indicates that the joint angle is predicted while focusing on the robot hand and the grasped object.
 
 ![results_of_SARNN](img/sarnn-rt_4.webp){: .center}
 
@@ -35,18 +30,10 @@ The following figure shows the inference results at the unlearned position ([poi
 <!-- #################################################################################################### -->
 ----
 ## Principal Component Analysis {#pca}
-In deep predictive learning, it is recommended to visualize the internal representation using Principal Component Analysis (PCA)[@hotelling1933analysis] in order to preliminarily examine whether the trained model has generalization performance.
-In order to acquire generalization motion with small data, it is necessary to embed the motion in the RNN's internal state, and the internal state should be self-organized (structured) for each teaching motion.
-Hereafter, we use PCA to compress the internal state of the RNN to a lower dimension, and visualize the elements (first through third principal components) that represent the characteristics of the data to verify how the sensorimotor information (images and joint angles) are represented.
+In deep predictive learning, it is recommended to visualize the internal representation using Principal Component Analysis (PCA)[@hotelling1933analysis] to preliminarily examine the generalization performance of the trained model. By embedding motion into the internal state of the RNN and ensuring that the internal state is self-organized and structured for each learning motion, we can achieve generalization motion with a small amount of data. To verify how the sensorimotor information (images and joint angles) is represented, we use PCA to compress the internal state of the RNN into a lower dimension and visualize the elements that represent the characteristics of the data, specifically the first through third principal components.
 
+The following code snippet demonstrates the inference and PCA process. First, the test data is fed into the model and the internal state `state` of the RNN at each time step is stored as a list. In the case of [LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html), the `hidden state` and the `cell state` are returned as `state`. For visualization and analysis purposes we use the `hidden state`. Next, we reshape the state from [number of data, time series length, number of state dimensions] to [number of data x time series length, number of state dimensions] to compare the internal state at each object position. Finally, we apply PCA to compress the high-dimensional state into low-dimensional information (3 dimensions), as shown in line 12. By restoring the compressed principal component pca_val to its original form [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by assigning a unique color to each object position and plotting the points in 3D space.
 
-The following program is a partial excerpt of the inference and PCA process.
-First, input test data into the model and store the internal state `state` of the RNN at each time as a list.
-In the case of [LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html), `hidden state` and `cell state` are returned as `state`.
-Here we use `hidden state` for visualization and analysis.
-Next, we transform the shape of state, from [number of data, time series length, number of dimensions of state] to [number of data x time series length, number of dimensions of state] in order to compare the internal state at each object position.
-Finally, the high-dimensional state is compressed into low-dimensional information (3 dimensions) by applying PCA as shown in line 12.
-By restoring the compressed principal component `pca_val` to its original shape [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by coloring each object position and plotting it in 3D space.
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
@@ -78,10 +65,7 @@ def anim_update(i):
     c_list = ['C0','C1','C2','C3','C4']
 ```
 
-
-
-Use `test_pca_sarnn.py` for the program to visualize the internal state using PCA.
-The argument filename is the path of the weights file.
+Use the `test_pca_sarnn.py` program to visualize the internal state using PCA. The filename argument should be the path to the weight file.
 
 ```bash
 $ cd eipl/tutorials/sarnn/
@@ -90,11 +74,7 @@ $ ls output/
 PCA_SARNN_20230521_1247_41.gif
 ```
 
-The figure below shows the inference result of SARNN. Each dotted line shows the time series change of the internal state.
-The color of each attractor corresponds to [object position](../teach/overview.md#task), with blue, orange, and green corresponding to taught positions A, C,and E,
-and red and purple to untrained positions B and D.
-Since the attractors are self-organized (aligned) according to the object position, it can be said that the behavior is learned (memorized) according to the object position.
-In particular, since the attractors at unlearned positions are generated between taught positions, it is possible to generate unlearned interpolated motions by simply teaching and learning grasping motions with different object positions multiple times.
+The figure below shows the inference results of SARNN. Each dotted line represents the time evolution of the internal state. The color of each attractor corresponds to the [object position](../teach/overview.md#task): blue, orange, and green correspond to the teaching positions A, C, and E, while red and purple correspond to the untrained positions B and D. The self-organization of the attractors based on the object position indicates that the behavior is learned and memorized according to the object position. In particular, the attractors at the untrained positions are generated between the teaching positions, allowing the generation of interpolated movements by teaching grasping movements with different object positions multiple times.
 
 ![Visualize_the_internal_state_of_SARNN_using_Principal_Component_Analysis](img/sarnn_pca.webp){: .center}
 
@@ -102,34 +82,32 @@ In particular, since the attractors at unlearned positions are generated between
 
 <!-- #################################################################################################### -->
 ----
-## Online Motion Generation {#online}
-The following describes an online motion generation method using a real robot with pseudo code.
-The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.
+## Motion Generation {#online}
+The following pseudocode describes an online motion generation method using a real robot. The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.
 
-
-1. **Model loading (line 23)**
+1. **Load model (line 23)**
 
     After defining the model, load the trained weights.
 
-2. **Get and normalize sensor information (line 38)**
 
-    Get the robot sensor information and perform the normalization process.
-    For example, if you are using ROS, the Subscribed image and joint angles as `raw_image` and `raw_joint`.
+2. **Retrieve and normalize sensor information (line 38)**
+
+    Retrieve the robot's sensor information and perform the normalization process. For example, if you are using ROS, subscribe to the image and joint angles and assign them to the `raw_image` and `raw_joint` variables.
     
 
 3. **Inference (line 51)**
 
-    Predict the image `y_image` and joint angle `y_joint` at the next time using the normalized image `x_img` and joint angle `x_joint`.
+    Predict the image `y_image` and joint angle `y_joint` for the next time step using the normalized image `x_img` and joint angle `x_joint`.
     
 
 4. **Send command (line 61)**
 
-    By using the predicted joint angle `pred_joint` as the robot's motor command, the robot can generate sequential motions.
-    In the case of ROS, by publishing the joint angles to the motors, the robot controls each motor based on the motor command.
+    By using the predicted joint angle `pred_joint` as the robot's motor command, the robot can generate sequential motions. When using ROS, publish the joint angles to the motors to control each motor based on the motor command.
 
 5. **Sleep (line 65)**
 
-    Finally, timing is adjusted by inserting a sleep process to perform inference at the specified sampling rate. The sampling rate should be the same as during training data collection.
+    Finally, insert a sleep process to adjust the timing and perform inference at the specified sampling rate. The sampling rate should be the same as that used during training data collection.
+
 
 
 

@@ -96,7 +96,7 @@ class CNNRNN(nn.Module):
 時系列学習を行うための誤差逆伝播アルゴリズムとしてBackpropagation Through Time（BPTT）を用いる。
 BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
     def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
@@ -154,10 +154,10 @@ class fullBPTTtrainer:
 ## 学習 {#train}
 メインプログラム `train.py` を使用して、CNNRNNを学習する。
 プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/bin/train.py)ください。
+プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cnnrnn/bin/train.py)ください。
 
 ```bash
-$ cd eipl/tutorials/cnnrnn/
+$ cd eipl/zoo/cnnrnn/
 $ python3 ./bin/train.py
 [INFO] Set tag = 20230514_1958_07
 ================================
@@ -189,8 +189,8 @@ CNNRNNが適切に学習されたかを確認するために、テストプロ�
 `input_param` は推論時の混合係数であり、[詳細はこちら](../model/test.md)を参照ください。
 
 ```bash
-$ cd eipl/tutorials/cnnrnn/
-$ python3 bin/test.py --filename ./log/20230514_1958_07/CNNRNN.pth --idx 4 --input_param 1.0
+$ cd eipl/zoo/cnnrnn/
+$ python3 ./bin/test.py --filename ./log/20230514_1958_07/CNNRNN.pth --idx 4 --input_param 1.0
 
 images shape:(187, 128, 128, 3), min=0, max=255
 joints shape:(187, 8), min=-0.8595600128173828, max=1.8292399644851685

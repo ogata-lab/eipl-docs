@@ -1,9 +1,6 @@
 # Overview {#overview}
 
-Because CAE-RNN trains the image feature extraction part (CAE) and the time series learning part (RNN) independently, parameter adjustment and model training time have been issues.
-Furthermore, CAE extracts image features that are specialized for dimensional compression of image information, not the image features that are necessarily appropriate for generating robot motions.
-Therefore, CNNRNN is a motion generation model that can automatically extract image features important for motion generation by simultaneously learning (end-to-end learning) the image feature extraction part (CAE) and the time series learning part (RNN).
-This allows the robot to focus only on objects that are important to the task and generate motions that are more robust to background changes than CAE-RNN[@ito2020visualization].
+Due to the independent training of the image feature extraction part (CAE) and the time series learning part (RNN), CAE-RNN has faced challenges in parameter adjustment and model training time. In addition, CAE extracts image features specifically designed for dimensional compression of image information, rather than features suitable for robot motion generation. To address these issues, CNN-RNN is introduced as a motion generation model that can automatically extract image features essential for motion generation by simultaneously learning (end-to-end learning) the image feature extraction part (CAE) and the time series learning part (RNN). This approach enables the robot to prioritize objects critical to the task and generate motions that are more robust to background changes compared to CAE-RNN[@ito2020visualization].
 
 ![Overview of CNNRNN](img/cnnrnn/cnnrnn.png){: .center}
 
@@ -11,20 +8,20 @@ This allows the robot to focus only on objects that are important to the task an
 <!-- #################################################################################################### -->
 ----
 ## Files {#files}
-The programs and folders used in CNNRNN are as follows:
+The following programs and folders are used in CNNRNN:
 
-- **bin/train.py**: Programs to load data, train, and save models.
-- **bin/test.py**: Program to perform off-line inference of models using test data (images and joint angles) and visualize inference results.
-- **bin/test_pca_cnnrnn.py**: Program to visualize the internal state of RNN using Principal Component Analysis.
-- **libs/fullBPTT.py**: Back propagation class for time series learning.
-- **log**: Folder to store weights, learning curves, and parameter information.
-- **output**: Save inference results.
+- **bin/train.py**: This program is used to load data, train models, and save the trained models.
+- **bin/test.py**: This program performs offline inference using test data (images and joint angles) and visualizes the results of the inference.
+- **bin/test_pca_cnnrnn.py**: This program visualizes the internal state of the RNN using Principal Component Analysis.
+- **libs/fullBPTT.py**: This is a `backpropagation` class used for time series learning.
+- **log**: This folder is used to store the weights, learning curves, and parameter information.
+- **output**: This folder is used to store the results of the inference.
 
 
 <!-- #################################################################################################### -->
 ----
 ## Model {#model}
-CNNRNN is a motion generation model capable of learning and inference of multimodal time series data. It predicts the image `y_image` and joint angle `y_joint` at the next time $t+1$ based on the image `xi`, joint angle `xv` and state `state` at the previous time $t$.
+CNNRNN is a motion generation model that can learn and perform inference on multimodal time series data. It predicts the image `y_image` and joint angle `y_joint` at the next time step $t+1$ based on the image `xi`, joint angle `xv`, and the state `state` at the time step $t$.
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1"
 class CNNRNN(nn.Module):
@@ -93,10 +90,9 @@ class CNNRNN(nn.Module):
 <!-- #################################################################################################### -->
 ----
 ## Backpropagation Through Time {#bptt}
-Backpropagation Through Time (BPTT) is used as the error back propagation algorithm for time series learning.
-The details of BPTT have already been described in SARNN, please refer to [here](../../model/SARNN#bptt).
+Backpropagation Through Time (BPTT) is used as the error backpropagation algorithm for time series learning in CNNRNN. The detailed explanation of BPTT has already been provided in SARNN, please refer to that [section](../../model/SARNN#bptt) for more information.
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
     def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
@@ -153,13 +149,12 @@ class fullBPTTtrainer:
 <!-- #################################################################################################### -->
 ----
 ## Training {#train}
-The main program `train.py` is used to train CNNRNN.
-When the program is run, the trained weights (pth) and Tensorboard log files are saved in the `log` folder.
-Please [see](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/bin/train.py) the comments in the code for a detailed description of how the program works.
+The main program, `train.py`, is used to train CNNRNN. When executing the program, the trained weights (pth) and Tensorboard log files are saved in the `log` folder. For a detailed understanding of the functionality of the program, please refer to the comments in the [code](https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cnnrnn/bin/train.py).
+
 
 
 ```bash
-$ cd eipl/tutorials/cnnrnn/
+$ cd eipl/zoo/cnnrnn/
 $ python3 ./bin/train.py
 [INFO] Set tag = 20230514_1958_07
 ================================
@@ -186,13 +181,12 @@ vmin : 0.0
 <!-- #################################################################################################### -->
 ----
 ## Inference {#inference}
-Check that CNNRNN has been properly trained using the test program `test.py`.
-The arguments `filename` is the path of the trained weights file, `idx` is the index of the data you want to visualize,
-`input_param` is the mixing coefficient for inference, and more info are [here](../model/test.md).
+To ensure that CNNRNN has been trained correctly, you can use the test program `test.py`. The `filename` argument should be the path to the trained weights file, while `idx` is the index of the data you want to visualize. Additionally, `input_param` is the mixing coefficient for the inference. More details can be found in the provided [documentation](../model/test.md).
+
 
 ```bash
-$ cd eipl/tutorials/cnnrnn/
-$ python3 bin/test.py --filename ./log/20230514_1958_07/CNNRNN.pth --idx 4 --input_param 1.0
+$ cd eipl/zoo/cnnrnn/
+$ python3 ./bin/test.py --filename ./log/20230514_1958_07/CNNRNN.pth --idx 4 --input_param 1.0
 
 images shape:(187, 128, 128, 3), min=0, max=255
 joints shape:(187, 8), min=-0.8595600128173828, max=1.8292399644851685
@@ -208,12 +202,8 @@ $ ls ./output/
 CNNRNN_20230514_1958_07_4_1.0.gif
 ```
 
-The following figure shows the results of inference at [unlearned position](../teach/overview.md#task).
-From left to right are the input image, the predicted image, and the predicted joint angles (dotted lines are true values).
-CNNRNN predicts the next time based on the extracted image features and robot joint angles.
-It is expected that the image features include information such as the color and position of the grasped object, and it is also important that the predicted image and robot joint angle are predicted appropriately as a set.
-However, experiments show that while the joint angles are appropriately predicted, only the robot hand is generated in the predicted image.
-Therefore, it is difficult to generate flexible motions based on object positions because the image features contain "only" information on the robot hand.
+The figure below shows the results of inference at an [untaught position](../teach/overview.md#task). The images are presented from left to right, showing the input image, the predicted image, and the predicted joint angles (with dotted lines representing the true values). CNNRNN predicts the next time step based on the extracted image features and robot joint angles. The image features are expected to include information such as the color and position of the grasped object. It is also critical that the predicted image and robot joint angles are appropriately aligned. However, experimental results indicate that while the joint angles are accurately predicted, the predicted image consists only of the robot hand. Consequently, generating flexible movements based on object positions becomes challenging because the image features only contain information about the robot hand.
+
 
 ![results_of_CNNRNN](img/cnnrnn/cnnrnn-rt.webp){: .center}
 
@@ -221,12 +211,7 @@ Therefore, it is difficult to generate flexible motions based on object position
 <!-- #################################################################################################### -->
 ----
 ## Principal Component Analysis {#pca}
-The following figure shows the results of visualizing the internal state of CNNRNN using principal component analysis.
-Each dotted line shows the time-series change of the internal state of CNNRNN, and the internal state transitions sequentially starting from the black circle.
-The color of each attractor is [object position](../teach/overview.md#task), where blue, orange, and green correspond to teaching positions A, C, and E, and red and purple correspond to unlearned positions B and D.
-Since the attractors are self-organized (aligned) for each teaching position, it can be said that properly learned movements can be generated at the teaching positions.
-On the other hand, the attractors at the unteaching position are attracted to the attractors at the teaching position, and thus cannot generate interpolated motions.
-This is due to the fact that the position information of the grasped object could not be extracted as image features.
+The figure below illustrates the visualization of the internal state of CNNRNN using Principal Component Analysis. Each dotted line represents the temporal evolution of CNNRNN's internal state, starting from the black circle. The color of each attractor corresponds to the [object position](../teach/overview.md#task), where blue, orange, and green represent teaching positions A, C, and E, while red and purple represent untaught positions B and D. The self-organization of attractors for each teaching position suggests the ability to generate well-learned movements at these positions. However, the attractors at the untaught positions are attracted to the attractors at the learning positions, making it impossible to generate interpolated movements. This occurs because the image features fail to extract the positional information of the grasped object.
 
 ![Visualize the internal state of CNNRNN using PCA](img/cnnrnn/cnnrnn_pca.webp){: .center}
 
@@ -234,24 +219,20 @@ This is due to the fact that the position information of the grasped object coul
 <!-- #################################################################################################### -->
 ----
 ## Model Improvement {#improvement}
-In CAE-RNN, generalization performance was ensured by learning various object position information using data augmentation. On the other hand, since CNNRNN learns images and joint angle information at the same time, the data augmentation method for robot joint angles corresponding to changes in image position is a challenge. The following three solutions can be proposed to obtain position generalization performance with CNNRNNs.
+In CAE-RNN, generalization performance was achieved by learning different object position information through data augmentation. In contrast, CNN-RNN learns images and joint angle information simultaneously, making it difficult to apply data augmentation to robot joint angles corresponding to changes in image position. Three potential solutions are proposed below to improve the position generalization performance of CNNRNNs.
 
 1. **Pre-training**
 
-    Only the CAE portion of the CNNRNN is extracted and pre-trained.
-    By learning only the image information using data augmentation, CAE can extract a variety of object location information.
-    Then, end-to-end learning is performed using the pre-trained weights to map images to joint angles.
-    However, since CAE needs to be trained in advance, the training man-hours are equivalent to those of CAE-RNN, so the benefit of CNNRNN is small.
+    Only the CAE part of the CNNRNN is extracted and pre-trained. By learning only the image information using data augmentation, CAE can extract a variety of object position information. Then, end-to-end learning is performed using the pre-trained weights to map images to joint angles. However, since CAE needs to be pre-trained, the training time required is the same as that of CAE-RNN, resulting in minimal benefits of using CNN-RNN.
 
 
 2. **Layer Normalization**
 
     CAE-RNN used `BatchNormalization`[@ioffe2015batch] as a normalization method to make CAE training stable and fast.
-    However, BatchNormalization has the issues that learning becomes unstable when the batch of dataset is small and it is difficult to apply to recursive neural networks.
-    Therefore, we will improve generalization performance by using `Layer Normalization`[@ba2016layer], which can stably train on small batches of data sets and time-series data.
+    However, BatchNormalization has the problems that learning becomes unstable when the batch of dataset is small and it is difficult to apply to recursive neural networks.
+    Therefore, we will improve the generalization performance by using `Layer Normalization`[@ba2016layer], which can train stably on small batches of data sets and time-series data.
 
-    The following figure visualizes the internal state of [CNNRNNLN](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py) using principal component analysis.
-    The self-organization (alignment) of attractors for each object position allows the robot to properly generate motion even at unlearned positions.
+    The figure below visualizes the internal state of [CNNRNNLN: CNNRNN with Layer Normalization](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py) using principal component analysis. The self-organization (alignment) of attractors for each object position allows the robot to generate correct motion even at untaught positions.
 
     ![Visualize the internal state of CNNRNNLN using PCA](img/cnnrnn/cnnrnnln_pca.webp){: .center}
 
@@ -259,8 +240,5 @@ In CAE-RNN, generalization performance was ensured by learning various object po
 
 3. **Spatial Attention**
 
-    Because CAE-RNN and CNNRNN were learning motions based on image features containing various information in the image (position, color, shape, background, lighting conditions, etc.), robustness during motion generation was an issue.
-    Therefore, it is possible to improve robustness by learning spatial coordinates and robot joint angles using a spatial attention mechanism that "explicitly" extracts spatial coordinates of locations (work objects and arms) important to the task from images.
-    For more information on the spatial attention mechanism, see [here](../model/SARNN.md).
-
+    Since CAE-RNN and CNNRNN learn motion based on image features containing various information (position, color, shape, background, lighting conditions, etc.), robustness during motion generation has been a concern. To address this issue, we can improve robustness by incorporating a spatial attention mechanism that "explicitly" extracts spatial coordinates of important positions (target objects and arms) from images, thus improving the learning of spatial coordinates and robot joint angles. For more information on the spatial attention mechanism, see [this link](../model/SARNN.md).
 

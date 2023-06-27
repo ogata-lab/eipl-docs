@@ -1,6 +1,6 @@
 # Overview
 
-The newly implemented layers and models will be released sequentially.
+The newly implemented layers and models will be released gradually.
 
 - [x] [Multiple Timescale Recurrent Neural Network](./MTRNN.md)
 - [x] [CAE-RNN](./CAE-RNN.md)

@@ -1,37 +1,36 @@
 # Introduction
 
-EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robot motion generation using deep predictive learning developed at [Tetsuya Ogata Laboratory](https://ogata-lab.jp/), Waseda University. [Deep predictive learning](overview.md) is a method that enables flexible motion generation for unlearned environments and work targets by predicting in real time the appropriate motion for the real world based on past learning experience. In this study, using the smart robot [AIREC (AIREC：AI-driven Robot for Embrace and Care)](https://airec-waseda.jp/en/toppage_en/) and[Open Manpulator](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/) as real robots, it is possible to learn systematically from model implementation to learning and real-time motion generation using collected visual and joint angle data. The EIPL system enables users to learn systematically from model implementation to learning and real-time motion generation using the collected visual and joint angle data. In the future, newly developed motion generation models using EIPL will be released on [Model Zoo](./zoo/overview.md). The following is an overview of each chapter.
 
+EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robot motion generation using deep predictive learning developed at the  [Ogata Laboratory](https://ogata-lab.jp/), Waseda University. [Deep predictive learning](overview.md) is a method that enables flexible motion generation for unlearned environments and work goals by predicting the appropriate motion for the real world in real time based on past learning experience. In this study, we use the humanoid robot AIREC [AIREC (AIREC：AI-driven Robot for Embrace and Care)](https://airec-waseda.jp/en/toppage_en/) and [Open Manpulator](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/) as real robots, which enables systematic learning from model implementation to learning and real-time motion generation. In the future, newly developed motion generation models using EIPL will be published in the [Model Zoo](./zoo/overview.md). Below is an overview of each chapter.
 
 
 1. [**Deep Predictive Learning**](overview/)
 
-    The concept of deep predictive learning and the three steps toward robot implementation, motion teaching, learning, and motion generation, are described.
+    This section explains the concept of deep predictive learning and outlines the three steps towards robot implementation: motion teaching, learning, and motion generation.
     
-2. [**Setup**](install/install-software)
+2. [**Set Uup**](install/install-software)
 
-    Describes how to install EIPL and check the program using pre-trained weights.
+    This section provides instructions on how to install EIPL and verify the program using pre-trained weights.
 
 3. [**Motion Teaching**](teach/overview)
 
-    Describes how to extract data from ROSbag data and create dataset. EIPL provides an object grasping motion data set using AIREC as sample data.
+    This section describes the process of extracting data from ROSbag files and creating datasets. EIPL provides a sample dataset of object grasping motion using AIREC.
 
-4. [**Train Model**](model/dataloader)
+4. [**Teaching Model**](model/dataloader)
 
-    Using the motion generation model with attention mechanism as an example, describes a series of implementation methods from model training to inference.
+    Using the attention mechanism based motion generation model as an example, this section explains the implementation steps for training the model and performing inference.
 
 5. [**Real Robot Application**](robot/overview)
 
-    Describes a series of procedures from motion teaching to real robot control using Open Manpulator.
+    This section provides a detailed explanation of the procedures involved in applying motion learning to real robot control using Open Manpulator.
 
-6. [**ModelZoo**](zoo/overview)
+6. [**Model Zoo**](zoo/overview)
 
-    The motion generation models developed using EIPL will be released in a phased manner.
+    The motion generation models developed with EIPL will be gradually released in the ModelZoo.
 
-7. [**Tips**](tips/normalization/)
+7. [**Tips and Tricks**](tips/normalization/)
 
-    Describes the know-how of motion learning.
-
+    This section provides valuable insights and tips on motion learning techniques.
 
 
 

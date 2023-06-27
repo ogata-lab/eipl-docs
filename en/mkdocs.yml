@@ -7,12 +7,12 @@ copyright: 'Copyright &copy; 2023 Ogata Laboratory, Waseda University'
 nav:
   - 'Introduction': 'index.md'
   - 'Deep Predictive Learning': 'overview.md'
-  - 'Setup':
+  - 'Set Up':
     - 'Install': 'install/install-software.md'
     - 'Quick Start': 'install/quick-start.md'
   - 'Motion Teaching':
     - 'Overview': 'teach/overview.md'
-    - 'Setup': 'teach/environment.md'
+    - 'Setup': 'teach/setup.md'
     - 'Generate Dataset': 'teach/dataset.md'
   - 'Train Model':
     - 'Dataloader': 'model/dataloader.md'
@@ -26,7 +26,7 @@ nav:
     - 'MTRNN': 'zoo/MTRNN.md'
     - 'CAE-RNN': 'zoo/CAE-RNN.md'
     - 'CNNRNN': 'zoo/CNNRNN.md'
-  - 'Tips':
+  - 'Tips and Tricks':
     - 'Pre-process': 'tips/normalization.md'
     - 'Image Augmentation': 'tips/augmentation.md'
   - 'FAQ': 'faq.md'

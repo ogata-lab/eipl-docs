@@ -1,15 +1,10 @@
 # Model Overview {#model_overview}
 
-SARNN "explicitly" extracts the spatial coordinates of task-critical positions (work objects and arms) from images and learns the coordinates and joint angles of the robot, thereby significantly improving robustness to changes in object position[@ichiwara2022contact].
-The figure below shows the network structure of SARNN, which consists of an Encoder that extracts image features $f_t$ and object position coordinates $p_t$ from camera images $i_t$, a Recurrent that learns time-series changes in the robot's joint angles $a_t$ and object position coordinates $p_t$, and a Decoder that reconstructs images based on image features $f_t$ and heat maps $\hat h_{t+1}$.
+SARNN "explicitly" extracts the spatial coordinates of critical positions in the task, such as target objects and arms, from images, and learns the coordinates along with the robot's joint angles of the robot[@ichiwara2022contact]. This greatly improves robustness to changes in the object's position. The figure below illustrates the network structure of SARNN, which consists of an encoder responsible for extracting image features $f_t$ and object position coordinates $p_t$ from camera images $i_t$, a recurrent module that learns the temporal changes in the robot's joint angles and object position coordinates $p_t$, and a decoder that reconstructs images based on the image features $f_t$ and heat maps $\hat h_{t+1}$.
 
-The CNN layers (Convolution layer and Transposed convolutional layer) of the upper part of the Encoder and Decoder extract information about the color and shape of objects by extracting and reconstructing image features.
-The lower CNN extracts 2D position information of objects by using the Spatial Softmax layer.
-The Recurrent part predicts only the position information $p_{t+1}$ of the object, which does not contain enough information to reconstruct the image by Decoder.
-Therefore, a heat map $\hat h_{t+1}$ centered on the predicted coordinate information $p_{t+1}$ is generated, and by multiplying it with the image features extracted by the CNN in the upper section, a predicted image $\hat i_{t+1}$ is generated based on the information around the predicted attention point.
+The upper part of the encoder and decoder consists of CNN layers, including Convolutional and Transposed Convolutional layers, which extract and reconstruct color and shape information of objects from image features. The lower part of the CNN uses the Spatial Softmax layer to extract 2D position information of objects. The Recurrent module only predicts the position information $p_{t+1}$ of the object, which alone is not sufficient to reconstruct the image using the decoder. Therefore, a heat map $\hat h_{t+1}$ centered on the predicted coordinate information $p_{t+1}$ is generated. By multiplying it with the image features extracted by the CNN in the upper part, a predicted image $\hat i_{t+1}$ is generated based on the information around the predicted attention point.
 
-
-Here, we show the implementation method and model classes of SARNN's characteristic features: [spatial attention mechanism](#spatial_softmax), [heat-map generator](#heatmap), [loss scheduler](#loss_scheduler), and [back-propagation method](#bptt).
+Here, we show the implementation method and model classes for the distinctive features of SARNN: [the Spatial Attention Mechanism](#spatial_softmax), [the Heatmap Generator](#heatmap), [the Loss Scheduler](#loss_scheduler), and [the Backpropagation Through Time](#bptt).
 
 ![Network structure of SARNN](img/sarnn.webp){: .center}
 
@@ -20,12 +15,8 @@ Here, we show the implementation method and model classes of SARNN's characteris
 <!-- #################################################################################################### -->
 ----
 ## Spatial Attention Mechanism  {#spatial_softmax}
-The spatial attention mechanism emphasizes important information (large pixel values) by multiplying the feature map by Softmax, and then extracts the position informations of the emphasized pixels using Position-Encoding.
-The following figure shows the processing results of the spatial attention mechanism, where important position informations (red dots) is extracted by multiplying a "pseudo" feature map generated using two randomly generated gaussian distributions by Softmax.
-Since CNN feature maps contain a wide variety of information, they are not enhanced by simply multiplying Softmax.
-In order to further enhance the features, it is important to use [Softmax with temperature](https://en.wikipedia.org/wiki/Softmax_function).
-You can check the effect of Softmax with temperature by adjusting the parameter `temperature` in the sample program below.
-The red dots in the figure indicate the positions extracted by spatial softmax, and since they are generated at the center of one of the gaussian distributions, the position informations can be extracted appropriately.
+The spatial attention mechanism emphasizes important information (pixels with large values) by multiplying the feature map by softmax. It then extracts the position information of the highlighted pixels using position encoding. The figure below illustrates the results of the spatial attention mechanism, where important position information (represented by red dots) is extracted by multiplying a "pseudo" feature map generated by two randomly generated Gaussian distributions with Softmax. Since CNN feature maps contain diverse information, they are not effectively enhanced by a simple softmax multiplication. To further enhance the features, it is critical to use [Softmax with temperature](https://en.wikipedia.org/wiki/Softmax_function). The effect of Softmax with temperature can be observed by adjusting the `temperature` parameter in the provided example program. The red dots in the figure indicate the positions extracted by spatial Softmax, and since they are generated at the center of one of the Gaussian distributions, the position information can be extracted accurately.
+
 
 
 ![results_of_spatial_attention](img/spatial_softmax.webp){: .center}
@@ -70,10 +61,7 @@ class SpatialSoftmax(nn.Module):
 <!-- #################################################################################################### -->
 ----
 ## Heatmap Generator {#heatmap}
-The heatmap generator generates a heatmap centered on the location information (specific pixel coordinates).
-The following figure shows a heatmap generated by the heatmap generator centered on the location extracted by the spatial attention mechanism (red dot in the figure).
-The size of the heatmap can be set using the `heatmap_size` parameter. If the heatmap size is small, only the information near the attention point is considered, and if the heatmap size is large, the image is generated with some of the surrounding information.
-Note that if the heatmap is too small, the corresponding predictive image $\hat i_{t+1}$ cannot be generated, and if it is too large, the parameter must be adjusted to be sensitive to changes in the environment (background and obstacles).
+The Heatmap Generator generates a heatmap centered on specific pixel coordinates that represent the position information. The figure below illustrates a heatmap generated by the heatmap generator, centered on the position extracted by the spatial attention mechanism (indicated by the red dot in the figure). The size of the heatmap can be adjusted using the `heatmap_size` parameter. A smaller heatmap size considers only the information near the attention point, while a larger size includes some surrounding information in the generated image. It is important to note that if the heatmap is too small, the corresponding predictive image $\hat i_{t+1}$ may not be generated, while if it is too large, adjustments to the sensitivity parameter may be required to account for changes in the environment, such as background and obstacles.
 
 
 ![heatmap_generator](img/heatmap.webp){: .center}
@@ -104,21 +92,14 @@ class InverseSpatialSoftmax(nn.Module):
 <!-- #################################################################################################### -->
 ----
 ## Loss Scheduler {#loss_scheduler} 
-The loss scheduler is a `callback` function that gradually weights the prediction error of the attention point according to the epoch, and is an important feature for training SARNN.
-The following figure shows the weighting curve for each `curve_name` argument, where the horizontal axis is the number of epochs and the vertical axis is the weighting value.
-Loss weighting starts from 0 and returns the maximum weighting value (e.g. 0.1) at the epoch set by `decay_end` (e.g. 100).
-Note that the maximum weighting value is specified by the `__call__` method.
-This class supports the five types of curves shown in the figure (linear, S-curve, inverse S-curve, deceleration, and acceleration interpolation).
-
+The loss scheduler is a `callback` function that gradually assigns weights to the prediction error of the attention point based on the number of epochs. It is an important feature for SARNN training. The figure below shows the weighting curve for each `curve_name` argument, where the horizontal axis represents the number of epochs and the vertical axis represents the weighting value. The decay weighting starts at 0 and gradually reaches the maximum weighting value (e.g. 0.1) at the epoch specified by `decay_end` (e.g. 100). It is important to note that the maximum weighting value is determined by the `__call__` method. This class supports five types of curves, as shown in the figure: linear, S-curve, inverse S-curve, decay, and acceleration interpolation.
 
 ![loss_schedular](img/loss_scheduler.webp){: .center}
 
-The reason for using the error scheduler for training SARNN is to allow the filters of the CNN to be "freely" trained in the early stages of training.
-Since the Encoder and Decoder weights of SARNN are initialized randomly, visual features are not properly extracted/learned in the early learning phase.
 
-If the attention prediction error obtained in such a situation is propagated backward, the attention point will not be correctly directed to the work object, and the attention point that minimizes the "prediction image error" will be learned.
-Therefore, it is possible to obtain an attention point that focuses only on the work object by ignoring the prediction error of the attention point in the initial stage of learning, and learning the error of the attention point prediction when the filter of the CNN finishes learning the features.
-The `decay_end` adjusts the learning timing of the CNN, which is usually set around 1000 epochs, but may need to be adjusted depending on the task.
+The reason for using the error scheduler in SARNN training is to allow the CNN filters to be trained more freely in the early stages. Since the encoder and decoder weights of SARNN are randomly initialized, visual features may not be correctly extracted or learned during the initial learning phase.
+
+When the prediction error of attention obtained in such a situation is backpropagated, the attention point may not be correctly directed to the work object. Instead, the attention point that minimizes the "prediction image error" is learned. Therefore, by ignoring the prediction error of the attention point at the initial stage of learning, it is possible to obtain an attention point that focuses only on the work object. The attention point prediction error is then learned when the CNN filters have finished learning features. The `decay_end` parameter sets the learning time of the CNN, which is typically set to about 1000 epochs, but may need to be adjusted depending on the task.
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/utils/callback.py>[SOURCE] callback.py</a>" linenums="1"
@@ -183,22 +164,12 @@ class LossScheduler:
 <!-- #################################################################################################### -->
 ----
 ## Backpropagation Through Time {#bptt}
-We use Backpropagation Through Time (BPTT) to learn the time series of the model[@rumelhart1986learning].
-In RNN, the internal state $h_{t}$ at each time depends on the internal state $h_{t-1}$ at the previous time $t-1$.
-In BPTT, the parameters are updated at each time by calculating the loss at each time and then calculating the gradient backward.
-Specifically, image $i_t$ and joint angle $a_{t}$ are input to the model, and the next state ($\hat i_{t+1}$, $ \hat a_{t+1}$) is output (predicted).
-The mean squared error `nn.MSELoss` of the predictions and true values ($f_{t+1}$, $a_{t+1}$) for all sequences is calculated and error propagation is performed based on the loss value `loss`.
-The parameters at each time are used at all times after that time, so back propagation is performed with temporal expansion.
+We use Backpropagation Through Time (BPTT) to learn the time series of the model[@rumelhart1986learning]. In an RNN, the internal state $h_{t}$ at each time step depends on the internal state $h_{t-1}$ at the previous time step $t-1$. In BPTT, the parameters are updated at each time step by calculating the loss at each time step and then calculating the gradients backwards. Specifically, the model takes input images $i_t$ and joint angles $a_{t}$ and outputs the next state ($\hat i_{t+1}$, $\hat a_{t+1}$). The mean squared error (MSE) loss between the predictions and the true values ($f_{t+1}$, $a_{t+1}$) for all sequences is computed using `nn.MSELoss`, and error propagation is performed based on the `loss` value. Since the parameters at each time step are used for all subsequent time steps, backpropagation is performed with temporal expansion.
 
-Lines 47-54 show that SARNN computes not only the image loss and joint angle loss, but also the prediction loss of the attention point.
-Since the true value of the attention point does not exist, the bi-directional loss[@hiruma2022deep] is used to learn the attention point.
-Specifically, the model updates the weights to minimize the loss between the attention point $\hat p_{t+1}$ predicted by the RNN at time $t$ and the attention point $p_{t+1}$ extracted by the CNN at time $t+1$. 
-Based on this bidirectional loss, LSTM learns the time-series relationship between attention points and joint angles, which not only eliminates redundant image predictions, but also induces the CNN to predict attention points that are important for motion prediction.
+Lines 47-54 show that SARNN calculates not only the image loss and the joint angle loss, but also the prediction loss of the attention point. Since the true value of the attention point is not available, the bidirectional loss [@hiruma2022deep] is used to learn the attention point. Specifically, the model updates the weights to minimize the loss between the attention point $\hat p_{t+1}$ predicted by the RNN at each time step and the attention point $p_{t+1}$ extracted by the CNN at the same time step $t+1$. Based on this bidirectional loss, the LSTM learns the time-series relationship between attention points and joint angles. This approach not only eliminates redundant image predictions, but also encourages the CNN to predict attention points that are critical for motion prediction.
 
-Also, `loss_weights` weights each modality loss and determines which modality to focus on for learning. 
-In deep prediction learning, the joint angles are intensively learned because the predicted joint angles are directly related to the robot's motion commands.
-However, if image information is not sufficiently learned, integrated learning of images and joint angles cannot be performed properly (joint angle prediction corresponding to image information becomes difficult), thus the weighting coefficients must be adjusted according to the model and task.
-In our experience, the weighting factor is often set to 1.0 for all or 0.1 for images only.
+In addition, `loss_weights` assign weights to each modality loss, thus determining the focus of learning for each modality. In deep predictive learning, joint angles are learned intensively because they directly affect the robot's motion commands. However, if the image information is not adequately learned, the integration of image and joint angle learning may not occur properly, making joint angle prediction corresponding to the image information difficult. Therefore, the weighting coefficients need to be adjusted based on the model and the task. In our experience, the weighting factor is often set to 1.0 for all modalities or 0.1 for images only.
+
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"

@@ -14,7 +14,7 @@ from eipl.utils import get_activation_fn
 class SARNN(nn.Module):
     #:: SARNN
     """SARNN: Spatial Attention with Recurrent Neural Network.
-    This model "explicitly" extracts positions from the image that are important to the task, such as the work object or arm position,
+    This model "explicitly" extracts positions from the image that are important to the task, such as the target object or arm position,
     and learns the time-series relationship between these positions and the robot's joint angles.
     The robot is able to generate robust motions in response to changes in object position and lighting.
 

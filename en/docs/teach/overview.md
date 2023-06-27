@@ -1,15 +1,13 @@
 # Overview
 
-This section describes how to create a dataset for deep predictive learning from robot sensor data `rosbag` obtained from motion instruction using ROS.
-For better understanding, it is recommended to [download (1.3GB)](https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar) the collected data and scripts and run them according to the manual.
+This section provides instructions on how to create a dataset for deep predictive learning using robot sensor data collected by the ROS system. For better understanding, it is recommended to download [the collected data and scripts (1.3GB)](https://dl.dropboxusercontent.com/s/90wkfttf9w0bz0t/rosbag.tar) and follow the instructions to run them.
+
+
 
 <!-- ******************************** -->
 ----
 ## Experimental Task {#task}
-
-The AIREC (AI-driven Robot for Embrace and Care), a smart robot manufactured by [Tokyo Robotics](https://robotics.tokyo/), is used to teach object grasping.
-The following figure shows an overview of the task. Based on the object grasping experience at the teaching positions shown in the figure (three circled points), the generalization performance at the unlearned positions (two points) is evaluated.
-The training data was collected 4 times for each teaching position for a total of 12 data, and the test data was collected once for each of the 5 locations, including the unlearned positions, for a total of 5 data.
+AIREC (AI-driven Robot for Embrace and Care), a humanoid robot developed by [Tokyo Robotics](https://robotics.tokyo/), is used to teach object grasping. The figure below shows an overview of the task. The generalization performance is evaluated by comparing the object grasping experience at the teaching positions (three circled points) with the unlearned positions (two points) shown in the figure. Training data are collected four times for each teaching position, for a total of 12 data points. Test data is collected once for each of the five positions, including the unlearned positions, for a total of five data
 
 
 ![task_overview](img/teaching.webp){: .center}
@@ -18,10 +16,9 @@ The training data was collected 4 times for each teaching position for a total o
 <!-- ******************************** -->
 ----
 ## Motion Teaching {#teaching}
-AIREC is a robot system that enables bilateral teleoperation as shown below. The operator can teach a multi-degree-of-freedom robot more intuitively by teaching its motion based on the robot visual image displayed on the monitor and force feedback from the robot. Here, the sensor information (joint angle, camera image, torque information, etc.) of the robot when teaching a task using the teleoperation device is saved in 'rosbag' format, and a dataset is created for the machine learning model in the following sections.
+AIREC is a robotic system that enables bilateral teleoperation, as shown below. The operator can teach a multi-degree of freedom robot more intuitively by instructing its motion based on the visual image of the robot displayed on the monitor and receiving force feedback from the robot. During the task teaching process using the teleoperation device, sensor information such as joint angles, camera images, torque information, etc. is stored in the "rosbag" format and a dataset is created for the deep predictive learning model in the following sections.
 
-Note that it is possible to teach motion to a robot without such a specialized device.
-In the [Real Robot Application section](../robot/overview.md), two types of motion teaching methods using OpenManipulator are described: leader-follower system and joystick.
+Note that it is possible to teach motion to a robot without using such specialized equipment.  [The Real Robot Application section](../robot/overview.md) describes two motion teaching methods using OpenManipulator: the leader-follower system and joystick control.
 
 
 <html lang="ja">

@@ -119,7 +119,7 @@ CAEの学習過程では、ロボットのカメラ画像（$i_t$） を入力�
 この自己回帰的な学習により、従来のロボティクスで必要であった画像のための詳細なモデル設計が不要となる。
 なお、実世界の多様なノイズに対しロバストな画像特徴量を抽出するために、[データ拡張](../tips/augmentation.md) を用いることで、輝度やコントラスト、そして位置をランダムに変化させた画像をモデルに学習させる。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1" hl_lines="27-33"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1" hl_lines="27-33"
 class Trainer:
     def __init__(self, model, optimizer, device="cpu"):
         self.device = device
@@ -168,11 +168,11 @@ class Trainer:
 フォルダには学習済みの重み（pth）とTensorBoardのログファイルが保存される。
 このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
 また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する（`save_ckpt=True`）。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py)ください。
+プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/train.py)ください。
 
 ```bash
-$ cd eipl/tutorials/cae/
-$ python3 train.py
+$ cd eipl/zoo/cae/
+$ python3 ./bin/train.py
 [INFO] Set tag = 20230427_1316_29
 ================================
 batch_size : 128
@@ -205,8 +205,8 @@ CAEが適切に学習されたかを確認するために、テストプログ�
 
 
 ```bash
-$ cd eipl/tutorials/cae/
-$ python3 test.py --filename ./log/20230424_1107_01/CAEBN.pth --idx 4
+$ cd eipl/zoo/cae/
+$ python3 ./bin/test.py --filename ./log/20230424_1107_01/CAEBN.pth --idx 4
 $ ls output/
 CAEBN_20230424_1107_01_4.gif
 ```
@@ -226,8 +226,8 @@ RNNで画像特徴量とロボット関節角度の時系列学習を行うた�
 なお、関節角度を改めて保存する理由として、RNNの学習を行う際にデータセットの読み込みを容易にするためである。
 
 ```bash
-$ cd eipl/tutorials/cae/
-$ python3 extract.py ./log/20230424_1107_01/CAEBN.pth
+$ cd eipl/zoo/cae/
+$ python3 ./bin/extract.py --filename ./log/20230424_1107_01/CAEBN.pth
 [INFO] train data
 ==================================================
 Shape of joints angle: torch.Size([12, 187, 8])
@@ -255,7 +255,7 @@ CAEで抽出された画像特徴量は、ユーザが指定した範囲内に�
 しかしCAEBNは、活性化関数に `ReLU` を用いているため画像特徴量の上下限値は未定である。
 そこで25行目では、抽出した学習・テストデータの画像特徴量から最大値と最小値を計算することで、画像特徴量の上下限を決定する。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/extract.py>[SOURCE] extract.py</a>" linenums="1" hl_lines="4 25"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/cae/bin/extract.py>[SOURCE] extract.py</a>" linenums="1" hl_lines="4 25"
     # extract image feature
     feature_list = []
     for i in range(N):
@@ -353,7 +353,7 @@ Backpropagation Through Time（BPTT）とは、RNNにおいて使用される誤
 BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
     def __init__(self, model, optimizer, device="cpu"):
         self.device = device
@@ -408,7 +408,7 @@ CAEで抽出した画像特徴量とロボット関節角度をRNNで学習す�
 15-16行目に示す通り、入力情報にガウシアンノイズを加える。
 予測値はノイズ加算前の元データに近くなるように学習を行うことで、実世界で動作予測する際に入力情報にノイズが付与されたとしても、適切な動作指令を予測することが可能である。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="15-16"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="15-16"
 class TimeSeriesDataSet(Dataset):
     def __init__(self, feats, joints, minmax=[0.1, 0.9], stdev=0.02):
         self.stdev = stdev
@@ -440,10 +440,10 @@ class TimeSeriesDataSet(Dataset):
 `libs/fullBPTT.py`、 `libs/dataloader.py`、そしてすでに実装されているメインプログラム `train.py` を使用して、RNNを学習する。
 モデルは実装済みのBasicLSTMもしくはBasicMTRNNを用い、引数で選択することが可能である。
 CAE同様、プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py)ください。
+プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/zoo/rnn/bin/train.py)ください。
 
 ```bash 
-$ cd eipl/tutorials/rnn/
+$ cd eipl/zoo/rnn/
 $ python3 ./bin/train.py --device -1
 [INFO] Set tag = 20230510_0134_03
 ================================
@@ -476,7 +476,7 @@ RNNが適切に学習されたかを確認するために、テストプログ�
 図中の黒点線は真値、色線は予測値を表しており、ほぼ一致していることから適切に動作学習ができたといえる。
 
 ```bash 
-$ cd eipl/tutorials/rnn/
+$ cd eipl/zoo/rnn/
 $ python3 ./bin/test.py --filename ./log/20230510_0134_03/LSTM.pth --idx 4
 $ ls output/
 LSTM_20230510_0134_03_4.gif
@@ -493,7 +493,7 @@ LSTM_20230510_0134_03_4.gif
 主成分分析を概要と具体的な実装は[こちら](../model/test.md#pca)を参照されたい。
 
 ```bash
-$ cd eipl/tutorials/rnn/
+$ cd eipl/zoo/rnn/
 $ python3 ./bin/test_pca_rnn.py --filename log/20230510_0134_03/LSTM.pth
 $ ls output/
 PCA_LSTM_20230510_0134_03.gif
