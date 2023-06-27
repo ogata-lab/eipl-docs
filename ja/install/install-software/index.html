@@ -818,14 +818,12 @@
 
 
 <h1 id="_1">概要</h1>
-<p>EPILは、公式的にLinux（Ubuntu 20.04）とPython3.8をサポートしている。
-深層学習フレームワークとしてはPytorchを採用しており、最新版の <a href="https://pytorch.org/get-started/locally/">pytorch</a> をインストールすることを推奨する。
+<p>深層学習フレームワークとしてはPytorchを採用しており、最新版の <a href="https://pytorch.org/get-started/locally/">pytorch</a> をインストールすることを推奨する。
 特に、Pytorch 2.0以上は、事前にコンパイルされたことにより、学習速度を向上させ、GPUメモリの使用率を低減させるため、大規模なモデルの学習を高速に実行可能である。
 なお、CUDAやNvidiaドライバーは利用するPytorchの<a href="https://pytorch.org/get-started/previous-versions/">バージョン</a>に合わせてインストールする必要がある。</p>
 <hr />
 <h2 id="_2">ファイル</h2>
-<p>本ライブラリは以下のように構成される。
-<code>layer</code> と <code>model</code> の一部は <a href="https://github.com/TylerYep/torchinfo">torchinfo</a>を用いて、モデル構造を可視化することで検証を行っている。</p>
+<p>本ライブラリは以下のように構成される。</p>
 <ul>
 <li><strong>data</strong>: サンプルデータのダウンロードや、モデル学習のためのDataloader</li>
 <li><strong>layer</strong>: <a href="../../zoo/MTRNN/">階層型RNN</a>や<a href="../../model/SARNN/#spatial_softmax">空間注意機構</a>などを実装</li>

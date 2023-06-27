@@ -825,16 +825,14 @@
 <h1 id="faq">FAQ</h1>
 <h2 id="q-motion-is-not-smooth">Q. Motion is not smooth.</h2>
 <p>To generate stable and smooth motion against real-world noise, the sensor information at time $t$ is mixed with the predicted value from the previous time $t-1$ in a certain ratio and then fed into the RNN. This process acts as a low-pass filter, allowing the predicted values from the previous time to supplement the motion prediction even in the presence of noisy sensor values. It is important to note that if the mixing factor (<code>input_param</code>) is too small, it becomes difficult to modify the motion based on real sensor information, resulting in reduced robustness to position changes. When <code>input_param=0.0</code>, the motion is generated based solely on the sensor information obtained at the initial time. Below is an example implementation that shows data mixing using the robot's camera image and joint angles.</p>
-<div class="language-text highlight"><pre><span></span><code>```python
-x_image, x_joint = robot.get_sensor_data()
-
-if loop_ct &gt; 1:
-    x_image = x_image * input_param + y_image * (1.0-input_param)
-    x_joint = x_joint * input_param + y_joint * (1.0-input_param)
-
-y_image , y_joint, state = mode(x_image, x_joint, state)
-```
-</code></pre></div>
+<div class="language-python highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">x_image</span><span class="p">,</span> <span class="n">x_joint</span> <span class="o">=</span> <span class="n">robot</span><span class="o">.</span><span class="n">get_sensor_data</span><span class="p">()</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="k">if</span> <span class="n">loop_ct</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">x_image</span> <span class="o">=</span> <span class="n">x_image</span> <span class="o">*</span> <span class="n">input_param</span> <span class="o">+</span> <span class="n">y_image</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">input_param</span><span class="p">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">x_joint</span> <span class="o">=</span> <span class="n">x_joint</span> <span class="o">*</span> <span class="n">input_param</span> <span class="o">+</span> <span class="n">y_joint</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">input_param</span><span class="p">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="n">y_image</span> <span class="p">,</span> <span class="n">y_joint</span><span class="p">,</span> <span class="n">state</span> <span class="o">=</span> <span class="n">mode</span><span class="p">(</span><span class="n">x_image</span><span class="p">,</span> <span class="n">x_joint</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+</span></code></pre></div>
 <h2 id="q-the-predicted-image-looks-abnormal">Q. The predicted image looks abnormal.</h2>
 <p>When applying a trained model to a real robot, there may be problems such as objects not being visible in the predicted image, or the image being noisy. This could be due to automatic changes in camera parameters (e.g. white balance). To avoid this, it is recommended to fix the camera parameters during motion teaching, or to adjust the inference camera parameters to match the visual image during motion teaching.</p>
 <h2 id="q-the-model-does-not-focus-on-the-object">Q. The model does not focus on the object.</h2>

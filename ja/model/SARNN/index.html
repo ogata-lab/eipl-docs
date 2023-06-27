@@ -844,7 +844,7 @@
   
 
 
-<h1 id="model_overview">モデル概要</h1>
+<h1 id="model_overview">概要</h1>
 <p>SARNNは、画像からタスクに重要な位置（作業対象物やアーム）の空間座標を「明示的」に抽出し、その座標とロボットの関節角度を学習することで、対象物の位置変化に対するロバスト性を大幅に向上させた<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
 下図はSARNNのネットワーク構造を示しており、カメラ画像 $i_t$ から画像特徴量 $f_t$ と物体の位置座標 $p_t$ を抽出するEncoder部、ロボットの関節角度 $a_t$ と物体の位置情報の時系列変化を学習するRecurrent部、そして画像特徴量 $f_t$ とヒートマップ $\hat h_{t+1}$ に基づいて画像を再構成するDecoder部から構成される。
 Encoder上段とDecoderのCNN 層（Convolution layer and Transposed convolutional layer）は、画像の特徴量抽出と再構成をすることで物体の色や形に関する情報を抽出する。
