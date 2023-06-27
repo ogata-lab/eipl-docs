@@ -824,7 +824,6 @@
 一方で関節正規化を行った場合、関節毎に正規化を行うため大まかな動き（例えば灰色波形）と細かい動き（青色波形）の両方が顕著になっている。
 これにより、全体正規化よりも高精度にロボットの動作を学習することが可能である。</p>
 <p><a href="../img/joint_norm.png"><img alt="joint_norm" src="../img/joint_norm.png" /></a></p>
-<p>:download:<code>Download joint_normalization.py &lt;./src/joint_norm.py&gt;</code></p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>タスクによっては、全く動かないもしくは変化量がごく僅かな関節もある。そのような関節に対し関節正規化を適用した場合、正規化後の波形が大きく乱れるため学習に悪影響を及ぼす場合がある。正規化後の波形を確認の上、そのような関節波形がある場合、手動で正規化範囲を調整することを推奨する。またトルクや電流値のように、元々ノイジーなデータに対し関節正規化は適さないことに注意されたい。</p>

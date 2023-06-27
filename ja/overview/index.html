@@ -825,7 +825,7 @@
 <h1 id="dpl">深層予測学習</h1>
 <h2 id="dpl-overview">概要</h2>
 <p>深層予測学習（Deep Predictive Learning）とは、脳の多様な機能を統一的に説明する自由エネルギー原理を参考に開発されたロボット動作生成手法である<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。
-遠隔操作などを用いて実世界でロボットが動作を経験した際の運動と感覚の時系列情報を用いて、時刻($t$)と次時刻($t$+1)の感覚運動情報の予測誤差が最小になるように再起結合型神経回路モデル（Recurrent Neural Network: RNN）を学習する。
+遠隔操作などを用いて実世界でロボットが動作を経験した際の運動と感覚の時系列情報を用いて、時刻($t$)と次時刻($t+1$)の感覚運動情報の予測誤差が最小になるように再起結合型神経回路モデル（Recurrent Neural Network: RNN）を学習する。
 実行時には、ロボットの感覚運動情報からリアルタイムに近未来の感覚と動作を予測し、RNN内のアトラクタの引き込み作用により結果的に予測誤差が最小になるような動作を実行することが可能である。
 下図は深層予測学習のロボット実装を示しており、動作教示、学習、動作生成の3ステップから構成される。</p>
 <p><a href="../img/dpl-overview.webp"><img alt="深層予測学習の概要図" src="../img/dpl-overview.webp" /></a></p>
@@ -835,9 +835,12 @@
 そのため、学習データにはロボットの身体と環境とのインタラクションに関する情報が含まれている必要がある。
 また、学習データの量と質はモデルの性能に大きく影響するため、高品質なデモンストレーションデータを効率的に収集できることが望ましい。</p>
 <p>ステップ１では、所望の動作をロボットに教示し、その時の感覚運動情報を一定のサンプリングレートで記録することで学習データを収集する。
-代表的な動作教示方法として、プログラミングによる動作記述 <sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup><em> 、ダイレクトティーチング <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></em> 、テレオペレーション <sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup><em> <sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></em> などが挙げられる。
-プログラミングによる動作記述は簡単に動作教示可能である反面、複雑かつ長期の動作をロボットに行わせる際には記述が複雑になる。
-一方で、ダイレクトティーチングやテレオペレーションのように、人がロボットを操縦して教示を行うことで、緻密なモデリングやパラメータ調整などを必要とせずに学習データを収集することが可能である。</p>
+代表的な動作教示方法として、プログラミングによる動作記述<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> 、ダイレクトティーチング<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>、テレオペレーション<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup>などが挙げられる。
+ロボット用プログラミング言語などを用いて事前に動作を記述しておくことは最も単純な教示手法であるが、長期の動作をロボットに行わせる際には記述が複雑になり、実現できない可能性がある。
+一方、人間がロボットを操作して動作教示を行うことで、精密なモデリングやパラメータ調整などを必要とせずに訓練データを取得することが可能である。
+中でも、実際のロボット視点からマニピュレータを遠隔操作する手法（Wizard of Oz<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup>）はタスクに対する人間の操作スキルを直観的にロボットに教示できるため望ましい。
+作業者は自分自身の身体を操るようにロボットを操縦することで、環境との自然なインタラクションを行う。
+また、操作者はセンサ情報から得た情報をもとに動作を決定するため、取得した教示データセットには動作学習に必要な情報が含まれると考えられ、モデルの訓練に有効なデータの獲得が期待される。</p>
 <hr />
 <h2 id="dpl-train">学習</h2>
 <p>ステップ2の深層予測学習では、実世界でロボットが動作を経験した時の運動と感覚の時系列を学習する。
@@ -854,12 +857,10 @@
 具体的には、モデルの前向き計算を毎ステップ行うことで、RNNは内部で保持するコンテキスト情報（$c_t$）と入力情報（$x_t$）に基づいて、次ステップのロボット状態（$\hat x_{t+1} $）を予測する。
 その後、RNNの予測値を目標状態として各関節の制御を行う。
 上記の作業をオンラインで繰り返し行うことで、逐次的にロボットからセンサ情報を取得し、モデルによる予測、ロボットへの制御コマンドの送信を行う。
-RNNはコンテキスト層の各ニューロンの状態を逐次的に変化させながらロボットの感覚運動情報を予測する。
-このときRNNが持つ引き込み作用により、結果的に、予測誤差が最小になるような行動遷移が起こり、予測感覚と現時点の感覚入力の融合（Perceptual Inference）、さらに生成動作の変化（Active Inference）が起こる。
-これにより、柔軟物のハンドリングなど複数のタスクを多自由度ロボットを用いて実世界で実現することが可能である<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
+この予測結果や実環境との予測誤差に基づいて、ロボットは入力に対して動的に対応する動作を生成可能である。</p>
 <p>深層予測学習モデルを動作生成に用いる利点の一つに、オンライン時における動作の生成速度が挙げられる。
 提案するフレームワークは軽量なモデルから構成されており、動作生成時に必要な計算時間・コストが少ない。
-これまでの各機能をコンポーネント化して実装することで、タスクやロボットハードの変更・デバイスの追加などに応じて実装したシステムを容易に使いまわすことも可能である <sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup>。</p>
+これまでの各機能をコンポーネント化して実装することで、タスクやロボットハードの変更・デバイスの追加などに応じて実装したシステムを容易に使いまわすことも可能である<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</p>
 <div class="footnote">
 <hr />
 <ol>
@@ -873,13 +874,10 @@ RNNはコンテキスト層の各ニューロンの状態を逐次的に変化�
 <p>Hideyuki Ichiwara, Hiroshi Ito, Kenjiro Yamamoto, Hiroki Mori, and Tetsuya Ogata. Contact-rich manipulation of a flexible object based on deep predictive learning using vision and tactility. In <em>2022 International Conference on Robotics and Automation (ICRA)</em>, 5375–5381. IEEE, 2022.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p>Pin-Chu Yang, Kazuma Sasaki, Kanata Suzuki, Kei Kase, Shigeki Sugano, and Tetsuya Ogata. Repeatable folding task by humanoid robot worker using deep learning. <em>IEEE Robotics and Automation Letters</em>, 2(2):397–403, 2016.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p>Pin-Chu Yang, Kazuma Sasaki, Kanata Suzuki, Kei Kase, Shigeki Sugano, and Tetsuya Ogata. Repeatable folding task by humanoid robot worker using deep learning. <em>IEEE Robotics and Automation Letters</em>, 2(2):397–403, 2016.&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>Namiko Saito, Tetsuya Ogata, Satoshi Funabashi, Hiroki Mori, and Shigeki Sugano. How to select and use tools?: active perception of target objects using multimodal deep learning. <em>IEEE Robotics and Automation Letters</em>, 6(2):2517–2524, 2021.&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
-</li>
-<li id="fn:6">
-<p>Momomi Kanamura, Kanata Suzuki, Yuki Suga, and Tetsuya Ogata. Development of a basic educational kit for robotic system with deep neural networks. <em>Sensors</em>, 21(11):3804, 2021.&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+<p>Momomi Kanamura, Kanata Suzuki, Yuki Suga, and Tetsuya Ogata. Development of a basic educational kit for robotic system with deep neural networks. <em>Sensors</em>, 21(11):3804, 2021.&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

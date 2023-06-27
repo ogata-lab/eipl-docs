@@ -816,7 +816,7 @@ For better understanding, it is recommended to <a href="https://dl.dropboxuserco
 <!-- ******************************** -->
 <hr />
 <h2 id="task">Experimental Task</h2>
-<p>The AIREC(AI-driven Robot for Embrace and Care), a smart robot manufactured by <a href="https://robotics.tokyo/">Tokyo Robotics</a>, is used to teach object grasping.
+<p>The AIREC (AI-driven Robot for Embrace and Care), a smart robot manufactured by <a href="https://robotics.tokyo/">Tokyo Robotics</a>, is used to teach object grasping.
 The following figure shows an overview of the task. Based on the object grasping experience at the teaching positions shown in the figure (three circled points), the generalization performance at the unlearned positions (two points) is evaluated.
 The training data was collected 4 times for each teaching position for a total of 12 data, and the test data was collected once for each of the 5 locations, including the unlearned positions, for a total of 5 data.</p>
 <p><img alt="task_overview" class="center" src="../img/teaching.webp" /></p>
@@ -825,7 +825,7 @@ The training data was collected 4 times for each teaching position for a total o
 <h2 id="teaching">Motion Teaching</h2>
 <p>AIREC is a robot system that enables bilateral teleoperation as shown below. The operator can teach a multi-degree-of-freedom robot more intuitively by teaching its motion based on the robot visual image displayed on the monitor and force feedback from the robot. Here, the sensor information (joint angle, camera image, torque information, etc.) of the robot when teaching a task using the teleoperation device is saved in 'rosbag' format, and a dataset is created for the machine learning model in the following sections.</p>
 <p>Note that it is possible to teach motion to a robot without such a specialized device.
-In the <a href="./robot/overview">Real Robot Application section</a>, two types of motion teaching methods using OpenManipulator are described: leader-follower system and joystick.</p>
+In the <a href="../../robot/overview/">Real Robot Application section</a>, two types of motion teaching methods using OpenManipulator are described: leader-follower system and joystick.</p>
 <p><html lang="ja">
 <head>
   <link rel="stylesheet" href="index.css">
