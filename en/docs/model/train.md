@@ -15,7 +15,7 @@ The roles of each folder and program are as follows:
 <!-- #################################################################################################### -->
 ----
 ## Trainig {#train}
-The main program `train.py` is used to train SARNN.　
+The main program `train.py` is used to train SARNN.
 When the program is run, the weights (pth) and Tensorboard log files are saved in the `log` folder.
 The program allows the user to specify the necessary parameters for training, such as model type, number of epochs, batch size, training rate, and optimization method, using command line arguments.
 It also uses the EarlyStopping library to determine when to terminate training early as well as to save weights when the test error is minimized.

@@ -1,6 +1,6 @@
 # 概要 {#cae-rnn}
 
-CAE-RNNは、ロボットの感覚運動情報を学習するために、画像特徴抽出部と時系列学習部から構成される[@ito2022efficient, @yang2016repeatable]。
+CAE-RNNは、ロボットの感覚運動情報を学習するために、画像特徴抽出部と時系列学習部から構成される[@ito2022efficient] [@yang2016repeatable]。
 下図は、CAE-RNNモデルのネットワーク構成を示しており、ロボットの視覚情報であるカメラ画像から画像特徴量を抽出するConvolutional Auto-Encoder(CAE)と、ロボットの身体情報である関節角と画像特徴量の時系列情報を学習するRecurrent Neural Network(RNN)から構成される。
 CAE-RNNは、画像特徴量抽出部と時系列学習部を独立して学習を行うことを特徴としており、CAEとRNNの順に学習を行う。
 多様な感覚運動情報を学習させることで、従来では認識困難な柔軟物体の位置、形状などの画像特徴量の抽出と、それに対応した動作を学習、生成することが可能である。
@@ -42,10 +42,10 @@ CAEで用いるプログラム一式と、フォルダ構成は以下のとお�
 ----
 ### CAEモデル  {#cae_model}
 CAEは、畳み込み層と逆畳み込み層、そして全結合層から構成される。
-画像の特徴量抽出に Convolution layer (CNN) を用いることで、Linear layer だけで構成されるAutoEncoder [@hinton2006reducing]と比較して、少ないパラメータで高次元情報を扱うことができる。
+画像の特徴量抽出に Convolution layer (CNN) を用いることで、Linear layer だけで構成されるAutoEncoder[@hinton2006reducing]と比較して、少ないパラメータで高次元情報を扱うことができる。
 更にCNNは、フィルタをシフトしながら畳み込むことで、多様な画像特徴量を抽出することができる。
 一般的にCNNの後に適用される Pooling layer は、入力データの次元圧縮を行うために、画像認識分野などで多用される。
-しかし、位置不変性と情報圧縮が同時に行える反面、画像の空間的な構造の情報が喪失するという問題がある [@sabour2017dynamic] 。
+しかし、位置不変性と情報圧縮が同時に行える反面、画像の空間的な構造の情報が喪失するという問題がある[@sabour2017dynamic] 。
 ロボット動作生成では、操作対象物やロボットハンドなどの空間的な位置情報は必要不可欠であるため、Pooling Layer の代わりにCNNフィルタの畳み込みの適用間隔（stride）を用いて次元圧縮を行う。
 
 以下はCAEモデルのプログラムを示しており、128x128ピクセルのカラー画像から `feat_dim` で指定した次元の画像特徴量を抽出することが可能である。
@@ -53,42 +53,55 @@ CAEは、畳み込み層と逆畳み込み層、そして全結合層から構�
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAE.py>[SOURCE] BasicCAE.py</a>" linenums="1"
 class BasicCAE(nn.Module):
-    def __init__(self,
-                 feat_dim=10):
+    def __init__(self, feat_dim=10):
         super(BasicCAE, self).__init__()
 
         # encoder
         self.encoder = nn.Sequential(
-            nn.Conv2d(3,  64, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(64, 32, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(32, 16, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(16, 12, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(12, 8,  3, 2, 1), nn.Tanh(),
+            nn.Conv2d(3, 64, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(64, 32, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(32, 16, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(16, 12, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(12, 8, 3, 2, 1),
+            nn.Tanh(),
             nn.Flatten(),
-            nn.Linear(8*4*4, 50),   nn.Tanh(),
-            nn.Linear(50, feat_dim),nn.Tanh()
+            nn.Linear(8 * 4 * 4, 50),
+            nn.Tanh(),
+            nn.Linear(50, feat_dim),
+            nn.Tanh(),
         )
 
         # decoder
         self.decoder = nn.Sequential(
-            nn.Linear(feat_dim,  50),   nn.Tanh(),
-            nn.Linear(50, 8*4*4),       nn.Tanh(),
-            nn.Unflatten(1, (8,4,4)), 
-            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(12,16, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(16,32, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(32,64, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1), nn.Tanh()
+            nn.Linear(feat_dim, 50),
+            nn.Tanh(),
+            nn.Linear(50, 8 * 4 * 4),
+            nn.Tanh(),
+            nn.Unflatten(1, (8, 4, 4)),
+            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(12, 16, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(16, 32, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(32, 64, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
         )
-    
+
     def forward(self, x):
-        return self.decoder( self.encoder(x) )
+        return self.decoder(self.encoder(x))
 ```
 
 
-活性化関数にReLU関数やBatch Normalization [@ioffe2015batch] を用いることで、各層の表現力向上や勾配消失を防ぎ、更に学習を効率的かつ安定に行うことが可能である。
-本ライブラリでは、Batch Normalization を用いたCAEモデルは実装済みであり、以下のようにモデルを読み込むことが可能である。
-`BasicCAENE` と `CAEBN` の違いはモデルの構造（パラメータサイズ）であり、詳細は [ソースコード](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) を参照されたい。
+活性化関数に`ReLU`関数や`Batch Normalization`[@ioffe2015batch] を用いることで、各層の表現力向上や勾配消失を防ぎ、更に学習を効率的かつ安定に行うことが可能である。
+本ライブラリでは、`Batch Normalization` を用いたCAEモデルは実装済みであり、以下のようにモデルを読み込むことが可能である。
+BasicCAENE と CAEBN の違いはモデルの構造（パラメータサイズ）であり、詳細は [ソースコード](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) を参照されたい。
 なお、実装済みモデルの入力フォーマットは128x128ピクセルのカラー画像であり、それ以外の画像サイズを入力する場合、パラメータの修正が必要である。
 
 ```python
@@ -100,33 +113,31 @@ from eipl.model import BasicCAENE, CAEBN
 ----
 ### 誤差逆伝搬法 {#cae_bp}
 CAEの学習過程では、ロボットのカメラ画像（$i_t$） を入力し、再構成画像（$\hat i_t$） を生成する。
-次に、入力画像と再構成画像の誤差が最小になるように誤差逆伝搬法 [@rumelhart1986learning] を用いてモデルのパラメータを更新する。
-45-52行目では、 バッチサイズ分の画像 $xi$ をモデルに入力し、再構成画像 $yi_hat$ を得る。
-そして再構成画像と真値 $yi$ の平均二乗誤差 `nn.MSELoss` を計算し、誤差値 `loss` に基づいて誤差伝番を行う。
+ここで、入力画像と再構成画像の誤差が最小になるように誤差逆伝搬法[@rumelhart1986learning] を用いてモデルのパラメータを更新する。
+27-33行目では、 バッチサイズ分の画像 `xi` をモデルに入力し、再構成画像 `yi_hat` を得る。
+そして再構成画像と真値 `yi` の平均二乗誤差 `nn.MSELoss` を計算し、誤差値 `loss` に基づいて誤差伝番を行う。
 この自己回帰的な学習により、従来のロボティクスで必要であった画像のための詳細なモデル設計が不要となる。
 なお、実世界の多様なノイズに対しロバストな画像特徴量を抽出するために、[データ拡張](../tips/augmentation.md) を用いることで、輝度やコントラスト、そして位置をランダムに変化させた画像をモデルに学習させる。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1" hl_lines="27-33"
 class Trainer:
-    def __init__(self,
-                model,
-                optimizer,
-                device='cpu'):
-
+    def __init__(self, model, optimizer, device="cpu"):
         self.device = device
-        self.optimizer = optimizer        
+        self.optimizer = optimizer
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-        
         if not training:
             self.model.eval()
 
@@ -156,7 +167,7 @@ class Trainer:
 プログラムを実行すると、実行した日時を示すフォルダ名（例：20230427_1316_29）が `log` フォルダ内に作成される。
 フォルダには学習済みの重み（pth）とTensorBoardのログファイルが保存される。
 このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
-また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する（ `save_ckpt=True` ）。
+また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する（`save_ckpt=True`）。
 プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/bin/train.py)ください。
 
 ```bash
@@ -187,9 +198,9 @@ vmin : 0.0
 ### 推論 {cae_inference}
 CAEが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
 引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックスである。
-下図（上段）は、本プログラムを用いて、`CAEBN` モデルの推論結果を示しており、左図は入力画像、右図は再構成画像である。
+下図（上段）は、本プログラムを用いて、CAEBNモデルの推論結果を示しており、左図は入力画像、右図は再構成画像である。
 特にロボット動作生成に重要なロボットハンドと「未学習位置」にある把持対象物が再構成されていることから、画像特徴量には物体の位置や形状などの情報が表現されていると考えられる。
-また下図（下段）は失敗例であり、ネットワーク構造がシンプルな `Basic CAE` モデルでは、対象物が適切に予測できていないことがわかる。
+また下図（下段）は失敗例であり、ネットワーク構造がシンプルなBasic CAEモデルでは、対象物が適切に予測できていないことがわかる。
 この場合、最適化アルゴリズムの手法や学習率、誤差関数、更にモデルの構造を調整する必要がある。
 
 
@@ -281,7 +292,7 @@ np.save('./data/feat_bounds.npy', feat_minmax )
 
 ### 概要 {#rnn_overview}
 ロボットの感覚運動情報を統合学習するために、再帰型ニューラルネットワーク（Recurrent Neural Network：以下、RNN）を用いる。
-下図はCAE-RNNのうち、RNNのネットワーク構造のみをハイライトしており、時刻 `t` の画像特徴量（$f_t$） と関節角度（$a_t$）を入力し、次時刻 `t+1` のそれらを予測する。
+下図はCAE-RNNのうち、RNNのネットワーク構造のみをハイライトしており、時刻 $t$ の画像特徴量（$f_t$） と関節角度（$a_t$）を入力し、次時刻 $t+1$ のそれらを予測する。
 ここでは、モデル、誤差逆伝播法、学習、そして推論プログラムの実装方法について述べる。
 
 ![Network structure of RNN](img/cae-rnn/rnn.png){: .center}
@@ -317,25 +328,18 @@ $h_{t-1}$ は短期記憶として時系列の細かい変化を、$c_{t-1}$ は
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" title="BasicRNN.py" linenums="1"
 class BasicLSTM(nn.Module):
-    def __init__(self,
-                 in_dim,
-                 rec_dim,
-                 out_dim,
-                 activation='tanh'):
+    def __init__(self, in_dim, rec_dim, out_dim, activation="tanh"):
         super(BasicLSTM, self).__init__()
-        
+
         if isinstance(activation, str):
             activation = get_activation_fn(activation)
 
-        self.rnn = nn.LSTMCell(in_dim, rec_dim )
-        self.rnn_out = nn.Sequential(
-            nn.Linear(rec_dim, out_dim),
-            activation
-        )  
-    
+        self.rnn = nn.LSTMCell(in_dim, rec_dim)
+        self.rnn_out = nn.Sequential(nn.Linear(rec_dim, out_dim), activation)
+
     def forward(self, x, state=None):
         rnn_hid = self.rnn(x, state)
-        y_hat   = self.rnn_out(rnn_hid[0])
+        y_hat = self.rnn_out(rnn_hid[0])
 
         return y_hat, rnn_hid
 ```
@@ -345,52 +349,46 @@ class BasicLSTM(nn.Module):
 <!-- #################################################################################################### -->
 ----
 ### 誤差逆伝播法 {#rnn_bptt}
-Backpropagation Through Time（BPTT）とは、RNNにおいて使用される誤差逆伝播アルゴリズムの一種である [@rumelhart1986learning]。
+Backpropagation Through Time（BPTT）とは、RNNにおいて使用される誤差逆伝播アルゴリズムの一種である[@rumelhart1986learning]。
 BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
 
-RNNの学習過程では、事前抽出した画像特徴量 :$f_{t}$ とロボット関節角度 $a_{t}$ をRNNに入力し、次状態（$\hat f_{t+1}$, $ \hat a_{t+1}$）を出力（予測）する。
-52行目では、全シーケンスの予測値と真値（$f_{t+1}$, $a_{t+1}$）の平均二乗誤差 `nn.MSELoss` を計算し、誤差値 `loss` に基づいて誤差伝番を行う。
-この学習過程は、LSTMとMTRNNの両方に適用することが可能である。
 
-
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="52"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                device='cpu'):
-
+    def __init__(self, model, optimizer, device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
         total_loss = 0.0
-        for n_batch, (x,y) in enumerate(data):
+        for n_batch, (x, y) in enumerate(data):
             x = x.to(self.device)
             y = y.to(self.device)
 
             state = None
             y_list = []
             T = x.shape[1]
-            for t in range(T-1):
-                y_hat, state = self.model(x[:,t], state)
+            for t in range(T - 1):
+                y_hat, state = self.model(x[:, t], state)
                 y_list.append(y_hat)
 
-            y_hat = torch.permute(torch.stack(y_list), (1,0,2) )
-            loss  = nn.MSELoss()(y_hat, y[:,1:] )
+            y_hat = torch.permute(torch.stack(y_list), (1, 0, 2))
+            loss = nn.MSELoss()(y_hat, y[:, 1:])
             total_loss += loss.item()
 
             if training:
@@ -398,7 +396,7 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
 
 
@@ -407,33 +405,28 @@ class fullBPTTtrainer:
 ----
 ### データローダ {#rnn_dataloader}
 CAEで抽出した画像特徴量とロボット関節角度をRNNで学習するための DataLoader について述べる。
-35,36行目に示す通り、入力情報にガウシアンノイズを加える。
+15-16行目に示す通り、入力情報にガウシアンノイズを加える。
 予測値はノイズ加算前の元データに近くなるように学習を行うことで、実世界で動作予測する際に入力情報にノイズが付与されたとしても、適切な動作指令を予測することが可能である。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="20-21"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="15-16"
 class TimeSeriesDataSet(Dataset):
-    def __init__( self,
-                  feats,
-                  joints,
-                  minmax=[0.1, 0.9],
-                  stdev=0.02):
-
-        self.stdev  = stdev
-        self.feats  = torch.from_numpy(feats).float()
+    def __init__(self, feats, joints, minmax=[0.1, 0.9], stdev=0.02):
+        self.stdev = stdev
+        self.feats = torch.from_numpy(feats).float()
         self.joints = torch.from_numpy(joints).float()
 
     def __len__(self):
         return len(self.feats)
 
     def __getitem__(self, idx):
-        y_feat  = self.feats[idx]
+        y_feat = self.feats[idx]
         y_joint = self.joints[idx]
-        y_data  = torch.concat( (y_feat, y_joint), axis=-1)
+        y_data = torch.concat((y_feat, y_joint), axis=-1)
 
-        x_feat  = self.feats[idx]  + torch.normal(mean=0, std=self.stdev, size=y_feat.shape)
+        x_feat = self.feats[idx] + torch.normal(mean=0, std=self.stdev, size=y_feat.shape)
         x_joint = self.joints[idx] + torch.normal(mean=0, std=self.stdev, size=y_joint.shape)
 
-        x_data = torch.concat( (x_feat, x_joint), axis=-1)
+        x_data = torch.concat((x_feat, x_joint), axis=-1)
 
         return [x_data, y_data]
 ```
@@ -445,7 +438,7 @@ class TimeSeriesDataSet(Dataset):
 ----
 ### 学習 {#rnn_train}
 `libs/fullBPTT.py`、 `libs/dataloader.py`、そしてすでに実装されているメインプログラム `train.py` を使用して、RNNを学習する。
-モデルは実装済みの `BasicLSTM` もしくは `BasicMTRNN` を用い、引数で選択することが可能である。
+モデルは実装済みのBasicLSTMもしくはBasicMTRNNを用い、引数で選択することが可能である。
 CAE同様、プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
 プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/bin/train.py)ください。
 
@@ -479,7 +472,7 @@ vmin : 0.0
 RNNが適切に学習されたかを確認するために、テストプログラム `test.py` を用いて検証する。
 引数 `filename` は学習済みの重みファイルのパス、 `idx` は可視化したいデータのインデックスである。
 モデルの汎化性能を評価するために、[未学習位置](../../teach/overview#task)で収集したテストデータを入力し、真値と予測値の比較を行う。
-下図は`RNN` 予測結果を示しており、左図はロボット関節角度、右図は画像特徴量である。
+下図はRNNの予測結果を示しており、左図はロボット関節角度、右図は画像特徴量である。
 図中の黒点線は真値、色線は予測値を表しており、ほぼ一致していることから適切に動作学習ができたといえる。
 
 ```bash 

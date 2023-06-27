@@ -1,6 +1,6 @@
 # CAE-RNN {#cae-rnn}
 
-CAE-RNN is a motion generation model consisting of an image feature extraction part and a time series learning part to learn the robot's sensory-motor information [@ito2022efficient, @yang2016repeatable].
+CAE-RNN is a motion generation model consisting of an image feature extraction part and a time series learning part to learn the robot's sensory-motor information[@ito2022efficient] [@yang2016repeatable].
 The following figure shows the network structure of the CAE-RNN model, which consists of a Convolutional Auto-Encoder (CAE) that extracts image features from the robot's visual information, and a Recurrent Neural Network (RNN) that learns the time series information of robot's joint angles and image features.
 CAE-RNN features independent training of the image feature extraction part and the time series learning part, which are trained in the order of CAE and RNN.
 By learning a variety of sensory-motor information, it is possible to extract image features such as the position and shape of flexible objects that are conventionally difficult to recognize, and to learn and generate corresponding motions.
@@ -41,48 +41,61 @@ The programs and folders used in CAE are as follows:
 ----
 ### CAE Model  {#cae_model}
 CAE consists of a convolution layer, transposed convolution layer, and a linear layer.
-By using the Convolution layer (CNN) to extract image features, CAE can handle high-dimensional information with fewer parameters compared to AutoEncoder [@hinton2006reducing], which consists of only a Linear layer. Furthermore, CNN can extract a variety of image features by convolving with shifting filters. The Pooling layer, which is generally applied after CNN, is often used in image recognition and other fields to compress the dimensionality of input data. However, while position invariance and information compression can be achieved simultaneously, there is a problem that information on the spatial structure of the image is lost [@sabour2017dynamic]. Since spatial position information of manipulated objects and robot hands is essential for robot motion generation, dimensional compression is performed using the convolution application interval (stride) of the CNN filter instead of the Pooling Layer.
+By using the Convolution layer (CNN) to extract image features, CAE can handle high-dimensional information with fewer parameters compared to AutoEncoder[@hinton2006reducing], which consists of only a Linear layer. Furthermore, CNN can extract a variety of image features by convolving with shifting filters. The Pooling layer, which is generally applied after CNN, is often used in image recognition and other fields to compress the dimensionality of input data. However, while position invariance and information compression can be achieved simultaneously, there is a problem that information on the spatial structure of the image is lost [@sabour2017dynamic]. Since spatial position information of manipulated objects and robot hands is essential for robot motion generation, dimensional compression is performed using the convolution application interval (stride) of the CNN filter instead of the Pooling Layer.
 
 The following is a program of the CAE model, which can extract image features of the dimension specified by `feat_dim` from a 128x128 pixel color image.
 This model is a simple network structure to understand the outline and implementation of CAE.
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAE.py>[SOURCE] BasicCAE.py</a>" linenums="1"
 class BasicCAE(nn.Module):
-    def __init__(self,
-                 feat_dim=10):
+    def __init__(self, feat_dim=10):
         super(BasicCAE, self).__init__()
 
         # encoder
         self.encoder = nn.Sequential(
-            nn.Conv2d(3,  64, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(64, 32, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(32, 16, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(16, 12, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(12, 8,  3, 2, 1), nn.Tanh(),
+            nn.Conv2d(3, 64, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(64, 32, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(32, 16, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(16, 12, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(12, 8, 3, 2, 1),
+            nn.Tanh(),
             nn.Flatten(),
-            nn.Linear(8*4*4, 50),   nn.Tanh(),
-            nn.Linear(50, feat_dim),nn.Tanh()
+            nn.Linear(8 * 4 * 4, 50),
+            nn.Tanh(),
+            nn.Linear(50, feat_dim),
+            nn.Tanh(),
         )
 
         # decoder
         self.decoder = nn.Sequential(
-            nn.Linear(feat_dim,  50),   nn.Tanh(),
-            nn.Linear(50, 8*4*4),       nn.Tanh(),
-            nn.Unflatten(1, (8,4,4)), 
-            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(12,16, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(16,32, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(32,64, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1), nn.Tanh()
+            nn.Linear(feat_dim, 50),
+            nn.Tanh(),
+            nn.Linear(50, 8 * 4 * 4),
+            nn.Tanh(),
+            nn.Unflatten(1, (8, 4, 4)),
+            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(12, 16, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(16, 32, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(32, 64, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
         )
-    
+
     def forward(self, x):
-        return self.decoder( self.encoder(x) )
+        return self.decoder(self.encoder(x))
 ```
 
-By using the ReLU function and Batch Normalization [@ioffe2015batch], it is possible to improve the expressiveness of each layer, prevent gradient loss, and furthermore make learning more efficient and stable.
-In this library, CAE models using Batch Normalization have already been implemented and can be loaded as follows.
-The difference between `BasicCAENE` and `CAEBN` is the structure of the model (parameter size), see [source code](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) for details.
+By using the `ReLU` function and `Batch Normalization`[@ioffe2015batch], it is possible to improve the expressiveness of each layer, prevent gradient loss, and furthermore make learning more efficient and stable.
+In this library, CAE models using `Batch Normalization` have already been implemented and can be loaded as follows.
+The difference between BasicCAENE and CAEBN is the structure of the model (parameter size), see [source code](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CAEBN.py) for details.
 Note that the input format of the implemented model is a color image of 128x128 pixels; if you want to input any other image size, you need to modify the parameters.
 
 
@@ -95,34 +108,32 @@ from eipl.model import BasicCAENE, CAEBN
 ----
 ### Back Propagation {#cae_bp}
 In the CAE learning process, input camera images of the robot ($i_t$) and generate the reconstructed images ($\hat i_t$).
-Next, the parameters of the model are updated using the back propagation method [@rumelhart1986learning] to minimize the error between the input and reconstructed images.
-In lines 45-52, the batch size image $xi$ is input to the model to obtain the reconstructed image $yi_hat$.
-Then, the mean square error `nn.MSELoss` between the reconstructed image and the true value $yi$ is calculated, and error propagation is performed based on the error value `loss`.
+Here, the parameters of the model are updated using the back propagation method[@rumelhart1986learning] to minimize the error between the input and reconstructed images.
+In lines 27-33, the batch size image `xi` is input to the model to obtain the reconstructed image `yi_hat`.
+Then, the mean square error `nn.MSELoss` between the reconstructed image and the true value `yi` is calculated, and error propagation is performed based on the error value `loss`.
 This autoregressive learning eliminates the need for detailed model design for images, which is required in conventional robotics.
 Note that in order to extract image features that are robust against a variety of real-world noise, [data extension](../tips/augmentation.md) is used to train the model on images with randomly varying brightness, contrast, and position.
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cae/libs/trainer.py>[SOURCE] trainer.py</a>" linenums="1" hl_lines="27-33"
 class Trainer:
-    def __init__(self,
-                model,
-                optimizer,
-                device='cpu'):
-
+    def __init__(self, model, optimizer, device="cpu"):
         self.device = device
-        self.optimizer = optimizer        
+        self.optimizer = optimizer
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-        
         if not training:
             self.model.eval()
 
@@ -184,9 +195,9 @@ vmin : 0.0
 ### Inference {cae_inference}
 Check that CAE has been properly trained using the test program `test.py`.
 The argument `filename` is the path of the trained weights file and `idx` is the index of the data to be visualized.
-The lower (top) figure shows the inference results of the `CAEBN` model using this program, with the input image on the left and the reconstructed image on the right.
+The lower (top) figure shows the inference results of the CAEBN model using this program, with the input image on the left and the reconstructed image on the right.
 Since the robot hand and the grasping object in the "unlearned position" are reconstructed, which is important for generating robot motion, it can be assumed that the image features represent information such as the object's position and shape.
-The lower figure (bottom) is also an example of failure, showing that the object is not adequately predicted by the `Basic CAE` model with a simple network structure.
+The lower figure (bottom) is also an example of failure, showing that the object is not adequately predicted by the Basic CAE model with a simple network structure.
 In this case, it is necessary to adjust the method of the optimization algorithm, the learning rate, the loss function, and the structure of the model.
 
 
@@ -279,7 +290,7 @@ np.save('./data/feat_bounds.npy', feat_minmax )
 
 ### Overview {#rnn_overview}
 A Recurrent Neural Network (RNN) is used to integrate and learn the robot's sensory-motor information.
-The following figure highlights only the network structure of RNN among CAE-RNNs, which inputs image features ($f_t$) and joint angles ($a_t$) at time `t` and predicts them at the next time `t+1`.
+The following figure highlights only the network structure of RNN among CAE-RNNs, which inputs image features ($f_t$) and joint angles ($a_t$) at time $t$ and predicts them at the next time $t+1$.
 
 ![Network structure of RNN](img/cae-rnn/rnn.png){: .center}
 
@@ -309,31 +320,24 @@ Long Short-Term Memory (LSTM) and [Multiple Timescales RNN (MTRNN)](../zoo/MTRNN
 Here, we describe a method for learning integrated sensory-motor information of a robot using LSTM.
 LSTM has three gates (input gate, forget gate, and output gate), each with its own weight and bias.
 The $h_{t-1}$ gate learns detailed changes in the time series as short-term memory, and the $c_{t-1}$ gate learns features of the entire time series as long-term memory, allowing retention and forgetting of past information through each gate.
-The following shows an example of implementation. Input value $x$, which is a combination of low-dimensional image features and robot joint angles extracted by CAE in advance, is input to LSTM.
-LSTM then outputs the predicted value $\hat y$ of the image features and robot joint angles at the next time based on the internal state.
+The following shows an example of implementation. Input value `x`, which is a combination of low-dimensional image features and robot joint angles extracted by CAE in advance, is input to LSTM.
+LSTM then outputs the predicted value `y_hat` of the image features and robot joint angles at the next time based on the internal state.
 
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/BasicRNN.py>[SOURCE] BasicRNN.py</a>" title="BasicRNN.py" linenums="1"
 class BasicLSTM(nn.Module):
-    def __init__(self,
-                 in_dim,
-                 rec_dim,
-                 out_dim,
-                 activation='tanh'):
+    def __init__(self, in_dim, rec_dim, out_dim, activation="tanh"):
         super(BasicLSTM, self).__init__()
-        
+
         if isinstance(activation, str):
             activation = get_activation_fn(activation)
 
-        self.rnn = nn.LSTMCell(in_dim, rec_dim )
-        self.rnn_out = nn.Sequential(
-            nn.Linear(rec_dim, out_dim),
-            activation
-        )  
-    
+        self.rnn = nn.LSTMCell(in_dim, rec_dim)
+        self.rnn_out = nn.Sequential(nn.Linear(rec_dim, out_dim), activation)
+
     def forward(self, x, state=None):
         rnn_hid = self.rnn(x, state)
-        y_hat   = self.rnn_out(rnn_hid[0])
+        y_hat = self.rnn_out(rnn_hid[0])
 
         return y_hat, rnn_hid
 ```
@@ -347,44 +351,42 @@ Backpropagation Through Time (BPTT) is used as the error back propagation algori
 The details of BPTT have already been described in SARNN, please refer to [here](../../model/SARNN#bptt).
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="52"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                device='cpu'):
-
+    def __init__(self, model, optimizer, device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
         total_loss = 0.0
-        for n_batch, (x,y) in enumerate(data):
+        for n_batch, (x, y) in enumerate(data):
             x = x.to(self.device)
             y = y.to(self.device)
 
             state = None
             y_list = []
             T = x.shape[1]
-            for t in range(T-1):
-                y_hat, state = self.model(x[:,t], state)
+            for t in range(T - 1):
+                y_hat, state = self.model(x[:, t], state)
                 y_list.append(y_hat)
 
-            y_hat = torch.permute(torch.stack(y_list), (1,0,2) )
-            loss  = nn.MSELoss()(y_hat, y[:,1:] )
+            y_hat = torch.permute(torch.stack(y_list), (1, 0, 2))
+            loss = nn.MSELoss()(y_hat, y[:, 1:])
             total_loss += loss.item()
 
             if training:
@@ -392,7 +394,7 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
 
 
@@ -401,39 +403,32 @@ class fullBPTTtrainer:
 ----
 ### Dataloader {#rnn_dataloader}
 We describe DataLoader for learning image features and robot joint angles extracted by CAE with RNN.
-As shown in lines 35 and 36, gaussian noise is added to the input data.
+As shown in lines 15 and 16, gaussian noise is added to the input data.
 By training the model to minimize the error between the prediction values and the original data, the robot can predict appropriate motion commands even if noise is added in the real world.
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="20-21"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/rnn/libs/dataloader.py>[SOURCE] dataloader.py</a>" linenums="1" hl_lines="15-16"
 class TimeSeriesDataSet(Dataset):
-    def __init__( self,
-                  feats,
-                  joints,
-                  minmax=[0.1, 0.9],
-                  stdev=0.02):
-
-        self.stdev  = stdev
-        self.feats  = torch.from_numpy(feats).float()
+    def __init__(self, feats, joints, minmax=[0.1, 0.9], stdev=0.02):
+        self.stdev = stdev
+        self.feats = torch.from_numpy(feats).float()
         self.joints = torch.from_numpy(joints).float()
 
     def __len__(self):
         return len(self.feats)
 
     def __getitem__(self, idx):
-        y_feat  = self.feats[idx]
+        y_feat = self.feats[idx]
         y_joint = self.joints[idx]
-        y_data  = torch.concat( (y_feat, y_joint), axis=-1)
+        y_data = torch.concat((y_feat, y_joint), axis=-1)
 
-        x_feat  = self.feats[idx]  + torch.normal(mean=0, std=self.stdev, size=y_feat.shape)
+        x_feat = self.feats[idx] + torch.normal(mean=0, std=self.stdev, size=y_feat.shape)
         x_joint = self.joints[idx] + torch.normal(mean=0, std=self.stdev, size=y_joint.shape)
 
-        x_data = torch.concat( (x_feat, x_joint), axis=-1)
+        x_data = torch.concat((x_feat, x_joint), axis=-1)
 
         return [x_data, y_data]
 ```
-
-
 
 
 <!-- #################################################################################################### -->
@@ -474,7 +469,7 @@ vmin : 0.0
 Check that RNN has been properly trained using the test program `test.py`.
 The arguments `filename` is the path of the trained weights file, `idx` is the index of the data you want to visualize,
 To evaluate the generalization performance of the model, test data collected at [untrained location](../../teach/overview#task) are input and the true values are compared with the predicted values.
-The figure below shows the `RNN` prediction results, where the left figure is the robot joint angles and the right figure is the image features.
+The figure below shows the RNN prediction results, where the left figure is the robot joint angles and the right figure is the image features.
 The black dotted line in the figure represents the true value and the colored line represents the predicted value, and since they are almost identical, we can say that motion learning was done appropriately.
 
 
@@ -493,7 +488,7 @@ LSTM_20230510_0134_03_4.gif
 <!-- #################################################################################################### -->
 ----
 ### Principal Component Analysis {#rnn_pca}
-For an overview and concrete implementation of PCA, see [here](. /model/test.md#pca).
+For an overview and concrete implementation of PCA, see [here](../model/test.md#pca).
 
 
 ```bash

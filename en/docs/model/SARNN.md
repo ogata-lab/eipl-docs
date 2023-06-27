@@ -1,6 +1,6 @@
 # Model Overview {#model_overview}
 
-SARNN "explicitly" extracts the spatial coordinates of task-critical positions (work objects and arms) from images and learns the coordinates and joint angles of the robot, thereby significantly improving robustness to changes in object position [@ichiwara2022contact].
+SARNN "explicitly" extracts the spatial coordinates of task-critical positions (work objects and arms) from images and learns the coordinates and joint angles of the robot, thereby significantly improving robustness to changes in object position[@ichiwara2022contact].
 The figure below shows the network structure of SARNN, which consists of an Encoder that extracts image features $f_t$ and object position coordinates $p_t$ from camera images $i_t$, a Recurrent that learns time-series changes in the robot's joint angles $a_t$ and object position coordinates $p_t$, and a Decoder that reconstructs images based on image features $f_t$ and heat maps $\hat h_{t+1}$.
 
 The CNN layers (Convolution layer and Transposed convolutional layer) of the upper part of the Encoder and Decoder extract information about the color and shape of objects by extracting and reconstructing image features.
@@ -21,7 +21,7 @@ Here, we show the implementation method and model classes of SARNN's characteris
 ----
 ## Spatial Attention Mechanism  {#spatial_softmax}
 The spatial attention mechanism emphasizes important information (large pixel values) by multiplying the feature map by Softmax, and then extracts the position informations of the emphasized pixels using Position-Encoding.
-The following figure shows the processing results of the spatial attention mechanism, where important position informations (red dots) is extracted by multiplying a "pseudo" feature map generated using two randomly generated Gaussian distributions by Softmax.
+The following figure shows the processing results of the spatial attention mechanism, where important position informations (red dots) is extracted by multiplying a "pseudo" feature map generated using two randomly generated gaussian distributions by Softmax.
 Since CNN feature maps contain a wide variety of information, they are not enhanced by simply multiplying Softmax.
 In order to further enhance the features, it is important to use [Softmax with temperature](https://en.wikipedia.org/wiki/Softmax_function).
 You can check the effect of Softmax with temperature by adjusting the parameter `temperature` in the sample program below.
@@ -40,29 +40,29 @@ class SpatialSoftmax(nn.Module):
             self.temperature = torch.nn.Parameter(torch.ones(1))
         else:
             self.temperature = temperature
-        
+
         _, pos_x, pos_y = create_position_encoding(width, height, normalized=normalized)
-        self.register_buffer('pos_x', pos_x)
-        self.register_buffer('pos_y', pos_y)
+        self.register_buffer("pos_x", pos_x)
+        self.register_buffer("pos_y", pos_y)
 
     def forward(self, x):
         batch_size, channels, width, height = x.shape
-        assert height==self.height
-        assert width==self.width
+        assert height == self.height
+        assert width == self.width
 
         # flatten, apply softmax
         logit = x.reshape(batch_size, channels, -1)
-        att_map = torch.softmax(logit/self.temperature, dim=-1)
-                
+        att_map = torch.softmax(logit / self.temperature, dim=-1)
+
         # compute expectation
-        expected_x = torch.sum(self.pos_x*att_map, dim=-1, keepdim=True)
-        expected_y = torch.sum(self.pos_y*att_map, dim=-1, keepdim=True)
+        expected_x = torch.sum(self.pos_x * att_map, dim=-1, keepdim=True)
+        expected_y = torch.sum(self.pos_y * att_map, dim=-1, keepdim=True)
         keys = torch.cat([expected_x, expected_y], -1)
-        
+
         # keys [[x,y], [x,y], [x,y],...]
         keys = keys.reshape(batch_size, channels, 2)
-        att_map = att_map.reshape(-1, channels, width, height)       
-        return keys, att_map  
+        att_map = att_map.reshape(-1, channels, width, height)
+        return keys, att_map
 ```
 
 
@@ -90,10 +90,12 @@ class InverseSpatialSoftmax(nn.Module):
         self.heatmap_size = heatmap_size
 
         pos_xy, _, _ = create_position_encoding(width, height, normalized=normalized)
-        self.register_buffer('pos_xy', pos_xy)
+        self.register_buffer("pos_xy", pos_xy)
 
     def forward(self, keys):
-        squared_distances = torch.sum( torch.pow( self.pos_xy[None,None] - keys[:,:,:,None,None], 2.0 ), axis=2)
+        squared_distances = torch.sum(
+            torch.pow(self.pos_xy[None, None] - keys[:, :, :, None, None], 2.0), axis=2
+        )
         heatmap = torch.exp(-squared_distances / self.heatmap_size)
         return heatmap
 ```
@@ -104,7 +106,7 @@ class InverseSpatialSoftmax(nn.Module):
 ## Loss Scheduler {#loss_scheduler} 
 The loss scheduler is a `callback` function that gradually weights the prediction error of the attention point according to the epoch, and is an important feature for training SARNN.
 The following figure shows the weighting curve for each `curve_name` argument, where the horizontal axis is the number of epochs and the vertical axis is the weighting value.
-Loss weighting starts from 0 and returns the maximum weighting value (e.g. 0.1) at the epoch set by `decay_end` (100).
+Loss weighting starts from 0 and returns the maximum weighting value (e.g. 0.1) at the epoch set by `decay_end` (e.g. 100).
 Note that the maximum weighting value is specified by the `__call__` method.
 This class supports the five types of curves shown in the figure (linear, S-curve, inverse S-curve, deceleration, and acceleration interpolation).
 
@@ -121,11 +123,13 @@ The `decay_end` adjusts the learning timing of the CNN, which is usually set aro
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/utils/callback.py>[SOURCE] callback.py</a>" linenums="1"
 class LossScheduler:
-    def __init__(self, decay_end=1000, curve_name='s'):
+    def __init__(self, decay_end=1000, curve_name="s"):
         decay_start = 0
         self.counter = -1
         self.decay_end = decay_end
-        self.interpolated_values = self.curve_interpolation(decay_start, decay_end, decay_end, curve_name)
+        self.interpolated_values = self.curve_interpolation(
+            decay_start, decay_end, decay_end, curve_name
+        )
 
     def linear_interpolation(self, start, end, num_points):
         x = np.linspace(start, end, num_points)
@@ -152,18 +156,18 @@ class LossScheduler:
         return x
 
     def curve_interpolation(self, start, end, num_points, curve_name):
-        if curve_name == 'linear':
+        if curve_name == "linear":
             interpolated_values = self.linear_interpolation(start, end, num_points)
-        elif curve_name == 's':
+        elif curve_name == "s":
             interpolated_values = self.s_curve_interpolation(start, end, num_points)
-        elif curve_name == 'inverse_s':
+        elif curve_name == "inverse_s":
             interpolated_values = self.inverse_s_curve_interpolation(start, end, num_points)
-        elif curve_name == 'deceleration':
+        elif curve_name == "deceleration":
             interpolated_values = self.deceleration_curve_interpolation(start, end, num_points)
-        elif curve_name == 'acceleration':
+        elif curve_name == "acceleration":
             interpolated_values = self.acceleration_curve_interpolation(start, end, num_points)
         else:
-            assert False, 'Invalid curve name. {}'.format(curve_name)
+            assert False, "Invalid curve name. {}".format(curve_name)
 
         return interpolated_values / num_points
 
@@ -186,9 +190,9 @@ Specifically, image $i_t$ and joint angle $a_{t}$ are input to the model, and th
 The mean squared error `nn.MSELoss` of the predictions and true values ($f_{t+1}$, $a_{t+1}$) for all sequences is calculated and error propagation is performed based on the loss value `loss`.
 The parameters at each time are used at all times after that time, so back propagation is performed with temporal expansion.
 
-Lines 59-63 show that SARNN computes not only the image loss and joint angle loss, but also the prediction loss of the attention point.
-Since the true value of the attention point does not exist, the bi-directional loss [@hiruma2022deep] is used to learn the attention point.
-Specifically, the model updates the weights to minimize the loss between the attention point $\hat p_{t+1}$ predicted by the RNN at time $t$ and the attention point $p_{t+1}$ extracted by the CNN at time $t$+1. 
+Lines 47-54 show that SARNN computes not only the image loss and joint angle loss, but also the prediction loss of the attention point.
+Since the true value of the attention point does not exist, the bi-directional loss[@hiruma2022deep] is used to learn the attention point.
+Specifically, the model updates the weights to minimize the loss between the attention point $\hat p_{t+1}$ predicted by the RNN at time $t$ and the attention point $p_{t+1}$ extracted by the CNN at time $t+1$. 
 Based on this bidirectional loss, LSTM learns the time-series relationship between attention points and joint angles, which not only eliminates redundant image predictions, but also induces the CNN to predict attention points that are important for motion prediction.
 
 Also, `loss_weights` weights each modality loss and determines which modality to focus on for learning. 
@@ -197,31 +201,27 @@ However, if image information is not sufficiently learned, integrated learning o
 In our experience, the weighting factor is often set to 1.0 for all or 0.1 for images only.
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="11 49-53"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                loss_weights=[1.0, 1.0],
-                device='cpu'):
-
+    def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.loss_weights = loss_weights
-        self.scheduler = LossScheduler(decay_end=1000, curve_name='s')
+        self.scheduler = LossScheduler(decay_end=1000, curve_name="s")
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    #'optimizer_state_dict': self.optimizer.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
@@ -236,20 +236,24 @@ class fullBPTTtrainer:
             yi_list, yv_list = [], []
             dec_pts_list, enc_pts_list = [], []
             T = x_img.shape[1]
-            for t in range(T-1):
-                _yi_hat, _yv_hat, enc_ij, dec_ij, state = self.model(x_img[:,t], x_joint[:,t], state)
+            for t in range(T - 1):
+                _yi_hat, _yv_hat, enc_ij, dec_ij, state = self.model(
+                    x_img[:, t], x_joint[:, t], state
+                )
                 yi_list.append(_yi_hat)
                 yv_list.append(_yv_hat)
                 enc_pts_list.append(enc_ij)
                 dec_pts_list.append(dec_ij)
 
-            yi_hat = torch.permute(torch.stack(yi_list), (1,0,2,3,4) )
-            yv_hat = torch.permute(torch.stack(yv_list), (1,0,2) )
+            yi_hat = torch.permute(torch.stack(yi_list), (1, 0, 2, 3, 4))
+            yv_hat = torch.permute(torch.stack(yv_list), (1, 0, 2))
 
-            img_loss   = nn.MSELoss()(yi_hat, y_img[:,1:] ) * self.loss_weights[0]
-            joint_loss = nn.MSELoss()(yv_hat, y_joint[:,1:] ) * self.loss_weights[1]
+            img_loss = nn.MSELoss()(yi_hat, y_img[:, 1:]) * self.loss_weights[0]
+            joint_loss = nn.MSELoss()(yv_hat, y_joint[:, 1:]) * self.loss_weights[1]
             # Gradually change the loss value using the LossScheluder class.
-            pt_loss    = nn.MSELoss()(torch.stack(dec_pts_list[:-1]), torch.stack(enc_pts_list[1:])) * self.scheduler(self.loss_weights[2])
+            pt_loss = nn.MSELoss()(
+                torch.stack(dec_pts_list[:-1]), torch.stack(enc_pts_list[1:])
+            ) * self.scheduler(self.loss_weights[2])
             loss = img_loss + joint_loss + pt_loss
             total_loss += loss.item()
 
@@ -258,7 +262,7 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
 
 

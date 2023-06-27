@@ -44,8 +44,8 @@ SARNN_20230521_1247_41_4_1.0.gif
 以下のプログラムは、推論および主成分分析の処理を一部抜粋したものである。
 初めに、モデルにテストデータを入力し、各時刻におけるRNNの内部状態 `state` をリストとして保存する。
 [LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html) の場合、`hidden state` と `cell state` が `state` して返ってくるため、ここでは `hidden state` を対象に可視化解析する。
-次に、物体位置毎における内部状態を比較するために`state`の形状、［データ数、時系列長、stateの次元数］から［データ数×時系列長、stateの次元数］に変形する。
-最後に、12行目に示すように主成分分析を適用することで、高次元な `state` を低次元な情報（3次元）に圧縮する。
+次に、物体位置毎における内部状態を比較するために`hidden state`の形状、［データ数、時系列長、stateの次元数］から［データ数×時系列長、stateの次元数］に変形する。
+最後に、12行目に示すように主成分分析を適用することで、高次元な `hidden state` を低次元な情報（3次元）に圧縮する。
 圧縮された主成分 `pca_val` を元の形状［データ数、時系列長、3次元］に戻し、物体位置ごとに色付けて3D空間にプロットすることで、物体位置と内部状態の関係を可視化できる。
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
@@ -104,85 +104,87 @@ PCA_SARNN_20230521_1247_41.gif
 以下に疑似コードを用いて、実ロボットを用いたオンライン動作生成方法について述べる。
 ロボットは、ステップ2-5をの処理を、指定したサンプリングレートで繰り返し行うことで、センサ情報に基づいて逐次動作を生成することが可能である。
 
-1. **モデル読み込み（21行目）**
+1. **モデル読み込み（23行目）**
 
     モデルの定義を行った後に、学習済みの重みを読み込む。
 
-2. **センサ情報の取得、正規化（36行目）**
+2. **センサ情報の取得、正規化（38行目）**
 
     ロボットセンサ情報を取得し、正規化処理を行う。例えばロボットシステムに ROS を用いている場合、 Subscribe した画像と関節角度を `raw_image`, `raw_joint`とする。 
 
-3. **推論（49行目）**
+3. **推論（51行目）**
 
     正規化済みの画像`x_img`、関節角度`x_joint`を用いて、次時刻の画像`y_image`と関節角度`y_joint`を予測する。そして、各予測値を逆正規化することで、予測画像`pred_image`と予測関節角度`pred_joint`を計算する。
     
 
-4. **指令送信（59行目）**
+4. **指令送信（61行目）**
 
     予測関節角度`pred_joint`をロボットの動作指令とするとことで、ロボットは逐次動作を生成することが可能である。ROSの場合、関節角度をモータにPublishすることでロボットは指令値に基づいて各モータを制御する。
 
 
-5. **スリープ（63行目）**
+5. **スリープ（65行目）**
 
     最後に指定したサンプリングレートで推論を行うために、スリープ処理を入れることでタイミング調整を行う。なお、サンプリングレートは学習データ収集時と同じにする。
 
 
-```python title="online.py" linenums="1" hl_lines="21-24 36-42 49-50 59-61 63-65"
+```python title="online.py" linenums="1" hl_lines="23-26 38-44 51-52 61-63 65-67"
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_pth', type=str, default=None)
-parser.add_argument('--input_param',type=float, default=0.8 )
+parser.add_argument("--model_pth", type=str, default=None)
+parser.add_argument("--input_param", type=float, default=0.8)
 args = parser.parse_args()
 
 # restore parameters
 dir_name = os.path.split(args.model_pth)[0]
-params = restore_args( os.path.join(dir_name, 'args.json') )
+params = restore_args(os.path.join(dir_name, "args.json"))
 
 # load dataset
-minmax = [params['vmin'], params['vmax']]
-joint_bounds = np.load( os.path.join( os.path.expanduser('~'), '.eipl/grasp_bottle/joint_bounds.npy') )
+minmax = [params["vmin"], params["vmax"]]
+joint_bounds = np.load(os.path.join(os.path.expanduser("~"), ".eipl/grasp_bottle/joint_bounds.npy"))
 
 # define model
-model = SARNN( rec_dim=params['rec_dim'],
-               joint_dim=8,
-               k_dim=params['k_dim'],
-               heatmap_size=params['heatmap_size'],
-               temperature=params['temperature'])
+model = SARNN(
+    rec_dim=params["rec_dim"],
+    joint_dim=8,
+    k_dim=params["k_dim"],
+    heatmap_size=params["heatmap_size"],
+    temperature=params["temperature"],
+)
 
 # load weight
-ckpt = torch.load(args.model_pth, map_location=torch.device('cpu') )
-model.load_state_dict(ckpt['model_state_dict'])
+ckpt = torch.load(args.model_pth, map_location=torch.device("cpu"))
+model.load_state_dict(ckpt["model_state_dict"])
 model.eval()
 
 # Inference
 # Set the inference frequency; for a 10-Hz in ROS system, set as follows.
-freq = 10 # 10Hz
+freq = 10  # 10Hz
 rate = rospy.Rate(freq)
 image_list, joint_list = [], []
 state = None
-nloop = 200 # freq * 20 sec
+nloop = 200  # freq * 20 sec
 for loop_ct in range(nloop):
     start_time = time.time()
 
     # load data and normalization
     raw_images, raw_joint = robot.get_sensor_data()
-    x_img = raw_images[loop_ct].transpose(2,0,1)
-    x_img = torch.Tensor( np.expand_dims(x_img, 0 ) )
-    x_img = normalization( x_img, (0,255), minmax )
-    x_joint = torch.Tensor( np.expand_dims(raw_joint, 0 ) )
-    x_joint = normalization( x_joint, joint_bounds, minmax )
+    x_img = raw_images[loop_ct].transpose(2, 0, 1)
+    x_img = torch.Tensor(np.expand_dims(x_img, 0))
+    x_img = normalization(x_img, (0, 255), minmax)
+    x_joint = torch.Tensor(np.expand_dims(raw_joint, 0))
+    x_joint = normalization(x_joint, joint_bounds, minmax)
 
     # closed loop
     if loop_ct > 0:
-        x_img   = args.input_param*x_img   + (1.0-args.input_param)*y_image
-        x_joint = args.input_param*x_joint + (1.0-args.input_param)*y_joint
+        x_img = args.input_param * x_img + (1.0 - args.input_param) * y_image
+        x_joint = args.input_param * x_joint + (1.0 - args.input_param) * y_joint
 
     # predict rnn
     y_image, y_joint, state = rnn_model(x_img, x_joint, state)
 
     # denormalization
     pred_image = tensor2numpy(y_image[0])
-    pred_image = deprocess_img(pred_image, cae_params['vmin'], cae_params['vmax'])
-    pred_image = pred_image.transpose(1,2,0)
+    pred_image = deprocess_img(pred_image, cae_params["vmin"], cae_params["vmax"])
+    pred_image = pred_image.transpose(1, 2, 0)
     pred_joint = tensor2numpy(y_joint[0])
     pred_joint = normalization(pred_joint, minmax, joint_bounds)
 

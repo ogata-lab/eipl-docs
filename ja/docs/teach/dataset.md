@@ -20,7 +20,7 @@ $ ls
 
 <!-- ******************************** -->
 ----
-## フォルダ構成
+## ファイル
 ダウンロードファイルの中身は、以下のようなフォルダで構成されている。
 プログラム番号1から順にプログラムを実行するだけで、rosbagデータから学習データを生成することが可能である。
 
@@ -55,15 +55,13 @@ Failed to load Python extension for LZ4 support. LZ4 compression will not be ava
 ```
 
 全てのトピックをnpzファイルに保存すると膨大なメモリを消費するため、本スクリプトでは一例として、ロボットセンサ情報（カメラ画像、関節角度、グリッパ状態）を保存する。
-31行目で保存したいトピック名を列挙し、47-84行目では各トピックのメッセージからデータを抽出し予め用意したリストに保存する。
+31-35行目で保存したいトピック名を列挙し、50-87行目では各トピックのメッセージからデータを抽出し予め用意したリストに保存する。
 なお、カメラ画像をそのまま保存すると膨大な容量が必要になるため、事前にリサイズもしくはトリミングすることを推奨する。
-また、一定間隔でサンプリングしても、rosbag record の開始・終了タイミングによってトピックのデータ長が異なる場合があるため、91行目以降では時系列長の調整を行っている。
+また、一定間隔でサンプリングしても、rosbag record の開始・終了タイミングによってトピックのデータ長が異なる場合があるため、95行目以降では時系列長の調整を行っている。
 なお本プログラムのトピック名やデータの抽出方法を変更することで、ユーザ自身のロボットへ適用することが可能である。
 
 
-
-
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-32 92-99"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-35 95-102"
 import os
 import cv2
 import glob
@@ -74,16 +72,16 @@ import numpy as np
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('bag_dir', type=str)
-parser.add_argument('--freq',  type=float,  default=10)
+parser.add_argument("bag_dir", type=str)
+parser.add_argument("--freq", type=float, default=10)
 args = parser.parse_args()
 
 
-files = glob.glob( os.path.join( args.bag_dir, '*.bag') )
+files = glob.glob(os.path.join(args.bag_dir, "*.bag"))
 files.sort()
 for file in files:
     print(file)
-    savename = file.split('.bag')[0] + '.npz'
+    savename = file.split(".bag")[0] + ".npz"
 
     # Open the rosbag file
     bag = rosbag.Bag(file)
@@ -93,23 +91,26 @@ for file in files:
     end_time = bag.get_end_time()
 
     # Get the topics in the rosbag file
-    #topics = bag.get_type_and_topic_info()[1].keys()
-    topics = ['/torobo/joint_states', '/torobo/head/see3cam_left/camera/color/image_repub/compressed',
-    '/torobo/left_hand_controller/state']
+    # topics = bag.get_type_and_topic_info()[1].keys()
+    topics = [
+        "/torobo/joint_states",
+        "/torobo/head/see3cam_left/camera/color/image_repub/compressed",
+        "/torobo/left_hand_controller/state",
+    ]
 
     # Create a rospy.Time object to represent the current time
     current_time = rospy.Time.from_sec(start_time)
 
-    joint_list  = []
+    joint_list = []
     finger_list = []
-    image_list  = []
+    image_list = []
     finger_state_list = []
 
     prev_finger = None
-    finger_state  = 0
+    finger_state = 0
 
     # Loop through the rosbag file at regular intervals (args.freq)
-    freq = 1. / float(args.freq)
+    freq = 1.0 / float(args.freq)
     while current_time.to_sec() < end_time:
         print(current_time.to_sec())
 
@@ -117,23 +118,23 @@ for file in files:
         for topic in topics:
             for topic_msg, msg, time in bag.read_messages(topic):
                 if time >= current_time:
-                    if topic == '/torobo/joint_states':
-                        joint_list.append( msg.position[7:14] )
+                    if topic == "/torobo/joint_states":
+                        joint_list.append(msg.position[7:14])
 
-                    if topic == '/torobo/head/see3cam_left/camera/color/image_repub/compressed':
+                    if topic == "/torobo/head/see3cam_left/camera/color/image_repub/compressed":
                         np_arr = np.frombuffer(msg.data, np.uint8)
                         np_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-                        np_img = np_img[::2,::2]                        
-                        image_list.append( np_img[150:470,110:430].astype(np.uint8) )
+                        np_img = np_img[::2, ::2]
+                        image_list.append(np_img[150:470, 110:430].astype(np.uint8))
 
-                    if topic == '/torobo/left_hand_controller/state':
+                    if topic == "/torobo/left_hand_controller/state":
                         finger = np.array(msg.desired.positions[3])
                         if prev_finger is None:
                             prev_finger = finger
 
                         if finger - prev_finger > 0.005 and finger_state == 0:
                             finger_state = 1
-                        elif prev_finger - finger > 0.005 and finger_state == 1:                               
+                        elif prev_finger - finger > 0.005 and finger_state == 1:
                             finger_state = 0
                         prev_finger = finger
 
@@ -154,7 +155,7 @@ for file in files:
     finger = np.array(finger_list, dtype=np.float32)
     finger_state = np.array(finger_state_list, dtype=np.float32)
     images = np.array(image_list, dtype=np.uint8)
-    
+
     # Get shorter lenght
     shorter_length = min(len(joints), len(images), len(finger), len(finger_state))
 
@@ -164,12 +165,8 @@ for file in files:
     images = images[:shorter_length]
     finger_state = finger_state[:shorter_length]
 
-    # Save 
-    np.savez(savename,
-        joints=joints,
-        finger=finger,
-        finger_state=finger_state,
-        images=images)
+    # Save
+    np.savez(savename, joints=joints, finger=finger, finger_state=finger_state, images=images)
 ```
 
 
@@ -196,14 +193,14 @@ $ python3 2_make_dataset.py
 - **cos_interpolation** : ロボットハンドの開閉コマンドのように、急激に変化する0/1のバイナリデータの学習と予測を容易にするために、cos波を用いて滑らかな開閉コマンドに整形する。詳細は [こちら](../tips/normalization.md#cos-interpolation)。
 - **list_to_numpy** : `rosbag record` 時に保存時間 `--duration` を指定しても、ROSシステムの実行タイミングの関係上、必ず全てのrosbagデータのシーケンス長が同じになるとは限らない。そこで、最も長いシーケンスに合わせてpadding処理を行うことで、データ長の統一・整形を行う。
 
-次に45-48行目では、ユーザが指定するインデックス（38,39行目）に基づいて学習・テストデータの仕分けを行う。
+次に45-48行目では、ユーザが指定するインデックス（36,37行目）に基づいて学習・テストデータの仕分けを行う。
 教示位置とインデックスの関係は以下の表に示す通りである。
 表の位置A-Eは[物体位置](./overview.md#task)に対応しており、学習データは各教示位置でそれぞれ4つ、テストデータは全位置でそれぞれ1つ収集した。
 すなわち、合計で15データを収集した。
 教示位置で収集したテストデータのみを用いてモデルを評価した場合、教示位置に過学習してしまい、未学習位置における汎化動作を獲得しにくい。
 そのため、多様な位置における汎化性能を獲得するために、少量でも未学習位置をテストデータに含めることが重要である。
 
-最後に51-52行目で、関節角度の正規化パラメータとして各関節角度の上下限を計算し、保存する。
+最後に49-50行目で、関節角度の正規化パラメータとして各関節角度の上下限を計算し、保存する。
 関節角度の上下限を計算する理由については、[こちら](../tips/normalization.md#joint_norm)を参照ください。
 
 
@@ -213,7 +210,7 @@ $ python3 2_make_dataset.py
 | test        | 4       | 15    |9      | 16    | 14          |
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/2_make_dataset.py>[SOURCE] 2_make_dataset.py</a>" linenums="1" hl_lines="21-22 28-29 43-46 49"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/2_make_dataset.py>[SOURCE] 2_make_dataset.py</a>" linenums="1" hl_lines="21-22 28-29 43-46 49-50"
 import os
 import cv2
 import glob

@@ -16,7 +16,6 @@ This makes it possible to learn robot motions with higher accuracy than with glo
 [![joint_norm](img/joint_norm.png)](img/joint_norm.png)
 
 
-:download:`Download joint_normalization.py <./src/joint_norm.py>`
 
 !!! note
     Depending on the task, some joints may not move at all or change only slightly. If joint normalization is applied to such joints, the waveforms after normalization will be greatly distorted, which may adversely affect learning. It is recommended to check the waveforms after normalization and manually adjust the normalization range if such joint waveforms exist. Note that joint normalization is not suitable for originally noisy data such as torque and current values.

@@ -6,7 +6,7 @@ EPILは、公式的にLinux（Ubuntu 20.04）とPython3.8をサポートして�
 なお、CUDAやNvidiaドライバーは利用するPytorchの[バージョン](https://pytorch.org/get-started/previous-versions/)に合わせてインストールする必要がある。
 
 ----
-## フォルダ構造
+## ファイル
 本ライブラリは以下のように構成される。
 `layer` と `model` の一部は [torchinfo](https://github.com/TylerYep/torchinfo)を用いて、モデル構造を可視化することで検証を行っている。
 

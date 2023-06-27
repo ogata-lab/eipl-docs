@@ -37,29 +37,29 @@ class SpatialSoftmax(nn.Module):
             self.temperature = torch.nn.Parameter(torch.ones(1))
         else:
             self.temperature = temperature
-        
+
         _, pos_x, pos_y = create_position_encoding(width, height, normalized=normalized)
-        self.register_buffer('pos_x', pos_x)
-        self.register_buffer('pos_y', pos_y)
+        self.register_buffer("pos_x", pos_x)
+        self.register_buffer("pos_y", pos_y)
 
     def forward(self, x):
         batch_size, channels, width, height = x.shape
-        assert height==self.height
-        assert width==self.width
+        assert height == self.height
+        assert width == self.width
 
         # flatten, apply softmax
         logit = x.reshape(batch_size, channels, -1)
-        att_map = torch.softmax(logit/self.temperature, dim=-1)
-                
+        att_map = torch.softmax(logit / self.temperature, dim=-1)
+
         # compute expectation
-        expected_x = torch.sum(self.pos_x*att_map, dim=-1, keepdim=True)
-        expected_y = torch.sum(self.pos_y*att_map, dim=-1, keepdim=True)
+        expected_x = torch.sum(self.pos_x * att_map, dim=-1, keepdim=True)
+        expected_y = torch.sum(self.pos_y * att_map, dim=-1, keepdim=True)
         keys = torch.cat([expected_x, expected_y], -1)
-        
+
         # keys [[x,y], [x,y], [x,y],...]
         keys = keys.reshape(batch_size, channels, 2)
-        att_map = att_map.reshape(-1, channels, width, height)       
-        return keys, att_map  
+        att_map = att_map.reshape(-1, channels, width, height)
+        return keys, att_map
 ```
 
 
@@ -86,10 +86,12 @@ class InverseSpatialSoftmax(nn.Module):
         self.heatmap_size = heatmap_size
 
         pos_xy, _, _ = create_position_encoding(width, height, normalized=normalized)
-        self.register_buffer('pos_xy', pos_xy)
+        self.register_buffer("pos_xy", pos_xy)
 
     def forward(self, keys):
-        squared_distances = torch.sum( torch.pow( self.pos_xy[None,None] - keys[:,:,:,None,None], 2.0 ), axis=2)
+        squared_distances = torch.sum(
+            torch.pow(self.pos_xy[None, None] - keys[:, :, :, None, None], 2.0), axis=2
+        )
         heatmap = torch.exp(-squared_distances / self.heatmap_size)
         return heatmap
 ```
@@ -100,7 +102,7 @@ class InverseSpatialSoftmax(nn.Module):
 ## 誤差スケジューラ {#loss_scheduler} 
 誤差スケジューラとは、注意点の予測誤差をエポックに応じて徐々に重み付けする `callback` であり、SARNNを学習させる上で重要な機能である。
 下図は引数 `curve_name` ごとの重み付け曲線を示しており、横軸はエポック数、縦軸は重み付けの値である。
-誤差の重み付けは0から始まり、 `decay_end` （100）で設定したエポックで重み付けの最大値（例：0.1）を返す。
+誤差の重み付けは0から始まり、 `decay_end` （例：100）で設定したエポックで重み付けの最大値（例：0.1）を返す。
 なお、重み付け最大値は `__call__` メソッドで指定する。
 本クラスでは、図中に示す5種類の曲線(線形補間、S字補完、逆S字補完、減速補完、加速補完)に対応している。
 
@@ -116,11 +118,13 @@ SARNNのEncoderとDecoderはランダムに初期化されているため、学�
 
 ```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/utils/callback.py>[SOURCE] callback.py</a>" linenums="1"
 class LossScheduler:
-    def __init__(self, decay_end=1000, curve_name='s'):
+    def __init__(self, decay_end=1000, curve_name="s"):
         decay_start = 0
         self.counter = -1
         self.decay_end = decay_end
-        self.interpolated_values = self.curve_interpolation(decay_start, decay_end, decay_end, curve_name)
+        self.interpolated_values = self.curve_interpolation(
+            decay_start, decay_end, decay_end, curve_name
+        )
 
     def linear_interpolation(self, start, end, num_points):
         x = np.linspace(start, end, num_points)
@@ -147,18 +151,18 @@ class LossScheduler:
         return x
 
     def curve_interpolation(self, start, end, num_points, curve_name):
-        if curve_name == 'linear':
+        if curve_name == "linear":
             interpolated_values = self.linear_interpolation(start, end, num_points)
-        elif curve_name == 's':
+        elif curve_name == "s":
             interpolated_values = self.s_curve_interpolation(start, end, num_points)
-        elif curve_name == 'inverse_s':
+        elif curve_name == "inverse_s":
             interpolated_values = self.inverse_s_curve_interpolation(start, end, num_points)
-        elif curve_name == 'deceleration':
+        elif curve_name == "deceleration":
             interpolated_values = self.deceleration_curve_interpolation(start, end, num_points)
-        elif curve_name == 'acceleration':
+        elif curve_name == "acceleration":
             interpolated_values = self.acceleration_curve_interpolation(start, end, num_points)
         else:
-            assert False, 'Invalid curve name. {}'.format(curve_name)
+            assert False, "Invalid curve name. {}".format(curve_name)
 
         return interpolated_values / num_points
 
@@ -181,7 +185,7 @@ BPTTでは、各時刻での誤差を計算し、それを遡って勾配を計�
 全シーケンスの予測値と真値（$f_{t+1}$, $a_{t+1}$）の平均二乗誤差 `nn.MSELoss` を計算し、誤差値`loss`に基づいて誤差伝番を行う。
 このとき、各時刻のパラメータが、その時刻より後のすべての時刻で使用されるため、時間的な展開を行いながら逆伝播を行う。
 
-59-63行目に示すように、SARNNは画像誤差と関節角度誤差に加え、注意点の予測誤差も計算する。
+47-54行目に示すように、SARNNは画像誤差と関節角度誤差に加え、注意点の予測誤差も計算する。
 注意点の真値は存在しないため、双方向誤差 [@hiruma2022deep] を用いて注意点の学習を行う。
 具体的には時刻 $t$ でRNNが予測した注意点 $ \hat p_{t+1}$ と時刻 $t+1$ でCNNが抽出した注意点 $p_{t+1}$ が一致するように誤差を計算する。
 この双方向誤差に基づいて、LSTMで注意点と関節角度の時系列関係を学習することで、冗長な画像予測を排除するだけでなく、動作予測に重要な注意点を予測するように誘導する。
@@ -192,31 +196,27 @@ BPTTでは、各時刻での誤差を計算し、それを遡って勾配を計�
 重み付け係数はモデルやタスクに応じて調整することが求められる。
 これまでの経験上、重み付け係数は全て1.0、もしくは画像のみ0.1にすることが多い。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="11 49-53"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                loss_weights=[1.0, 1.0],
-                device='cpu'):
-
+    def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.loss_weights = loss_weights
-        self.scheduler = LossScheduler(decay_end=1000, curve_name='s')
+        self.scheduler = LossScheduler(decay_end=1000, curve_name="s")
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    #'optimizer_state_dict': self.optimizer.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
@@ -231,20 +231,24 @@ class fullBPTTtrainer:
             yi_list, yv_list = [], []
             dec_pts_list, enc_pts_list = [], []
             T = x_img.shape[1]
-            for t in range(T-1):
-                _yi_hat, _yv_hat, enc_ij, dec_ij, state = self.model(x_img[:,t], x_joint[:,t], state)
+            for t in range(T - 1):
+                _yi_hat, _yv_hat, enc_ij, dec_ij, state = self.model(
+                    x_img[:, t], x_joint[:, t], state
+                )
                 yi_list.append(_yi_hat)
                 yv_list.append(_yv_hat)
                 enc_pts_list.append(enc_ij)
                 dec_pts_list.append(dec_ij)
 
-            yi_hat = torch.permute(torch.stack(yi_list), (1,0,2,3,4) )
-            yv_hat = torch.permute(torch.stack(yv_list), (1,0,2) )
+            yi_hat = torch.permute(torch.stack(yi_list), (1, 0, 2, 3, 4))
+            yv_hat = torch.permute(torch.stack(yv_list), (1, 0, 2))
 
-            img_loss   = nn.MSELoss()(yi_hat, y_img[:,1:] ) * self.loss_weights[0]
-            joint_loss = nn.MSELoss()(yv_hat, y_joint[:,1:] ) * self.loss_weights[1]
+            img_loss = nn.MSELoss()(yi_hat, y_img[:, 1:]) * self.loss_weights[0]
+            joint_loss = nn.MSELoss()(yv_hat, y_joint[:, 1:]) * self.loss_weights[1]
             # Gradually change the loss value using the LossScheluder class.
-            pt_loss    = nn.MSELoss()(torch.stack(dec_pts_list[:-1]), torch.stack(enc_pts_list[1:])) * self.scheduler(self.loss_weights[2])
+            pt_loss = nn.MSELoss()(
+                torch.stack(dec_pts_list[:-1]), torch.stack(enc_pts_list[1:])
+            ) * self.scheduler(self.loss_weights[2])
             loss = img_loss + joint_loss + pt_loss
             total_loss += loss.item()
 
@@ -253,7 +257,7 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
 
 

@@ -3,7 +3,7 @@
 Because CAE-RNN trains the image feature extraction part (CAE) and the time series learning part (RNN) independently, parameter adjustment and model training time have been issues.
 Furthermore, CAE extracts image features that are specialized for dimensional compression of image information, not the image features that are necessarily appropriate for generating robot motions.
 Therefore, CNNRNN is a motion generation model that can automatically extract image features important for motion generation by simultaneously learning (end-to-end learning) the image feature extraction part (CAE) and the time series learning part (RNN).
-This allows the robot to focus only on objects that are important to the task and generate motions that are more robust to background changes than CAE-RNN [@ito2020visualization].
+This allows the robot to focus only on objects that are important to the task and generate motions that are more robust to background changes than CAE-RNN[@ito2020visualization].
 
 ![Overview of CNNRNN](img/cnnrnn/cnnrnn.png){: .center}
 
@@ -26,47 +26,54 @@ The programs and folders used in CNNRNN are as follows:
 ## Model {#model}
 CNNRNN is a motion generation model capable of learning and inference of multimodal time series data. It predicts the image `y_image` and joint angle `y_joint` at the next time $t+1$ based on the image `xi`, joint angle `xv` and state `state` at the previous time $t$.
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1" hl_lines="50-51"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1"
 class CNNRNN(nn.Module):
-    def __init__(self,
-                 rec_dim=50,
-                 joint_dim=8,
-                 feat_dim=10):
+    def __init__(self, rec_dim=50, joint_dim=8, feat_dim=10):
         super(CNNRNN, self).__init__()
 
         # Encoder
         self.encoder_image = nn.Sequential(
-            nn.Conv2d(3,  64, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(64, 32, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(32, 16, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(16, 12, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(12, 8,  3, 2, 1), nn.Tanh(),
+            nn.Conv2d(3, 64, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(64, 32, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(32, 16, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(16, 12, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(12, 8, 3, 2, 1),
+            nn.Tanh(),
             nn.Flatten(),
-            nn.Linear(8*4*4, 50),   nn.Tanh(),
-            nn.Linear(50, feat_dim),nn.Tanh()
+            nn.Linear(8 * 4 * 4, 50),
+            nn.Tanh(),
+            nn.Linear(50, feat_dim),
+            nn.Tanh(),
         )
 
         # Recurrent
         rec_in = feat_dim + joint_dim
-        self.rec = nn.LSTMCell(rec_in, rec_dim )
+        self.rec = nn.LSTMCell(rec_in, rec_dim)
 
         # Decoder for joint angle
-        self.decoder_joint = nn.Sequential(
-            nn.Linear(rec_dim, joint_dim),
-            nn.Tanh()
-        )
-        
+        self.decoder_joint = nn.Sequential(nn.Linear(rec_dim, joint_dim), nn.Tanh())
+
         # Decoder for image
         self.decoder_image = nn.Sequential(
-            nn.Linear(rec_dim, 8*4*4), nn.Tanh(),
-            nn.Unflatten(1, (8,4,4)), 
-            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(12,16, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(16,32, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(32,64, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1), nn.Tanh()
+            nn.Linear(rec_dim, 8 * 4 * 4),
+            nn.Tanh(),
+            nn.Unflatten(1, (8, 4, 4)),
+            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(12, 16, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(16, 32, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(32, 64, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
         )
-    
+
     def forward(self, xi, xv, state=None):
         # Encoder
         im_feat = self.encoder_image(xi)
@@ -89,29 +96,26 @@ class CNNRNN(nn.Module):
 Backpropagation Through Time (BPTT) is used as the error back propagation algorithm for time series learning.
 The details of BPTT have already been described in SARNN, please refer to [here](../../model/SARNN#bptt).
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="54"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                loss_weights=[1.0, 1.0],
-                device='cpu'):
-
+    def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.loss_weights = loss_weights
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
@@ -125,14 +129,15 @@ class fullBPTTtrainer:
             state = None
             yi_list, yv_list = [], []
             T = x_img.shape[1]
-            for t in range(T-1):
-                _yi_hat, _yv_hat, state = self.model(x_img[:,t], x_joint[:,t], state)
+            for t in range(T - 1):
+                _yi_hat, _yv_hat, state = self.model(x_img[:, t], x_joint[:, t], state)
                 yi_list.append(_yi_hat)
                 yv_list.append(_yv_hat)
 
-            yi_hat = torch.permute(torch.stack(yi_list), (1,0,2,3,4) )
-            yv_hat = torch.permute(torch.stack(yv_list), (1,0,2) )
-            loss   = self.loss_weights[0]*nn.MSELoss()(yi_hat, y_img[:,1:] ) + self.loss_weights[1]*nn.MSELoss()(yv_hat, y_joint[:,1:] )
+            yi_hat = torch.permute(torch.stack(yi_list), (1, 0, 2, 3, 4))
+            yv_hat = torch.permute(torch.stack(yv_list), (1, 0, 2))
+            loss = self.loss_weights[0] * nn.MSELoss()(yi_hat, y_img[:, 1:]) \
+                + self.loss_weights[1] * nn.MSELoss()(yv_hat, y_joint[:, 1:])
             total_loss += loss.item()
 
             if training:
@@ -140,8 +145,9 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
+
 
 
 <!-- #################################################################################################### -->
@@ -240,9 +246,9 @@ In CAE-RNN, generalization performance was ensured by learning various object po
 
 2. **Layer Normalization**
 
-    CAE-RNN used `BatchNormalization` [@ioffe2015batch] as a normalization method to make CAE training stable and fast.
+    CAE-RNN used `BatchNormalization`[@ioffe2015batch] as a normalization method to make CAE training stable and fast.
     However, BatchNormalization has the issues that learning becomes unstable when the batch of dataset is small and it is difficult to apply to recursive neural networks.
-    Therefore, we will improve generalization performance by using `Layer Normalization` [@ba2016layer], which can stably train on small batches of data sets and time-series data.
+    Therefore, we will improve generalization performance by using `Layer Normalization`[@ba2016layer], which can stably train on small batches of data sets and time-series data.
 
     The following figure visualizes the internal state of [CNNRNNLN](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py) using principal component analysis.
     The self-organization (alignment) of attractors for each object position allows the robot to properly generate motion even at unlearned positions.

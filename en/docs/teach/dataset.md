@@ -55,13 +55,13 @@ Failed to load Python extension for LZ4 support. LZ4 compression will not be ava
 ```
 
 Since saving all topics in the npz file consumes a huge amount of memory, this script saves the robot sensor information (camera image, joint angle, and gripper state) as an example.
-In line 31, the names of the topics to be saved are listed, and in lines 47-84, data is extracted from the messages of each topic and saved in a list prepared in advance.
+In line 31-35, the names of the topics to be saved are listed, and in lines 50-87, data is extracted from the messages of each topic and saved in a list prepared in advance.
 Note that saving the camera image as it is requires a huge amount of space, so it is recommended to resize or crop the image in advance.
-Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end timing of the rosbag record, so the time series length is adjusted after line 91.
+Even if sampling is performed at regular intervals, the data length of the topics may differ depending on the start and end timing of the rosbag record, so the time series length is adjusted after line 95.
 The program can be applied to the user's own robot by changing the topic name and data extraction method.
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-32 92-99"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/1_rosbag2npz.py>[SOURCE] 1_rosbag2npz.py</a>" linenums="1" hl_lines="31-35 50-87 95-102"
 import os
 import cv2
 import glob
@@ -72,16 +72,16 @@ import numpy as np
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('bag_dir', type=str)
-parser.add_argument('--freq',  type=float,  default=10)
+parser.add_argument("bag_dir", type=str)
+parser.add_argument("--freq", type=float, default=10)
 args = parser.parse_args()
 
 
-files = glob.glob( os.path.join( args.bag_dir, '*.bag') )
+files = glob.glob(os.path.join(args.bag_dir, "*.bag"))
 files.sort()
 for file in files:
     print(file)
-    savename = file.split('.bag')[0] + '.npz'
+    savename = file.split(".bag")[0] + ".npz"
 
     # Open the rosbag file
     bag = rosbag.Bag(file)
@@ -91,23 +91,26 @@ for file in files:
     end_time = bag.get_end_time()
 
     # Get the topics in the rosbag file
-    #topics = bag.get_type_and_topic_info()[1].keys()
-    topics = ['/torobo/joint_states', '/torobo/head/see3cam_left/camera/color/image_repub/compressed',
-    '/torobo/left_hand_controller/state']
+    # topics = bag.get_type_and_topic_info()[1].keys()
+    topics = [
+        "/torobo/joint_states",
+        "/torobo/head/see3cam_left/camera/color/image_repub/compressed",
+        "/torobo/left_hand_controller/state",
+    ]
 
     # Create a rospy.Time object to represent the current time
     current_time = rospy.Time.from_sec(start_time)
 
-    joint_list  = []
+    joint_list = []
     finger_list = []
-    image_list  = []
+    image_list = []
     finger_state_list = []
 
     prev_finger = None
-    finger_state  = 0
+    finger_state = 0
 
     # Loop through the rosbag file at regular intervals (args.freq)
-    freq = 1. / float(args.freq)
+    freq = 1.0 / float(args.freq)
     while current_time.to_sec() < end_time:
         print(current_time.to_sec())
 
@@ -115,23 +118,23 @@ for file in files:
         for topic in topics:
             for topic_msg, msg, time in bag.read_messages(topic):
                 if time >= current_time:
-                    if topic == '/torobo/joint_states':
-                        joint_list.append( msg.position[7:14] )
+                    if topic == "/torobo/joint_states":
+                        joint_list.append(msg.position[7:14])
 
-                    if topic == '/torobo/head/see3cam_left/camera/color/image_repub/compressed':
+                    if topic == "/torobo/head/see3cam_left/camera/color/image_repub/compressed":
                         np_arr = np.frombuffer(msg.data, np.uint8)
                         np_img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
-                        np_img = np_img[::2,::2]                        
-                        image_list.append( np_img[150:470,110:430].astype(np.uint8) )
+                        np_img = np_img[::2, ::2]
+                        image_list.append(np_img[150:470, 110:430].astype(np.uint8))
 
-                    if topic == '/torobo/left_hand_controller/state':
+                    if topic == "/torobo/left_hand_controller/state":
                         finger = np.array(msg.desired.positions[3])
                         if prev_finger is None:
                             prev_finger = finger
 
                         if finger - prev_finger > 0.005 and finger_state == 0:
                             finger_state = 1
-                        elif prev_finger - finger > 0.005 and finger_state == 1:                               
+                        elif prev_finger - finger > 0.005 and finger_state == 1:
                             finger_state = 0
                         prev_finger = finger
 
@@ -152,7 +155,7 @@ for file in files:
     finger = np.array(finger_list, dtype=np.float32)
     finger_state = np.array(finger_state_list, dtype=np.float32)
     images = np.array(image_list, dtype=np.uint8)
-    
+
     # Get shorter lenght
     shorter_length = min(len(joints), len(images), len(finger), len(finger_state))
 
@@ -162,12 +165,8 @@ for file in files:
     images = images[:shorter_length]
     finger_state = finger_state[:shorter_length]
 
-    # Save 
-    np.savez(savename,
-        joints=joints,
-        finger=finger,
-        finger_state=finger_state,
-        images=images)
+    # Save
+    np.savez(savename, joints=joints, finger=finger, finger_state=finger_state, images=images)
 ```
 
 
@@ -193,14 +192,14 @@ Lines 21, 22, 28, and 29 perform the following operations.
 - **cos_interpolation**: To facilitate learning and prediction of sharply changing 0/1 binary data, such as robot hand open/close commands, cos interpolation are used to reshape the data into smooth open/close commands. For more information, see [here](../tips/normalization.md#cos-interpolation).
 - **list_to_numpy**: Even if you specify a storage time `--duration` for `rosbag record`, the sequence length of all rosbag data is not always the same due to the execution timing of the ROS system. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.
 
-Lines 45-48 then sort the training and test data based on the indexes specified by the user (lines 38 and 39).
+Lines 43-46 then sort the training and test data based on the indexes specified by the user (lines 36 and 37).
 The relationship between the teaching position and the index is shown in the table below.
 Positions A-E in the table are [object position](./overview.md#task). 4 training data were collected for each teaching position and 1 test data for all positions.
 In other words, a total of 15 data were collected.
 When the model is evaluated using only the test data collected at the teaching positions, it is difficult to acquire generalization behavior at unlearned positions due to overlearning at the teaching positions.
 Therefore, it is important to include even a small amount of untrained positions in the test data in order to acquire generalization performance in a variety of positions.
 
-Finally, in lines 51-52, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles.
+Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles.
 For more information on why the upper and lower limits of the joint angles are calculated, see [here](../tips/normalization.md#joint_norm).
 
 | Position    | A       | B     | C     | D     | E           |
@@ -209,7 +208,7 @@ For more information on why the upper and lower limits of the joint angles are c
 | test        | 4       | 15    |9      | 16    | 14          |
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/2_make_dataset.py>[SOURCE] 2_make_dataset.py</a>" linenums="1" hl_lines="21-22 28-29 43-46 49"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/ros/2_make_dataset.py>[SOURCE] 2_make_dataset.py</a>" linenums="1" hl_lines="21-22 28-29 43-46 49-50"
 import os
 import cv2
 import glob
@@ -261,6 +260,7 @@ if __name__ == "__main__":
     joint_bounds = calc_minmax(joints)
     np.save("./data/joint_bounds.npy", joint_bounds)
 ```
+
 
 
 <!-- ******************************** -->

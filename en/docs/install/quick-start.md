@@ -22,7 +22,7 @@ indicating that the joint angles are predicted while focusing on the robot hand 
 ![results_of_SARNN](img/sarnn-rt_4.webp){: .center}
 
 
-## HELP
+## Help
 If an error occurs, there are three possible causes:
 
 1. **Installation error**

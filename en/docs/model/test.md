@@ -43,9 +43,9 @@ Hereafter, we use PCA to compress the internal state of the RNN to a lower dimen
 The following program is a partial excerpt of the inference and PCA process.
 First, input test data into the model and store the internal state `state` of the RNN at each time as a list.
 In the case of [LSTM](https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html), `hidden state` and `cell state` are returned as `state`.
-Here we use `state` for visualization and analysis.
-Next, we transform the shape of `state`, from [number of data, time series length, number of dimensions of state] to [number of data x time series length, number of dimensions of state] in order to compare the internal state at each object position.
-Finally, the high-dimensional `state` is compressed into low-dimensional information (3 dimensions) by applying PCA as shown in line 12.
+Here we use `hidden state` for visualization and analysis.
+Next, we transform the shape of state, from [number of data, time series length, number of dimensions of state] to [number of data x time series length, number of dimensions of state] in order to compare the internal state at each object position.
+Finally, the high-dimensional state is compressed into low-dimensional information (3 dimensions) by applying PCA as shown in line 12.
 By restoring the compressed principal component `pca_val` to its original shape [number of data, time series length, 3 dim], we can visualize the relationship between object position and internal state by coloring each object position and plotting it in 3D space.
 
 
@@ -107,88 +107,90 @@ The following describes an online motion generation method using a real robot wi
 The robot can generate sequential motions based on sensor information by repeating steps 2-5 at a specified sampling rate.
 
 
-1. **Model loading (line 21)**
+1. **Model loading (line 23)**
 
     After defining the model, load the trained weights.
 
-2. **Get and normalize sensor information (line 36)**
+2. **Get and normalize sensor information (line 38)**
 
     Get the robot sensor information and perform the normalization process.
     For example, if you are using ROS, the Subscribed image and joint angles as `raw_image` and `raw_joint`.
     
 
-3. **Inference (line 49)**
+3. **Inference (line 51)**
 
     Predict the image `y_image` and joint angle `y_joint` at the next time using the normalized image `x_img` and joint angle `x_joint`.
     
 
-4. **Send command (line 59)**
+4. **Send command (line 61)**
 
     By using the predicted joint angle `pred_joint` as the robot's motor command, the robot can generate sequential motions.
     In the case of ROS, by publishing the joint angles to the motors, the robot controls each motor based on the motor command.
 
-5. **Sleep (line 63)**
+5. **Sleep (line 65)**
 
     Finally, timing is adjusted by inserting a sleep process to perform inference at the specified sampling rate. The sampling rate should be the same as during training data collection.
 
 
 
-```python title="online.py" linenums="1" hl_lines="21-24 36-42 49-50 59-61 63-65"
+```python title="online.py" linenums="1" hl_lines="23-26 38-44 51-52 61-63 65-67"
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_pth', type=str, default=None)
-parser.add_argument('--input_param',type=float, default=0.8 )
+parser.add_argument("--model_pth", type=str, default=None)
+parser.add_argument("--input_param", type=float, default=0.8)
 args = parser.parse_args()
 
 # restore parameters
 dir_name = os.path.split(args.model_pth)[0]
-params = restore_args( os.path.join(dir_name, 'args.json') )
+params = restore_args(os.path.join(dir_name, "args.json"))
 
 # load dataset
-minmax = [params['vmin'], params['vmax']]
-joint_bounds = np.load( os.path.join( os.path.expanduser('~'), '.eipl/grasp_bottle/joint_bounds.npy') )
+minmax = [params["vmin"], params["vmax"]]
+joint_bounds = np.load(os.path.join(os.path.expanduser("~"), ".eipl/grasp_bottle/joint_bounds.npy"))
 
 # define model
-model = SARNN( rec_dim=params['rec_dim'],
-               joint_dim=8,
-               k_dim=params['k_dim'],
-               heatmap_size=params['heatmap_size'],
-               temperature=params['temperature'])
+model = SARNN(
+    rec_dim=params["rec_dim"],
+    joint_dim=8,
+    k_dim=params["k_dim"],
+    heatmap_size=params["heatmap_size"],
+    temperature=params["temperature"],
+)
 
 # load weight
-ckpt = torch.load(args.model_pth, map_location=torch.device('cpu') )
-model.load_state_dict(ckpt['model_state_dict'])
+ckpt = torch.load(args.model_pth, map_location=torch.device("cpu"))
+model.load_state_dict(ckpt["model_state_dict"])
 model.eval()
 
 # Inference
 # Set the inference frequency; for a 10-Hz in ROS system, set as follows.
-freq = 10 # 10Hz
+freq = 10  # 10Hz
 rate = rospy.Rate(freq)
 image_list, joint_list = [], []
 state = None
-nloop = 200 # freq * 20 sec
+nloop = 200  # freq * 20 sec
 for loop_ct in range(nloop):
     start_time = time.time()
 
     # load data and normalization
     raw_images, raw_joint = robot.get_sensor_data()
-    x_img = raw_images[loop_ct].transpose(2,0,1)
-    x_img = torch.Tensor( np.expand_dims(x_img, 0 ) )
-    x_img = normalization( x_img, (0,255), minmax )
-    x_joint = torch.Tensor( np.expand_dims(raw_joint, 0 ) )
-    x_joint = normalization( x_joint, joint_bounds, minmax )
+    x_img = raw_images[loop_ct].transpose(2, 0, 1)
+    x_img = torch.Tensor(np.expand_dims(x_img, 0))
+    x_img = normalization(x_img, (0, 255), minmax)
+    x_joint = torch.Tensor(np.expand_dims(raw_joint, 0))
+    x_joint = normalization(x_joint, joint_bounds, minmax)
 
     # closed loop
     if loop_ct > 0:
-        x_img   = args.input_param*x_img   + (1.0-args.input_param)*y_image
-        x_joint = args.input_param*x_joint + (1.0-args.input_param)*y_joint
+        x_img = args.input_param * x_img + (1.0 - args.input_param) * y_image
+        x_joint = args.input_param * x_joint + (1.0 - args.input_param) * y_joint
 
     # predict rnn
     y_image, y_joint, state = rnn_model(x_img, x_joint, state)
 
     # denormalization
     pred_image = tensor2numpy(y_image[0])
-    pred_image = deprocess_img(pred_image, cae_params['vmin'], cae_params['vmax'])
-    pred_image = pred_image.transpose(1,2,0)
+    pred_image = deprocess_img(pred_image, cae_params["vmin"], cae_params["vmax"])
+    pred_image = pred_image.transpose(1, 2, 0)
     pred_joint = tensor2numpy(y_joint[0])
     pred_joint = normalization(pred_joint, minmax, joint_bounds)
 

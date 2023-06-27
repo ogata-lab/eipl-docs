@@ -3,7 +3,7 @@
 CAE-RNNは、画像特徴量抽出部（CAE）と時系列学習部（RNN）を独立して学習させるため、パラメータ調整やモデル学習時間などが課題であった。
 さらに、CAEは画像情報の次元圧縮に特化した画像特徴量を抽出しているため、必ずしもロボットの動作生成に適切な画像特徴量であるとは言えない。
 そこでCNNRNNは、画像特徴量抽出部（CAE）と時系列学習部（RNN）を同時に学習（End-to-End学習）することで、動作生成に重要な画像特徴量を自動抽出することが可能な動作生成モデルである。
-これによりロボットは作業に重要な対象物にのみ着目して動作を生成するため、CAE-RNNと比較して背景変化に対しロバストな動作を生成することが可能である [@ito2020visualization]。
+これによりロボットは作業に重要な対象物にのみ着目して動作を生成するため、CAE-RNNと比較して背景変化に対しロバストな動作を生成することが可能である[@ito2020visualization]。
 
 ![Overview of CNNRNN](img/cnnrnn/cnnrnn.png){: .center}
 
@@ -24,49 +24,56 @@ CNNRNNで用いるプログラム一式と、フォルダ構成は以下のと�
 <!-- #################################################################################################### -->
 ----
 ## CNNRNNモデル {#model}
-CNNRNNは、マルチモーダルな時系列データの学習と推論が可能なニューラルネットワークであり、時刻$t$における画像`xi`、関節角度`xv`そして前時刻での状態 `state` に基づいて、次時刻$t+1$の画像`y_image`と関節角度 `y_joint` を予測する。
+CNNRNNは、マルチモーダルな時系列データの学習と推論が可能なニューラルネットワークであり、時刻$t$における画像`xi`、関節角度`xv`そして前時刻での状態`state`に基づいて、次時刻$t+1$の画像`y_image`と関節角度`y_joint`を予測する。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1" hl_lines="50-51"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNN.py>[SOURCE] CNNRNN.py</a>" linenums="1"
 class CNNRNN(nn.Module):
-    def __init__(self,
-                 rec_dim=50,
-                 joint_dim=8,
-                 feat_dim=10):
+    def __init__(self, rec_dim=50, joint_dim=8, feat_dim=10):
         super(CNNRNN, self).__init__()
 
         # Encoder
         self.encoder_image = nn.Sequential(
-            nn.Conv2d(3,  64, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(64, 32, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(32, 16, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(16, 12, 3, 2, 1), nn.Tanh(),
-            nn.Conv2d(12, 8,  3, 2, 1), nn.Tanh(),
+            nn.Conv2d(3, 64, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(64, 32, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(32, 16, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(16, 12, 3, 2, 1),
+            nn.Tanh(),
+            nn.Conv2d(12, 8, 3, 2, 1),
+            nn.Tanh(),
             nn.Flatten(),
-            nn.Linear(8*4*4, 50),   nn.Tanh(),
-            nn.Linear(50, feat_dim),nn.Tanh()
+            nn.Linear(8 * 4 * 4, 50),
+            nn.Tanh(),
+            nn.Linear(50, feat_dim),
+            nn.Tanh(),
         )
 
         # Recurrent
         rec_in = feat_dim + joint_dim
-        self.rec = nn.LSTMCell(rec_in, rec_dim )
+        self.rec = nn.LSTMCell(rec_in, rec_dim)
 
         # Decoder for joint angle
-        self.decoder_joint = nn.Sequential(
-            nn.Linear(rec_dim, joint_dim),
-            nn.Tanh()
-        )
-        
+        self.decoder_joint = nn.Sequential(nn.Linear(rec_dim, joint_dim), nn.Tanh())
+
         # Decoder for image
         self.decoder_image = nn.Sequential(
-            nn.Linear(rec_dim, 8*4*4), nn.Tanh(),
-            nn.Unflatten(1, (8,4,4)), 
-            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(12,16, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(16,32, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(32,64, 3, 2, padding=1, output_padding=1), nn.Tanh(),
-            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1), nn.Tanh()
+            nn.Linear(rec_dim, 8 * 4 * 4),
+            nn.Tanh(),
+            nn.Unflatten(1, (8, 4, 4)),
+            nn.ConvTranspose2d(8, 12, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(12, 16, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(16, 32, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(32, 64, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
+            nn.ConvTranspose2d(64, 3, 3, 2, padding=1, output_padding=1),
+            nn.Tanh(),
         )
-    
+
     def forward(self, xi, xv, state=None):
         # Encoder
         im_feat = self.encoder_image(xi)
@@ -89,29 +96,26 @@ class CNNRNN(nn.Module):
 時系列学習を行うための誤差逆伝播アルゴリズムとしてBackpropagation Through Time（BPTT）を用いる。
 BPTTの詳細はSARNNで記載済みであるため、そちらを[参照](../../model/SARNN#bptt)されたい。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="54"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/cnnrnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1"
 class fullBPTTtrainer:
-    def __init__(self,
-                model,
-                optimizer,
-                loss_weights=[1.0, 1.0],
-                device='cpu'):
-
+    def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device
         self.optimizer = optimizer
         self.loss_weights = loss_weights
         self.model = model.to(self.device)
 
     def save(self, epoch, loss, savename):
-        torch.save({
-                    'epoch': epoch,
-                    'model_state_dict': self.model.state_dict(),
-                    'train_loss': loss[0],
-                    'test_loss': loss[1],
-                    }, savename)
+        torch.save(
+            {
+                "epoch": epoch,
+                "model_state_dict": self.model.state_dict(),
+                "train_loss": loss[0],
+                "test_loss": loss[1],
+            },
+            savename,
+        )
 
     def process_epoch(self, data, training=True):
-
         if not training:
             self.model.eval()
 
@@ -125,14 +129,15 @@ class fullBPTTtrainer:
             state = None
             yi_list, yv_list = [], []
             T = x_img.shape[1]
-            for t in range(T-1):
-                _yi_hat, _yv_hat, state = self.model(x_img[:,t], x_joint[:,t], state)
+            for t in range(T - 1):
+                _yi_hat, _yv_hat, state = self.model(x_img[:, t], x_joint[:, t], state)
                 yi_list.append(_yi_hat)
                 yv_list.append(_yv_hat)
 
-            yi_hat = torch.permute(torch.stack(yi_list), (1,0,2,3,4) )
-            yv_hat = torch.permute(torch.stack(yv_list), (1,0,2) )
-            loss   = self.loss_weights[0]*nn.MSELoss()(yi_hat, y_img[:,1:] ) + self.loss_weights[1]*nn.MSELoss()(yv_hat, y_joint[:,1:] )
+            yi_hat = torch.permute(torch.stack(yi_list), (1, 0, 2, 3, 4))
+            yv_hat = torch.permute(torch.stack(yv_list), (1, 0, 2))
+            loss = self.loss_weights[0] * nn.MSELoss()(yi_hat, y_img[:, 1:]) \
+                + self.loss_weights[1] * nn.MSELoss()(yv_hat, y_joint[:, 1:])
             total_loss += loss.item()
 
             if training:
@@ -140,7 +145,7 @@ class fullBPTTtrainer:
                 loss.backward()
                 self.optimizer.step()
 
-        return total_loss / (n_batch+1)
+        return total_loss / (n_batch + 1)
 ```
 
 
@@ -238,11 +243,11 @@ CAE-RNNでは、データ拡張を用いて多様な物体位置情報を学習�
     
 2. **正則化：CNNRNN with LayerNorm（CNNRNNLN）**
 
-    CAE-RNNでは、CAEの学習を安定かつ高速に行うために正則化手法として `BatchNormalization` [@ioffe2015batch] を用いた。
+    CAE-RNNでは、CAEの学習を安定かつ高速に行うために正則化手法として `BatchNormalization`[@ioffe2015batch] を用いた。
     しかし BatchNormalization はデータセットのバッチが小さいと学習が不安定になる、
     再帰的ニューラルネットワークへの適用が困難という課題がある。
     そこで、データセットのバッチが小さく、更に時系列長が変化しても安定して学習が行える
-    `Layer Normalization` [@ba2016layer] を用いることで汎化性能向上を実現する。
+    `Layer Normalization`[@ba2016layer] を用いることで汎化性能向上を実現する。
 
     下図は主成分分析を用いて[CNNRNNLN](https://github.com/ogata-lab/eipl/blob/master/eipl/model/CNNRNNLN.py)の内部状態を可視化した結果である。
     対象物の位置ごとにアトラクタが自己組織化（整列）していることから、未学習位置でも適切に動作を生成することが可能である。
