@@ -189,7 +189,7 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/ogata-lab/eipl-docs/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/ogata-lab/eipl/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -235,7 +235,7 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/ogata-lab/eipl-docs/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/ogata-lab/eipl/" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -1100,7 +1100,7 @@
 <li><strong>cos_interpolation</strong>: To facilitate learning and prediction of rapidly changing 0/1 binary data, such as robot hand open/close commands, cosine interpolation is used to transform the data into smooth open/close commands. See the provided <a href="../../tips/normalization/#cos-interpolation">link</a> for more information.</li>
 <li><strong>list_to_numpy</strong>: Even if you specify a storage time <code>--duration</code> for the <code>rosbag record</code>, the sequence length of all rosbag data may not be the same due to the timing of the ROS system execution. Therefore, the data length is standardized and formatted by performing padding processing according to the longest sequence.</li>
 </ul>
-<p>Lines 43-46 sort the training and test data based on user-specified indices (lines 36 and 37). The relationship between the training positions and the indexes is shown in the table below. The positions A-E in the table represent the <a href="../overview/#task">object position</a>. Four training data points were collected for each teaching position, and one test data point was collected for all positions. A total of 15 data points were collected. When evaluating the model using only the test data collected at the teaching positions, it can be difficult to observe generalization behavior at unlearned positions due to overlearning at the teaching positions. Therefore, it is important to include even a small amount of untrained items in the test data to obtain generalization performance across items.</p>
+<p>Lines 43-46 sort the training and test data based on user-specified indices (lines 36 and 37). The relationship between the training positions and the indexes is shown in the table below. The positions A-E in the table represent the <a href="../overview/#task">object position</a>. Four training data points were collected for each teaching position, and one test data point was collected for all positions. A total of 15 data points were collected. When evaluating the model using only the test data collected at the teaching positions, it can be difficult to observe generalization behavior at untaught positions due to overlearning at the teaching positions. Therefore, it is important to include even a small amount of untrained items in the test data to obtain generalization performance across items.</p>
 <p>Finally, in lines 49-50, the upper and lower limits of each joint angle are calculated and stored as normalization parameters for the joint angles. For more information on why the upper and lower limits of the joint angles are calculated, see the <a href="../../tips/normalization/#joint_norm">link</a> provided.</p>
 <table>
 <thead>
