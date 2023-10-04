@@ -1,5 +1,5 @@
 ## transforms.RandomAffine
-[transforms.RandomAffine](https://pytorch.org/vision/main/generated/torchvision.transforms.RandomAffine.html) is a function that applies a random affine transformation to an image. Affine transformations can translate, rotate, scale, or distort an image. The figure below shows the result of translating an image vertically and horizontally. When affine transforms are used during AutoEncoder training, they allow for the expression (extraction) of object position information as image features, allowing for appropriate reconstruction even for unlearned positions.
+[transforms.RandomAffine](https://pytorch.org/vision/main/generated/torchvision.transforms.RandomAffine.html) is a function that applies a random affine transformation to an image. Affine transformations can translate, rotate, scale, or distort an image. The figure below shows the result of translating an image vertically and horizontally. When affine transforms are used during AutoEncoder training, they allow for the expression (extraction) of object position information as image features, allowing for appropriate reconstruction even for untaught positions.
 
 
 [![random_affine](img/random_affine.png)](img/random_affine.png)

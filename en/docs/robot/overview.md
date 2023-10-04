@@ -3,7 +3,7 @@
 Here we will describe a sequence of procedures from motion teaching to motion generation using [Open Manpulator](https://emanual.robotis.com/docs/en/platform/openmanipulator_x/overview/). The following five points will be covered:
 
 !!! note
-    The packages will be available at the end of July.
+    Coming soon.
 
 1. Motion Teaching
 

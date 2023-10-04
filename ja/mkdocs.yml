@@ -2,7 +2,7 @@ site_name: 'EIPL: Embodied Intelligence with Deep Predictive Learning'
 site_description: EIPL User Guide, Japanese version
 site_author: Hiroshi Ito
 site_url: https://ogata-lab.github.io/eipl-docs/ja/
-repo_url: https://github.com/ogata-lab/eipl-docs/
+repo_url: https://github.com/ogata-lab/eipl/
 copyright: 'Copyright &copy; 2023 Ogata Laboratory, Waseda University'
 nav:
   - 'はじめに': 'index.md'

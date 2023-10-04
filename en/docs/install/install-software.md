@@ -25,9 +25,3 @@ cd eipl
 pip install -r requirements.txt
 pip install -e .
 ```
-
-----
-## Docker
-
-!!! Note
-    Coming soon.

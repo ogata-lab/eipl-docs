@@ -2,7 +2,7 @@ site_name: 'EIPL: Embodied Intelligence with Deep Predictive Learning'
 site_description: EIPL User Guide, Japanese version
 site_author: Hiroshi Ito
 site_url: https://ogata-lab.github.io/eipl-docs/en/
-repo_url: https://github.com/ogata-lab/eipl-docs/
+repo_url: https://github.com/ogata-lab/eipl/
 copyright: 'Copyright &copy; 2023 Ogata Laboratory, Waseda University'
 nav:
   - 'Introduction': 'index.md'
@@ -19,7 +19,11 @@ nav:
     - 'Model Implementation': 'model/SARNN.md'
     - 'Train': 'model/train.md'
     - 'Inference': 'model/test.md'
-  - 'Real Robot Application':
+  - 'Robot Simulator':
+    - 'Motion Teaching': 'simulator/dataset.md'
+    - 'Model Training': 'simulator/train.md'
+    - 'Motion Generation': 'simulator/rt_control.md'
+  - 'Real Robot':
     - 'Overview': 'robot/overview.md'
   - 'Model Zoo':
     - 'Overview': 'zoo/overview.md'

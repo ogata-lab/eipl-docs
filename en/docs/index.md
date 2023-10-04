@@ -8,7 +8,7 @@ EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robo
 
     This section explains the concept of deep predictive learning and outlines the three steps towards robot implementation: motion teaching, learning, and motion generation.
     
-2. [**Set Uup**](install/install-software)
+2. [**Set Up**](install/install-software)
 
     This section provides instructions on how to install EIPL and verify the program using pre-trained weights.
 
@@ -20,15 +20,19 @@ EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robo
 
     Using the attention mechanism based motion generation model as an example, this section explains the implementation steps for training the model and performing inference.
 
-5. [**Real Robot Application**](robot/overview)
+5. [**Simulator Application**](simulator/overview)
+
+    This section describes motion learning using a robot simulator (robosuite).
+
+6. [**Real Robot Application**](robot/overview)
 
     This section provides a detailed explanation of the procedures involved in applying motion learning to real robot control using Open Manpulator.
 
-6. [**Model Zoo**](zoo/overview)
+7. [**Model Zoo**](zoo/overview)
 
     The motion generation models developed with EIPL will be gradually released in the ModelZoo.
 
-7. [**Tips and Tricks**](tips/normalization/)
+8. [**Tips and Tricks**](tips/normalization/)
 
     This section provides valuable insights and tips on motion learning techniques.
 

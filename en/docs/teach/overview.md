@@ -7,7 +7,7 @@ This section provides instructions on how to create a dataset for deep predictiv
 <!-- ******************************** -->
 ----
 ## Experimental Task {#task}
-AIREC (AI-driven Robot for Embrace and Care), a humanoid robot developed by [Tokyo Robotics](https://robotics.tokyo/), is used to teach object grasping. The figure below shows an overview of the task. The generalization performance is evaluated by comparing the object grasping experience at the teaching positions (three circled points) with the unlearned positions (two points) shown in the figure. Training data are collected four times for each teaching position, for a total of 12 data points. Test data is collected once for each of the five positions, including the unlearned positions, for a total of five data
+AIREC (AI-driven Robot for Embrace and Care), a humanoid robot developed by [Tokyo Robotics](https://robotics.tokyo/), is used to teach object grasping. The figure below shows an overview of the task. The generalization performance is evaluated by comparing the object grasping experience at the teaching positions (three circled points) with the untaught positions (two points) shown in the figure. Training data are collected four times for each teaching position, for a total of 12 data points. Test data is collected once for each of the five positions, including the untaught positions, for a total of five data
 
 
 ![task_overview](img/teaching.webp){: .center}
