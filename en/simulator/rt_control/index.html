@@ -851,14 +851,20 @@
 
 <h1 id="realtime-motion-generation">Realtime Motion Generation</h1>
 <p>Move to the simulator folder and run the realtime motion generation program <code>6_rt_control.py</code> with the weight file as an argument. This program repeats 10 times the object grasping operation placed at random positions.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../simulator/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/6_rt_control.py<span class="w"> </span>../sarnn/log/YEAR_DAY_TIME/SARNN.pth
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>No<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span>found!<span class="w"> </span><span class="o">(</span>macros.py:53<span class="o">)</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>recommended<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>a<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>macros.py:54<span class="o">)</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>To<span class="w"> </span>setup,<span class="w"> </span>run:<span class="w"> </span>python<span class="w"> </span>/home/ito/var/robosuite/robosuite/scripts/setup_macros.py<span class="w"> </span><span class="o">(</span>macros.py:55<span class="o">)</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="o">[</span><span class="m">1</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="o">[</span><span class="m">2</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../simulator/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/6_rt_control.py<span class="w"> </span>../sarnn/log/YEAR_DAY_TIME/SARNN.pth
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>No<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span>found!<span class="w"> </span><span class="o">(</span>macros.py:53<span class="o">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>recommended<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>a<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>macros.py:54<span class="o">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>To<span class="w"> </span>setup,<span class="w"> </span>run:<span class="w"> </span>python<span class="w"> </span>/home/ito/var/robosuite/robosuite/scripts/setup_macros.py<span class="w"> </span><span class="o">(</span>macros.py:55<span class="o">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="o">[</span><span class="m">1</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="o">[</span><span class="m">2</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
+</span></code></pre></div></td></tr></table></div>
 
 
   

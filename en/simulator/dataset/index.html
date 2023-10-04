@@ -914,90 +914,139 @@
 <hr />
 <h2 id="setup">Setup</h2>
 <p>Clone the robosuite repository
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ARISE-Initiative/robosuite.git
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>robosuite
-</span></code></pre></div></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/ARISE-Initiative/robosuite.git
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>robosuite
+</span></code></pre></div></td></tr></table></div></p>
 <p>Install the requirements with
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>$<span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-extra.txt
-</span></code></pre></div></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>$<span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>$<span class="w"> </span>pip3<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements-extra.txt
+</span></code></pre></div></td></tr></table></div></p>
 <!-- ******************************** -->
 <hr />
 <h2 id="teleoperation">Teleoperation</h2>
 <p>Teach object grasping motions to the robot using keyboard teleoperation.
 The argument <code>pos</code> is the position of the object, and <code>ep_dir</code> is the save directory.
 We provide a <code>demonstration dataset</code> to eliminate the hassle of data collection. For more information, <a href="#demonstration-dataset">click here</a>.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/robosuite/simulator
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>$<span class="w"> </span>ls
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>2_resave.sh<span class="w">  </span>3_check_data.sh<span class="w">  </span>bin<span class="w">  </span>data<span class="w">  </span>libs<span class="w">  </span>output<span class="w">  </span>README
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/1_teaching.py<span class="w"> </span>--pos<span class="w"> </span>target_position<span class="w"> </span>--ep_dir<span class="w"> </span>save_dir
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="c1"># e.g.</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/1_teaching.py<span class="w"> </span>--pos<span class="w"> </span>-0.2<span class="w"> </span>--ep_dir<span class="w"> </span>./data/raw_data/Pos1_1
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>No<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span>found!<span class="w"> </span><span class="o">(</span>__init__.py:7<span class="o">)</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>recommended<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>a<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>__init__.py:8<span class="o">)</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>To<span class="w"> </span>setup,<span class="w"> </span>run:<span class="w"> </span>python<span class="w"> </span>/home/ito/Downloads/robosuite/robosuite/scripts/setup_macros.py<span class="w"> </span><span class="o">(</span>__init__.py:9<span class="o">)</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>Keys<span class="w">        </span>Command
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>spacebar<span class="w">    </span>toggle<span class="w"> </span>gripper<span class="w"> </span><span class="o">(</span>open/close<span class="o">)</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>w-a-s-d<span class="w">     </span>move<span class="w"> </span>arm<span class="w"> </span>horizontally<span class="w"> </span><span class="k">in</span><span class="w"> </span>x-y<span class="w"> </span>plane
-</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>r-f<span class="w">         </span>move<span class="w"> </span>arm<span class="w"> </span>vertically
-</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>z-x<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>x-axis
-</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>t-g<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>y-axis
-</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>c-v<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>z-axis
-</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a><span class="o">[</span><span class="w">           </span>start<span class="w"> </span>recording
-</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="o">]</span><span class="w">           </span>stop<span class="w"> </span>recording<span class="w"> </span><span class="o">(</span>not<span class="w"> </span>recommended<span class="o">)</span>
-</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>
-</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>Collecting<span class="w"> </span>demonstration<span class="w"> </span>data<span class="w"> </span>...
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-2-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-2-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-2-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-2-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-2-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-2-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-2-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-2-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-2-10">10</a></span>
+<span class="normal"><a href="#__codelineno-2-11">11</a></span>
+<span class="normal"><a href="#__codelineno-2-12">12</a></span>
+<span class="normal"><a href="#__codelineno-2-13">13</a></span>
+<span class="normal"><a href="#__codelineno-2-14">14</a></span>
+<span class="normal"><a href="#__codelineno-2-15">15</a></span>
+<span class="normal"><a href="#__codelineno-2-16">16</a></span>
+<span class="normal"><a href="#__codelineno-2-17">17</a></span>
+<span class="normal"><a href="#__codelineno-2-18">18</a></span>
+<span class="normal"><a href="#__codelineno-2-19">19</a></span>
+<span class="normal"><a href="#__codelineno-2-20">20</a></span>
+<span class="normal"><a href="#__codelineno-2-21">21</a></span>
+<span class="normal"><a href="#__codelineno-2-22">22</a></span>
+<span class="normal"><a href="#__codelineno-2-23">23</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/robosuite/simulator
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>$<span class="w"> </span>ls
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a>2_resave.sh<span class="w">  </span>3_check_data.sh<span class="w">  </span>bin<span class="w">  </span>data<span class="w">  </span>libs<span class="w">  </span>output<span class="w">  </span>README
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/1_teaching.py<span class="w"> </span>--pos<span class="w"> </span>target_position<span class="w"> </span>--ep_dir<span class="w"> </span>save_dir
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="c1"># e.g.</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/1_teaching.py<span class="w"> </span>--pos<span class="w"> </span>-0.2<span class="w"> </span>--ep_dir<span class="w"> </span>./data/raw_data/Pos1_1
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8"></a>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>No<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span>found!<span class="w"> </span><span class="o">(</span>__init__.py:7<span class="o">)</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>recommended<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>a<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>__init__.py:8<span class="o">)</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>To<span class="w"> </span>setup,<span class="w"> </span>run:<span class="w"> </span>python<span class="w"> </span>/home/ito/Downloads/robosuite/robosuite/scripts/setup_macros.py<span class="w"> </span><span class="o">(</span>__init__.py:9<span class="o">)</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12"></a>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13"></a>Keys<span class="w">        </span>Command
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14"></a>spacebar<span class="w">    </span>toggle<span class="w"> </span>gripper<span class="w"> </span><span class="o">(</span>open/close<span class="o">)</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15"></a>w-a-s-d<span class="w">     </span>move<span class="w"> </span>arm<span class="w"> </span>horizontally<span class="w"> </span><span class="k">in</span><span class="w"> </span>x-y<span class="w"> </span>plane
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16"></a>r-f<span class="w">         </span>move<span class="w"> </span>arm<span class="w"> </span>vertically
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17"></a>z-x<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>x-axis
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18"></a>t-g<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>y-axis
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19"></a>c-v<span class="w">         </span>rotate<span class="w"> </span>arm<span class="w"> </span>about<span class="w"> </span>z-axis
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20"></a><span class="o">[</span><span class="w">           </span>start<span class="w"> </span>recording
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21"></a><span class="o">]</span><span class="w">           </span>stop<span class="w"> </span>recording<span class="w"> </span><span class="o">(</span>not<span class="w"> </span>recommended<span class="o">)</span>
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22"></a>
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23"></a>Collecting<span class="w"> </span>demonstration<span class="w"> </span>data<span class="w"> </span>...
+</span></code></pre></div></td></tr></table></div>
 <p>The collected data (model.xml and state.npz) are stored in the <code>ep_dir</code> folder (e.g. ./data/raw_data/).
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/raw_data/
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>Pos1_1<span class="w">  </span>Pos1_2<span class="w">  </span>Pos1_3<span class="w">  </span>Pos1_4<span class="w">  </span>Pos2_1<span class="w">  </span>Pos2_2<span class="w">  </span>Pos2_3<span class="w">  </span>Pos2_4<span class="w"> </span>...
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>./data/raw_data/Pos1_1
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>model.xml<span class="w">  </span>state.npz
-</span></code></pre></div></p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/raw_data/
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a>Pos1_1<span class="w">  </span>Pos1_2<span class="w">  </span>Pos1_3<span class="w">  </span>Pos1_4<span class="w">  </span>Pos2_1<span class="w">  </span>Pos2_2<span class="w">  </span>Pos2_3<span class="w">  </span>Pos2_4<span class="w"> </span>...
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>./data/raw_data/Pos1_1
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a>model.xml<span class="w">  </span>state.npz
+</span></code></pre></div></td></tr></table></div></p>
 <!-- ******************************** -->
 <hr />
 <h2 id="data-re-saving">Data Re-Saving</h2>
 <p>The following two processes are performed.
 The first is the removal of guide lines. During keyboard teleoperation, green guide lines appear in the image data. By playback of the collected data, the image data without the guide line is saved. The second is downsampling. During tele-operation, the collected data sequence is long (default is 600 step) because the robot is controlled with a high frequency to teach fine movements. Therefore, sensor data is recollected every 5 step to downsample the sequence length to 120 step.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Re-save the files one by one.</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/2_resave.py<span class="w"> </span>--ep_dir<span class="w"> </span>./data/raw_data/Pos1_1/
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Re-save all files in the specified folder (default is &#39;./data/raw_data&#39;)  at once.</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>$<span class="w"> </span>bash<span class="w"> </span>2_resave.sh
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="c1"># Re-save the files one by one.</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/2_resave.py<span class="w"> </span>--ep_dir<span class="w"> </span>./data/raw_data/Pos1_1/
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="c1"># Re-save all files in the specified folder (default is &#39;./data/raw_data&#39;)  at once.</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a>$<span class="w"> </span>bash<span class="w"> </span>2_resave.sh
+</span></code></pre></div></td></tr></table></div>
 <p>Check whether the motion generated by playback is correct. Tasks rarely fail due to downsampling. If the playback data fails the task, the following error is displayed <code>[ERROR] This data set has failed task during playback.</code>. If the task is successful, the gif animation is saved in the output folder.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Re-save the files one by one.</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/3_check_playback_data.py<span class="w"> </span>./data/raw_data/Pos1_1/state_resave.npz
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Pos1_1_image_joint_ani.gif
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="c1"># Re-save all files in the specified folder (default is &#39;./data/raw_data&#39;)  at once.</span>
-</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>$<span class="w"> </span>bash<span class="w"> </span>3_check_data.sh
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
+<span class="normal"><a href="#__codelineno-5-2">2</a></span>
+<span class="normal"><a href="#__codelineno-5-3">3</a></span>
+<span class="normal"><a href="#__codelineno-5-4">4</a></span>
+<span class="normal"><a href="#__codelineno-5-5">5</a></span>
+<span class="normal"><a href="#__codelineno-5-6">6</a></span>
+<span class="normal"><a href="#__codelineno-5-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># Re-save the files one by one.</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/3_check_playback_data.py<span class="w"> </span>./data/raw_data/Pos1_1/state_resave.npz
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a>Pos1_1_image_joint_ani.gif
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="c1"># Re-save all files in the specified folder (default is &#39;./data/raw_data&#39;)  at once.</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a>$<span class="w"> </span>bash<span class="w"> </span>3_check_data.sh
+</span></code></pre></div></td></tr></table></div>
 <!-- ******************************** -->
 <hr />
 <h2 id="generate-dataset">Generate Dataset</h2>
 <p>If the playbacked file was stored in <code>./data/raw_data/</code>, training/test data will be automatically generated by the following command.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/4_generate_dataset.py
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>joint_bounds.npy<span class="w">  </span>pose_bounds.npy<span class="w">  </span>raw_data<span class="w">  </span><span class="nb">test</span><span class="w">  </span>train
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/train/
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>images.npy<span class="w">  </span>joints.npy<span class="w">  </span>poses.npy
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/test/
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>images.npy<span class="w">  </span>joints.npy<span class="w">  </span>poses.npy
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span>
+<span class="normal"><a href="#__codelineno-6-6">6</a></span>
+<span class="normal"><a href="#__codelineno-6-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/4_generate_dataset.py
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>joint_bounds.npy<span class="w">  </span>pose_bounds.npy<span class="w">  </span>raw_data<span class="w">  </span><span class="nb">test</span><span class="w">  </span>train
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/train/
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5"></a>images.npy<span class="w">  </span>joints.npy<span class="w">  </span>poses.npy
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6"></a>$<span class="w"> </span>ls<span class="w"> </span>./data/test/
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7"></a>images.npy<span class="w">  </span>joints.npy<span class="w">  </span>poses.npy
+</span></code></pre></div></td></tr></table></div>
 <p>Check for proper normalization range of joint angles. The visual image of the robot, raw joint angles, and normalized joint angle data are saved as a gif animation in the output folder.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/5_check_dataset.py
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>load<span class="w"> </span><span class="nb">test</span><span class="w"> </span>data,<span class="w"> </span>index<span class="w"> </span>number<span class="w"> </span>is<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>Joint:<span class="w"> </span><span class="nv">shape</span><span class="o">=(</span><span class="m">18</span>,<span class="w"> </span><span class="m">90</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span>-2.64,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">3</span>.18
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>Norm<span class="w"> </span>joint:<span class="w"> </span><span class="nv">shape</span><span class="o">=(</span><span class="m">18</span>,<span class="w"> </span><span class="m">90</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span><span class="m">0</span>.1,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">0</span>.9
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>check_dataset_0.gif
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span>
+<span class="normal"><a href="#__codelineno-7-2">2</a></span>
+<span class="normal"><a href="#__codelineno-7-3">3</a></span>
+<span class="normal"><a href="#__codelineno-7-4">4</a></span>
+<span class="normal"><a href="#__codelineno-7-5">5</a></span>
+<span class="normal"><a href="#__codelineno-7-6">6</a></span>
+<span class="normal"><a href="#__codelineno-7-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/5_check_dataset.py
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a>load<span class="w"> </span><span class="nb">test</span><span class="w"> </span>data,<span class="w"> </span>index<span class="w"> </span>number<span class="w"> </span>is<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a>Joint:<span class="w"> </span><span class="nv">shape</span><span class="o">=(</span><span class="m">18</span>,<span class="w"> </span><span class="m">90</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span>-2.64,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">3</span>.18
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4"></a>Norm<span class="w"> </span>joint:<span class="w"> </span><span class="nv">shape</span><span class="o">=(</span><span class="m">18</span>,<span class="w"> </span><span class="m">90</span>,<span class="w"> </span><span class="m">8</span><span class="o">)</span>,<span class="w"> </span><span class="nv">min</span><span class="o">=</span><span class="m">0</span>.1,<span class="w"> </span><span class="nv">max</span><span class="o">=</span><span class="m">0</span>.9
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7"></a>check_dataset_0.gif
+</span></code></pre></div></td></tr></table></div>
 <!-- ******************************** -->
 <hr />
 <h2 id="demonstration-dataset">Demonstration Dataset</h2>

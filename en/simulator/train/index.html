@@ -852,45 +852,74 @@
 <h1 id="model-training">Model Training</h1>
 <h1 id="train">Train</h1>
 <p>Move to the <code>sarnn folder</code> and start training the model. The trained weights are saved in the log folder. If you want to perform validation without training the model, download the trained weights from <a href="https://drive.google.com/file/d/1H4NKKAsNG0gwPemBR1N34s5A94KOH6R1/view?usp=sharing">here</a> and save it in the log folder.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../sarnn/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">YEAR_DAY_TIME</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="o">================================</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>batch_size<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>compile<span class="w"> </span>:<span class="w"> </span>False
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>device<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>epoch<span class="w"> </span>:<span class="w"> </span><span class="m">10000</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>heatmap_size<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>img_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>joint_loss<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>k_dim<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>log_dir<span class="w"> </span>:<span class="w"> </span>log/
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>lr<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a>model<span class="w"> </span>:<span class="w"> </span>sarnn
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a>n_worker<span class="w"> </span>:<span class="w"> </span><span class="m">8</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a>optimizer<span class="w"> </span>:<span class="w"> </span>adam
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a>pt_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a>rec_dim<span class="w"> </span>:<span class="w"> </span><span class="m">50</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a>stdev<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a>tag<span class="w"> </span>:<span class="w"> </span>YEAR_DAY_TIME
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a>temperature<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>vmax<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a>vmin<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="o">================================</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w"> </span><span class="m">96</span>%<span class="p">|</span>███████████████████<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">9551</span>/10000<span class="w"> </span><span class="o">[</span><span class="m">1</span>:56:01&lt;<span class="m">05</span>:31,<span class="w">  </span><span class="m">1</span>.35it/s,<span class="w"> </span><span class="nv">train_loss</span><span class="o">=</span><span class="m">0</span>.00066,<span class="w"> </span><span class="nv">test_loss</span><span class="o">=</span><span class="m">0</span>.00111<span class="o">]</span>
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-0-10">10</a></span>
+<span class="normal"><a href="#__codelineno-0-11">11</a></span>
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span>
+<span class="normal"><a href="#__codelineno-0-14">14</a></span>
+<span class="normal"><a href="#__codelineno-0-15">15</a></span>
+<span class="normal"><a href="#__codelineno-0-16">16</a></span>
+<span class="normal"><a href="#__codelineno-0-17">17</a></span>
+<span class="normal"><a href="#__codelineno-0-18">18</a></span>
+<span class="normal"><a href="#__codelineno-0-19">19</a></span>
+<span class="normal"><a href="#__codelineno-0-20">20</a></span>
+<span class="normal"><a href="#__codelineno-0-21">21</a></span>
+<span class="normal"><a href="#__codelineno-0-22">22</a></span>
+<span class="normal"><a href="#__codelineno-0-23">23</a></span>
+<span class="normal"><a href="#__codelineno-0-24">24</a></span>
+<span class="normal"><a href="#__codelineno-0-25">25</a></span>
+<span class="normal"><a href="#__codelineno-0-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../sarnn/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">YEAR_DAY_TIME</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="o">================================</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a>batch_size<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>compile<span class="w"> </span>:<span class="w"> </span>False
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>device<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>epoch<span class="w"> </span>:<span class="w"> </span><span class="m">10000</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>heatmap_size<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>img_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>joint_loss<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>k_dim<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>log_dir<span class="w"> </span>:<span class="w"> </span>log/
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>lr<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>model<span class="w"> </span>:<span class="w"> </span>sarnn
+</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>n_worker<span class="w"> </span>:<span class="w"> </span><span class="m">8</span>
+</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>optimizer<span class="w"> </span>:<span class="w"> </span>adam
+</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>pt_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>rec_dim<span class="w"> </span>:<span class="w"> </span><span class="m">50</span>
+</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>stdev<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
+</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>tag<span class="w"> </span>:<span class="w"> </span>YEAR_DAY_TIME
+</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>temperature<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
+</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>vmax<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
+</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>vmin<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0
+</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="o">================================</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w"> </span><span class="m">96</span>%<span class="p">|</span>███████████████████<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">9551</span>/10000<span class="w"> </span><span class="o">[</span><span class="m">1</span>:56:01&lt;<span class="m">05</span>:31,<span class="w">  </span><span class="m">1</span>.35it/s,<span class="w"> </span><span class="nv">train_loss</span><span class="o">=</span><span class="m">0</span>.00066,<span class="w"> </span><span class="nv">test_loss</span><span class="o">=</span><span class="m">0</span>.00111<span class="o">]</span>
+</span></code></pre></div></td></tr></table></div>
 <h2 id="test">Test</h2>
 <p>Specifying a weight file as the argument of <code>test.py</code> will save a gif animation of the predicted image, attention points, and predicted joint angles in the output folder.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>$<span class="w"> </span>SARNN_YEAR_DAY_TIME_0.gif
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>$<span class="w"> </span>SARNN_YEAR_DAY_TIME_0.gif
+</span></code></pre></div></td></tr></table></div>
 <h2 id="visualization-of-internal-representation-using-pca">Visualization of internal representation using PCA</h2>
 <p>Specifying a weight file as the argument of <code>test_pca_sarnn.py</code> will save the internal representation of the RNN as a gif animation.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_sarnn.py<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>$<span class="w"> </span>PCA_SARNN_YEAR_DAY_TIME.gif
-</span></code></pre></div>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
+<span class="normal"><a href="#__codelineno-2-2">2</a></span>
+<span class="normal"><a href="#__codelineno-2-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_sarnn.py<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a>$<span class="w"> </span>PCA_SARNN_YEAR_DAY_TIME.gif
+</span></code></pre></div></td></tr></table></div>
 
 
   
