@@ -577,14 +577,91 @@
       
       
         <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-          Real Robot Application
+          Robot Simulator
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
-          Real Robot Application
+          Robot Simulator
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../simulator/dataset/" class="md-nav__link">
+        Motion Teaching
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../simulator/train/" class="md-nav__link">
+        Model Training
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../simulator/rt_control/" class="md-nav__link">
+        Motion Generation
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+          Real Robot
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_7">
+          <span class="md-nav__icon md-icon"></span>
+          Real Robot
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -621,17 +698,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
       
       
       
-        <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
           Model Zoo
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_7">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_8">
           <span class="md-nav__icon md-icon"></span>
           Model Zoo
         </label>
@@ -712,17 +789,17 @@
       
       
       
-      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+      <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
       
       
       
-        <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+        <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
           Tips and Tricks
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
-        <label class="md-nav__title" for="__nav_8">
+      <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+        <label class="md-nav__title" for="__nav_9">
           <span class="md-nav__icon md-icon"></span>
           Tips and Tricks
         </label>
@@ -813,9 +890,9 @@
 <h1 id="setup">Setup</h1>
 <!-- ******************************** -->
 <hr />
-<h3 id="ros">ROS</h3>
+<h2 id="ros">ROS</h2>
 <p>In this section, we use the rospy and rosbag packages to extract data from <code>rosbag</code> files. If you are creating datasets in an environment with ROS installed, the following procedure is not necessary. Please skip to the <a href="../dataset/">next chapter</a>.</p>
-<h3 id="pyenv">pyenv</h3>
+<h2 id="pyenv">pyenv</h2>
 <p>On the other hand, if you want to use rospy and other software on a PC without a ROS environment, you can use the <a href="https://github.com/rospypi/simple">rospypi/simple</a> package. This package allows the use of binary packages such as rospy and tf2 without the need for a full ROS installation. Furthermore, since it is compatible with Linux, Windows, and MacOS, you can easily analyze the collected data in your own PC environment. To avoid conflicts with existing Python environments, it is recommended to create a virtual environment using venv. The following procedure outlines the steps to create an environment for the rospypi/simple library using venv.</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span>python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>~/.venv/rosbag
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span><span class="nb">source</span><span class="w"> </span>~/.venv/rosbag/bin/activate
