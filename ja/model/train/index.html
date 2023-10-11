@@ -907,7 +907,7 @@
   <h1>学習</h1>
 
 <h2 id="_1">ファイル</h2>
-<p>SARNNの学習には、EIPLリポジトリ中の<a href="https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/sarnn">tutorial/SARNN</a>フォルダ内のプログラムを利用する。
+<p>SARNNの学習には、EIPLリポジトリ中の<a href="https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/airec/sarnn">tutorial/SARNN</a>フォルダ内のプログラムを利用する。
 各フォルダとプログラムの役割は以下の通りである。</p>
 <ul>
 <li><strong>bin/train.py</strong>：データの読み込み、学習、そしてモデルの保存を行う学習プログラム</li>
@@ -924,7 +924,7 @@
 プログラムを実行すると <code>log</code> フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
 このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
 また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する。
-プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/train.py">参照</a>ください。</p>
+プログラムの詳細な動作については、コード内のコメントを<a href="https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/bin/train.py">参照</a>ください。</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>eipl/tutorials/sarnn/
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;20230521_1247_41&quot;</span>
