@@ -569,9 +569,54 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Model Training
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         Model Training
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#train" class="md-nav__link">
+    Train
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#test" class="md-nav__link">
+    Test
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualization-of-internal-representation-using-pca" class="md-nav__link">
+    Visualization of internal representation using PCA
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -850,7 +895,7 @@
 
 
 <h1 id="model-training">Model Training</h1>
-<h1 id="train">Train</h1>
+<h2 id="train">Train</h2>
 <p>Move to the <code>sarnn folder</code> and start training the model. The trained weights are saved in the log folder. If you want to perform validation without training the model, download the trained weights from <a href="https://drive.google.com/file/d/1H4NKKAsNG0gwPemBR1N34s5A94KOH6R1/view?usp=sharing">here</a> and save it in the log folder.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
@@ -906,7 +951,7 @@
 </span></code></pre></div></td></tr></table></div>
 <!-- ******************************** -->
 <hr />
-<h1 id="test">Test</h1>
+<h2 id="test">Test</h2>
 <p>Specifying a weight file as the argument of <code>test.py</code> will save a gif animation of the predicted image, attention points, and predicted joint angles in the output folder.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
@@ -917,7 +962,7 @@
 <p><img alt="results_of_SARNN" class="center" src="../img/sarnn_rt.webp" /></p>
 <!-- ******************************** -->
 <hr />
-<h1 id="visualization-of-internal-representation-using-pca">Visualization of internal representation using PCA</h1>
+<h2 id="visualization-of-internal-representation-using-pca">Visualization of internal representation using PCA</h2>
 <p>Specifying a weight file as the argument of <code>test_pca_sarnn.py</code> will save the internal representation of the RNN as a gif animation.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
