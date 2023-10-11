@@ -2,117 +2,117 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/faq/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/license/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/overview/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/install/install-software/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/install/quick-start/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/model/SARNN/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/model/dataloader/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/model/test/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/model/train/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/robot/overview/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/simulator/dataset/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/simulator/rt_control/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/simulator/train/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/teach/dataset/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/teach/overview/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/teach/setup/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/tips/augmentation/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/tips/normalization/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/zoo/CAE-RNN/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/zoo/CNNRNN/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/zoo/MTRNN/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://ogata-lab.github.io/eipl-docs/en/zoo/overview/</loc>
-         <lastmod>2023-10-04</lastmod>
+         <lastmod>2023-10-11</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

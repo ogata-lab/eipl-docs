@@ -1,6 +1,6 @@
 
 <!doctype html>
-<html lang="en" class="no-js">
+<html lang="ja" class="no-js">
   <head>
     
       <meta charset="utf-8">
@@ -12,20 +12,20 @@
         <meta name="author" content="Hiroshi Ito">
       
       
-        <link rel="canonical" href="https://ogata-lab.github.io/eipl-docs/en/simulator/train/">
+        <link rel="canonical" href="https://ogata-lab.github.io/eipl-docs/ja/simulator/rt_control/">
       
       
-        <link rel="prev" href="../dataset/">
+        <link rel="prev" href="../train/">
       
       
-        <link rel="next" href="../rt_control/">
+        <link rel="next" href="../../robot/overview/">
       
       <link rel="icon" href="../../img/favicon.ico">
       <meta name="generator" content="mkdocs-1.4.3, mkdocs-material-9.1.16">
     
     
       
-        <title>Model Training - EIPL: Embodied Intelligence with Deep Predictive Learning</title>
+        <title>動作生成 - EIPL: Embodied Intelligence with Deep Predictive Learning</title>
       
     
     
@@ -85,8 +85,8 @@
     <div data-md-component="skip">
       
         
-        <a href="#model-training" class="md-skip">
-          Skip to content
+        <a href="#realtime-motion-generation" class="md-skip">
+          コンテンツにスキップ
         </a>
       
     </div>
@@ -100,7 +100,7 @@
   
 
 <header class="md-header md-header--shadow" data-md-component="header">
-  <nav class="md-header__inner md-grid" aria-label="Header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
     <a href="../.." title="EIPL: Embodied Intelligence with Deep Predictive Learning" class="md-header__button md-logo" aria-label="EIPL: Embodied Intelligence with Deep Predictive Learning" data-md-component="logo">
       
   <img src="../../img/logo.svg" alt="logo">
@@ -119,7 +119,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Model Training
+              動作生成
             
           </span>
         </div>
@@ -130,7 +130,7 @@
       <div class="md-header__option">
         <div class="md-select">
           
-          <button class="md-header__button md-icon" aria-label="Select language">
+          <button class="md-header__button md-icon" aria-label="言語切り替え">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
           </button>
           <div class="md-select__inner">
@@ -161,14 +161,14 @@
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
-      <nav class="md-search__options" aria-label="Search">
+      <nav class="md-search__options" aria-label="検索">
         
-        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
         </button>
       </nav>
@@ -178,7 +178,7 @@
       <div class="md-search__scrollwrap" data-md-scrollfix>
         <div class="md-search-result" data-md-component="search-result">
           <div class="md-search-result__meta">
-            Initializing search
+            検索を初期化
           </div>
           <ol class="md-search-result__list" role="presentation"></ol>
         </div>
@@ -189,7 +189,7 @@
     
     
       <div class="md-header__source">
-        <a href="https://github.com/ogata-lab/eipl/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/ogata-lab/eipl/" title="リポジトリへ" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -224,7 +224,7 @@
 
   
 
-<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="ナビゲーション" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="EIPL: Embodied Intelligence with Deep Predictive Learning" class="md-nav__button md-logo" aria-label="EIPL: Embodied Intelligence with Deep Predictive Learning" data-md-component="logo">
       
@@ -235,7 +235,7 @@
   </label>
   
     <div class="md-nav__source">
-      <a href="https://github.com/ogata-lab/eipl/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/ogata-lab/eipl/" title="リポジトリへ" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
@@ -257,7 +257,7 @@
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Introduction
+        はじめに
       </a>
     </li>
   
@@ -272,7 +272,7 @@
   
     <li class="md-nav__item">
       <a href="../../overview/" class="md-nav__link">
-        Deep Predictive Learning
+        深層予測学習
       </a>
     </li>
   
@@ -296,14 +296,14 @@
       
       
         <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-          Set Up
+          環境構築
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_3">
           <span class="md-nav__icon md-icon"></span>
-          Set Up
+          環境構築
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -314,7 +314,7 @@
   
     <li class="md-nav__item">
       <a href="../../install/install-software/" class="md-nav__link">
-        Install
+        インストール
       </a>
     </li>
   
@@ -328,7 +328,7 @@
   
     <li class="md-nav__item">
       <a href="../../install/quick-start/" class="md-nav__link">
-        Quick Start
+        クイックスタート
       </a>
     </li>
   
@@ -359,14 +359,14 @@
       
       
         <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-          Motion Teaching
+          動作教示
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_4">
           <span class="md-nav__icon md-icon"></span>
-          Motion Teaching
+          動作教示
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -377,7 +377,7 @@
   
     <li class="md-nav__item">
       <a href="../../teach/overview/" class="md-nav__link">
-        Overview
+        概要
       </a>
     </li>
   
@@ -391,7 +391,7 @@
   
     <li class="md-nav__item">
       <a href="../../teach/setup/" class="md-nav__link">
-        Setup
+        実行環境
       </a>
     </li>
   
@@ -405,7 +405,7 @@
   
     <li class="md-nav__item">
       <a href="../../teach/dataset/" class="md-nav__link">
-        Generate Dataset
+        データセット作成
       </a>
     </li>
   
@@ -436,14 +436,14 @@
       
       
         <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-          Train Model
+          モデル学習
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_5">
           <span class="md-nav__icon md-icon"></span>
-          Train Model
+          モデル学習
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -454,7 +454,7 @@
   
     <li class="md-nav__item">
       <a href="../../model/dataloader/" class="md-nav__link">
-        Dataloader
+        データローダ
       </a>
     </li>
   
@@ -468,7 +468,7 @@
   
     <li class="md-nav__item">
       <a href="../../model/SARNN/" class="md-nav__link">
-        Model Implementation
+        モデル実装
       </a>
     </li>
   
@@ -482,7 +482,7 @@
   
     <li class="md-nav__item">
       <a href="../../model/train/" class="md-nav__link">
-        Train
+        学習
       </a>
     </li>
   
@@ -496,7 +496,7 @@
   
     <li class="md-nav__item">
       <a href="../../model/test/" class="md-nav__link">
-        Inference
+        推論
       </a>
     </li>
   
@@ -529,14 +529,14 @@
       
       
         <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
-          Robot Simulator
+          ロボットシミュレータ
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
         <label class="md-nav__title" for="__nav_6">
           <span class="md-nav__icon md-icon"></span>
-          Robot Simulator
+          ロボットシミュレータ
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -546,8 +546,36 @@
   
   
     <li class="md-nav__item">
-      <a href="../dataset/" class="md-nav__link">
-        Motion Teaching
+      <a href="../overview/" class="md-nav__link">
+        概要
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../teaching/" class="md-nav__link">
+        教示
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../train/" class="md-nav__link">
+        学習
       </a>
     </li>
   
@@ -570,23 +598,9 @@
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Model Training
+        動作生成
       </a>
       
-    </li>
-  
-
-            
-          
-            
-              
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../rt_control/" class="md-nav__link">
-        Motion Generation
-      </a>
     </li>
   
 
@@ -616,14 +630,14 @@
       
       
         <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
-          Real Robot
+          実ロボット応用
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
         <label class="md-nav__title" for="__nav_7">
           <span class="md-nav__icon md-icon"></span>
-          Real Robot
+          実ロボット応用
         </label>
         <ul class="md-nav__list" data-md-scrollfix>
           
@@ -634,7 +648,7 @@
   
     <li class="md-nav__item">
       <a href="../../robot/overview/" class="md-nav__link">
-        Overview
+        概要
       </a>
     </li>
   
@@ -683,7 +697,7 @@
   
     <li class="md-nav__item">
       <a href="../../zoo/overview/" class="md-nav__link">
-        Overview
+        概要
       </a>
     </li>
   
@@ -774,7 +788,7 @@
   
     <li class="md-nav__item">
       <a href="../../tips/normalization/" class="md-nav__link">
-        Pre-process
+        関節角度処理
       </a>
     </li>
   
@@ -788,7 +802,7 @@
   
     <li class="md-nav__item">
       <a href="../../tips/augmentation/" class="md-nav__link">
-        Image Augmentation
+        画像拡張
       </a>
     </li>
   
@@ -849,83 +863,22 @@
   
 
 
-<h1 id="model-training">Model Training</h1>
-<h1 id="train">Train</h1>
-<p>Move to the <code>sarnn folder</code> and start training the model. The trained weights are saved in the log folder. If you want to perform validation without training the model, download the trained weights from <a href="https://drive.google.com/file/d/1H4NKKAsNG0gwPemBR1N34s5A94KOH6R1/view?usp=sharing">here</a> and save it in the log folder.</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-0-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-0-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-0-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-0-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-0-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-0-10">10</a></span>
-<span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span>
-<span class="normal"><a href="#__codelineno-0-13">13</a></span>
-<span class="normal"><a href="#__codelineno-0-14">14</a></span>
-<span class="normal"><a href="#__codelineno-0-15">15</a></span>
-<span class="normal"><a href="#__codelineno-0-16">16</a></span>
-<span class="normal"><a href="#__codelineno-0-17">17</a></span>
-<span class="normal"><a href="#__codelineno-0-18">18</a></span>
-<span class="normal"><a href="#__codelineno-0-19">19</a></span>
-<span class="normal"><a href="#__codelineno-0-20">20</a></span>
-<span class="normal"><a href="#__codelineno-0-21">21</a></span>
-<span class="normal"><a href="#__codelineno-0-22">22</a></span>
-<span class="normal"><a href="#__codelineno-0-23">23</a></span>
-<span class="normal"><a href="#__codelineno-0-24">24</a></span>
-<span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../sarnn/
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/train.py
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="o">[</span>INFO<span class="o">]</span><span class="w"> </span>Set<span class="w"> </span><span class="nv">tag</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">YEAR_DAY_TIME</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="o">================================</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a>batch_size<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a>compile<span class="w"> </span>:<span class="w"> </span>False
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a>device<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a>epoch<span class="w"> </span>:<span class="w"> </span><span class="m">10000</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a>heatmap_size<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a>img_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a>joint_loss<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a>k_dim<span class="w"> </span>:<span class="w"> </span><span class="m">5</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a>log_dir<span class="w"> </span>:<span class="w"> </span>log/
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a>lr<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a>model<span class="w"> </span>:<span class="w"> </span>sarnn
-</span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a>n_worker<span class="w"> </span>:<span class="w"> </span><span class="m">8</span>
-</span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a>optimizer<span class="w"> </span>:<span class="w"> </span>adam
-</span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a>pt_loss<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a>rec_dim<span class="w"> </span>:<span class="w"> </span><span class="m">50</span>
-</span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a>stdev<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.1
-</span><span id="__span-0-21"><a id="__codelineno-0-21" name="__codelineno-0-21"></a>tag<span class="w"> </span>:<span class="w"> </span>YEAR_DAY_TIME
-</span><span id="__span-0-22"><a id="__codelineno-0-22" name="__codelineno-0-22"></a>temperature<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0001
-</span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a>vmax<span class="w"> </span>:<span class="w"> </span><span class="m">1</span>.0
-</span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a>vmin<span class="w"> </span>:<span class="w"> </span><span class="m">0</span>.0
-</span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="o">================================</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w"> </span><span class="m">96</span>%<span class="p">|</span>███████████████████<span class="w"> </span><span class="p">|</span><span class="w"> </span><span class="m">9551</span>/10000<span class="w"> </span><span class="o">[</span><span class="m">1</span>:56:01&lt;<span class="m">05</span>:31,<span class="w">  </span><span class="m">1</span>.35it/s,<span class="w"> </span><span class="nv">train_loss</span><span class="o">=</span><span class="m">0</span>.00066,<span class="w"> </span><span class="nv">test_loss</span><span class="o">=</span><span class="m">0</span>.00111<span class="o">]</span>
+<h1 id="realtime-motion-generation">Realtime Motion Generation</h1>
+<p>Move to the simulator folder and run the realtime motion generation program <code>6_rt_control.py</code> with the weight file as an argument. This program repeats 10 times the object grasping operation placed at random positions.</p>
+<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span>
+<span class="normal"><a href="#__codelineno-0-3">3</a></span>
+<span class="normal"><a href="#__codelineno-0-4">4</a></span>
+<span class="normal"><a href="#__codelineno-0-5">5</a></span>
+<span class="normal"><a href="#__codelineno-0-6">6</a></span>
+<span class="normal"><a href="#__codelineno-0-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>$<span class="w"> </span><span class="nb">cd</span><span class="w"> </span>../simulator/
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/6_rt_control.py<span class="w"> </span>../sarnn/log/YEAR_DAY_TIME/SARNN.pth
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>No<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span>found!<span class="w"> </span><span class="o">(</span>macros.py:53<span class="o">)</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>It<span class="w"> </span>is<span class="w"> </span>recommended<span class="w"> </span>to<span class="w"> </span>use<span class="w"> </span>a<span class="w"> </span>private<span class="w"> </span>macro<span class="w"> </span>file<span class="w"> </span><span class="o">(</span>macros.py:54<span class="o">)</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="o">[</span>robosuite<span class="w"> </span>WARNING<span class="o">]</span><span class="w"> </span>To<span class="w"> </span>setup,<span class="w"> </span>run:<span class="w"> </span>python<span class="w"> </span>/home/ito/var/robosuite/robosuite/scripts/setup_macros.py<span class="w"> </span><span class="o">(</span>macros.py:55<span class="o">)</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="o">[</span><span class="m">1</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="o">[</span><span class="m">2</span>/10<span class="o">]</span><span class="w"> </span>Task<span class="w"> </span>succeeded!
 </span></code></pre></div></td></tr></table></div>
-<!-- ******************************** -->
-<hr />
-<h1 id="test">Test</h1>
-<p>Specifying a weight file as the argument of <code>test.py</code> will save a gif animation of the predicted image, attention points, and predicted joint angles in the output folder.</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
-<span class="normal"><a href="#__codelineno-1-2">2</a></span>
-<span class="normal"><a href="#__codelineno-1-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test.py<span class="w"> </span>--filename<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>$<span class="w"> </span>SARNN_YEAR_DAY_TIME_0.gif
-</span></code></pre></div></td></tr></table></div>
-<p><img alt="results_of_SARNN" class="center" src="../img/sarnn_rt.webp" /></p>
-<!-- ******************************** -->
-<hr />
-<h1 id="visualization-of-internal-representation-using-pca">Visualization of internal representation using PCA</h1>
-<p>Specifying a weight file as the argument of <code>test_pca_sarnn.py</code> will save the internal representation of the RNN as a gif animation.</p>
-<div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
-<span class="normal"><a href="#__codelineno-2-2">2</a></span>
-<span class="normal"><a href="#__codelineno-2-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>$<span class="w"> </span>python3<span class="w"> </span>./bin/test_pca_sarnn.py<span class="w"> </span>./log/YEAR_DAY_TIME/SARNN.pth
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a>$<span class="w"> </span>ls<span class="w"> </span>./output/
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a>$<span class="w"> </span>PCA_SARNN_YEAR_DAY_TIME.gif
-</span></code></pre></div></td></tr></table></div>
-<p><img alt="Visualize_the_internal_state_of_SARNN_using_Principal_Component_Analysis" class="center" src="../img/sarnn_pca.webp" /></p>
 
 
   
@@ -969,7 +922,7 @@
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["toc.integrate"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["toc.integrate"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.a51614de.min.js"></script>
