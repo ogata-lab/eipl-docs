@@ -926,7 +926,9 @@
 <!-- ******************************** -->
 <hr />
 <h2 id="teleoperation">Teleoperation</h2>
-<p>Teach object grasping motions to the robot using keyboard teleoperation.
+<p>Teach object grasping motions to the robot using keyboard teleoperation. The following figure shows an overview of this experimental task, in which the robot grasps a red cube. The red letters in the figure are the teaching positions and the blue letters are the untaught positions, and the position of the grasping object was shifted by 5 cm intervals. The robot is moved up, down, left, and right with reference to the commands in the table. To facilitate learning the relationship between the position of the grasping object and the motion, a slight offset is applied to the position of the object each time. In this experiment, five grasping motions were taught at each position.</p>
+<p><img alt="task_overview" class="center" src="../img/overview.webp" /></p>
+<p>The following is a description of how to use the motion teaching program (1_teaching.py).
 The argument <code>pos</code> is the position of the object, and <code>ep_dir</code> is the save directory.
 We provide a <code>demonstration dataset</code> to eliminate the hassle of data collection. For more information, <a href="#demonstration-dataset">click here</a>.</p>
 <div class="language-bash highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
