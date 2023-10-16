@@ -56,26 +56,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://ogata-lab.github.io/eipl-docs/ja/simulator/overview/</loc>
-         <lastmod>2023-10-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://ogata-lab.github.io/eipl-docs/ja/simulator/rt_control/</loc>
-         <lastmod>2023-10-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://ogata-lab.github.io/eipl-docs/ja/simulator/teaching/</loc>
-         <lastmod>2023-10-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://ogata-lab.github.io/eipl-docs/ja/simulator/train/</loc>
-         <lastmod>2023-10-16</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://ogata-lab.github.io/eipl-docs/ja/teach/dataset/</loc>
          <lastmod>2023-10-16</lastmod>
          <changefreq>daily</changefreq>
