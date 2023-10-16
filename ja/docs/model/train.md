@@ -2,7 +2,7 @@
 
 ## ファイル
 
-SARNNの学習には、EIPLリポジトリ中の[tutorial/SARNN](https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/sarnn)フォルダ内のプログラムを利用する。
+SARNNの学習には、EIPLリポジトリ中の[tutorial/SARNN](https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/airec/sarnn)フォルダ内のプログラムを利用する。
 各フォルダとプログラムの役割は以下の通りである。
 
 - **bin/train.py**：データの読み込み、学習、そしてモデルの保存を行う学習プログラム
@@ -20,7 +20,7 @@ SARNNの学習には、EIPLリポジトリ中の[tutorial/SARNN](https://github.
 プログラムを実行すると `log` フォルダ内に学習済みの重み（pth）とTensorboardのログファイルが保存される。
 このプログラムでは、コマンドライン引数を使用して、モデルの種類、エポック数、バッチサイズ、学習率、最適化手法など、学習に必要なパラメータを指定可能である。
 また、EarlyStoppingライブラリを使用して、学習の早期終了タイミングを決定するだけでなく、テスト誤差が最小になった時点で重みを保存する。
-プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/train.py)ください。
+プログラムの詳細な動作については、コード内のコメントを[参照](https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/bin/train.py)ください。
 
 ```bash 
 $ cd eipl/tutorials/sarnn/

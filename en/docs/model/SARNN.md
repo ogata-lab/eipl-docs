@@ -172,7 +172,7 @@ In addition, `loss_weights` assign weights to each modality loss, thus determini
 
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
 class fullBPTTtrainer:
     def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device

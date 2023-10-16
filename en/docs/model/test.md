@@ -36,7 +36,7 @@ The following code snippet demonstrates the inference and PCA process. First, th
 
 
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
 states = tensor2numpy( states )
 # Reshape the state from [N,T,D] to [-1,D] for PCA of RNN.
 # N is the number of datasets

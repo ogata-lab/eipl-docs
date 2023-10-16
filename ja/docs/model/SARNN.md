@@ -196,7 +196,7 @@ BPTTでは、各時刻での誤差を計算し、それを遡って勾配を計�
 重み付け係数はモデルやタスクに応じて調整することが求められる。
 これまでの経験上、重み付け係数は全て1.0、もしくは画像のみ0.1にすることが多い。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/libs/fullBPTT.py>[SOURCE] fullBPTT.py</a>" linenums="1" hl_lines="6 47-54"
 class fullBPTTtrainer:
     def __init__(self, model, optimizer, loss_weights=[1.0, 1.0], device="cpu"):
         self.device = device

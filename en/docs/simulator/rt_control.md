@@ -1,7 +1,7 @@
 # Realtime Motion Generation
 Move to the simulator folder and run the realtime motion generation program `6_rt_control.py` with the weight file as an argument. This program repeats 10 times the object grasping operation placed at random positions.
 
-```bash
+```bash linenums="1"
 $ cd ../simulator/
 $ python3 ./bin/6_rt_control.py ../sarnn/log/YEAR_DAY_TIME/SARNN.pth
 [robosuite WARNING] No private macro file found! (macros.py:53)

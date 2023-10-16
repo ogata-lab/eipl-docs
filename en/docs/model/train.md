@@ -1,7 +1,7 @@
 
 
 ## Files
-Use the programs in the [tutorial/SARNN](https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/sarnn) folder of the EIPL repository to train SARNN. Each folder and each program has a specific role:
+Use the programs in the [tutorial/SARNN](https://github.com/ogata-lab/eipl/tree/master/eipl/tutorials/airec/sarnn) folder of the EIPL repository to train SARNN. Each folder and each program has a specific role:
 
 - **bin/train.py**: Program to load data, train and save models.
 - **bin/test.py**: Program for offline inference of models using test data (images and joint angles) and visualization of inference results.
@@ -14,7 +14,7 @@ Use the programs in the [tutorial/SARNN](https://github.com/ogata-lab/eipl/tree/
 <!-- #################################################################################################### -->
 ----
 ## Trainig {#train}
-The main program `train.py` is used to train SARNN. When the program is executed, the weights (pth) and Tensorboard log files are saved in the `log` folder. The program allows users to specify necessary training parameters such as model type, number of epochs, batch size, learning rate, and optimization method using command line arguments. It also uses the EarlyStopping library to determine when to stop training early and save weights when the test error is minimized. For a detailed explanation of how the program works, please refer to the comments in the [code] (https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/train.py).
+The main program `train.py` is used to train SARNN. When the program is executed, the weights (pth) and Tensorboard log files are saved in the `log` folder. The program allows users to specify necessary training parameters such as model type, number of epochs, batch size, learning rate, and optimization method using command line arguments. It also uses the EarlyStopping library to determine when to stop training early and save weights when the test error is minimized. For a detailed explanation of how the program works, please refer to the comments in the [code] (https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/bin/train.py).
 
 
 ```bash 

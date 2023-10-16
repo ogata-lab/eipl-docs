@@ -19,6 +19,11 @@ nav:
     - 'モデル実装': 'model/SARNN.md'
     - '学習': 'model/train.md'
     - '推論': 'model/test.md'
+  - 'ロボットシミュレータ':
+    - '概要': 'simulator/overview.md'
+    - '教示': 'simulator/teaching.md'
+    - '学習': 'simulator/train.md'
+    - '動作生成': 'simulator/rt_control.md'
   - '実ロボット応用':
     - '概要': 'robot/overview.md'
 #    - 'ハードウェア': 'robot/hardware.md'

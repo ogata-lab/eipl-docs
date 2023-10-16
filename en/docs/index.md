@@ -20,7 +20,7 @@ EIPL (Embodied Intelligence with Deep Predictive Learning) is a library for robo
 
     Using the attention mechanism based motion generation model as an example, this section explains the implementation steps for training the model and performing inference.
 
-5. [**Simulator Application**](simulator/overview)
+5. [**Robot Simulator**](simulator/dataset)
 
     This section describes motion learning using a robot simulator (robosuite).
 

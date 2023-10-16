@@ -48,7 +48,7 @@ SARNN_20230521_1247_41_4_1.0.gif
 最後に、12行目に示すように主成分分析を適用することで、高次元な `hidden state` を低次元な情報（3次元）に圧縮する。
 圧縮された主成分 `pca_val` を元の形状［データ数、時系列長、3次元］に戻し、物体位置ごとに色付けて3D空間にプロットすることで、物体位置と内部状態の関係を可視化できる。
 
-```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
+```python title="<a href=https://github.com/ogata-lab/eipl/blob/master/eipl/tutorials/airec/sarnn/bin/test_pca_sarnn.py>[SOURCE] test_pca_rnn.py</a>" linenums="1" hl_lines="12"
 states = tensor2numpy( states )
 # Reshape the state from [N,T,D] to [-1,D] for PCA of RNN.
 # N is the number of datasets
